@@ -1,0 +1,8 @@
+Motion add topics - 	depth/feed and motion/presence motion/position 
+Game add topics - 	game/state, game/level, game/frame
+			player1/score
+			player2/score
+			puck/position (x,y)
+			paddle1/position
+			paddle2/position
+
