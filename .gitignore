@@ -1,0 +1,6 @@
+# .gitignore
+build/*
+dist/*
+env/
+*.egg-info/
+.eggs/*

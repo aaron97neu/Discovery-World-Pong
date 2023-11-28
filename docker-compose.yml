@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+    mqtt-broker:
+        container_name: mqtt-broker
+        image: eclipse-mosquitto:2.0.15
+        ports:
+            - 1883:1883
+            - 8883:8883
+            - 9001:9001
+        volumes:
+            - ./mqtt-broker/config:/mosquitto/config
+            - ./mqtt-broker/data:/mosquitto/data
+            - ./mqtt-broker/log:/mosquitto/log
+        restart: unless-stopped
+        networks:
+            - dw_net
+    mqtt-explorer:
+        container_name: mqtt-explorer
+        image: smeagolworms4/mqtt-explorer
+        ports:
+            - 4000:4000
+        volumes:
+            - ./mqtt-explorer/config:/mqtt-explorer/config
+        restart: unless-stopped
+        networks:
+            - dw_net
+    dw_ai:
+        container_name: dw_ai
+        image: dw_ai:latest
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_game:
+        container_name: dw_game
+        image: dw_game:latest
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_motion:
+        container_name: dw_motion
+        image: dw_motion:latest
+        volumes:
+            - /dev:/dev
+        device_cgroup_rules:
+            - 'c 81:* rmw'
+            - 'c 189:* rmw'               
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_depthfeed:
+        container_name: dw_depthfeed
+        image: dw_depthfeed:latest
+        ports:
+            - 5001:8000        
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_visualization:
+        container_name: dw_visualization
+        image: dw_visualization:latest
+        ports:
+            - 5002:8000        
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_visualization-react:
+        container_name: dw_visualization-react
+        image: dw_visualization-react:latest
+        ports:
+            - 5003:80        
+        restart: unless-stopped
+        networks:
+            - dw_net       
+    dw_pong-react:
+        container_name: dw_pong-react
+        image: dw_pong-react:latest
+        ports:
+            - 5000:80        
+        restart: unless-stopped
+        networks:
+            - dw_net       
+networks:
+    dw_net:
+        name: dw_net
+        driver: bridge

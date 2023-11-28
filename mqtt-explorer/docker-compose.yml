@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+    mqtt-explorer:
+        container_name: mqtt-explorer
+        image: smeagolworms4/mqtt-explorer
+        ports:
+            - 4000:4000
+        volumes:
+            - ./mqtt-explorer/config:/mqtt-explorer/config
+        network_mode: "host"

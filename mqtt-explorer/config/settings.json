@@ -1,0 +1,70 @@
+{
+  "ConnectionManager_connections": {
+    "mqtt.eclipse.org": {
+      "configVersion": 1,
+      "certValidation": true,
+      "clientId": "mqtt-explorer-6b716573",
+      "id": "mqtt.eclipse.org",
+      "name": "mqtt.eclipse.org",
+      "encryption": false,
+      "subscriptions": [
+        {
+          "topic": "#",
+          "qos": 0
+        },
+        {
+          "topic": "$SYS/#",
+          "qos": 0
+        }
+      ],
+      "type": "mqtt",
+      "host": "mqtt.eclipse.org",
+      "port": 1883,
+      "protocol": "mqtt"
+    },
+    "test.mosquitto.org": {
+      "configVersion": 1,
+      "certValidation": true,
+      "clientId": "mqtt-explorer-eb3be13d",
+      "id": "test.mosquitto.org",
+      "name": "test.mosquitto.org",
+      "encryption": false,
+      "subscriptions": [
+        {
+          "topic": "#",
+          "qos": 0
+        },
+        {
+          "topic": "$SYS/#",
+          "qos": 0
+        }
+      ],
+      "type": "mqtt",
+      "host": "test.mosquitto.org",
+      "port": 1883,
+      "protocol": "mqtt"
+    },
+    "b7a48d0b-0f13-48ab-bcea-4f207087434f": {
+      "configVersion": 1,
+      "certValidation": false,
+      "clientId": "mqtt-explorer-8d4af0b0",
+      "id": "b7a48d0b-0f13-48ab-bcea-4f207087434f",
+      "name": "dw",
+      "encryption": false,
+      "subscriptions": [
+        {
+          "topic": "#",
+          "qos": 0
+        },
+        {
+          "topic": "$SYS/#",
+          "qos": 0
+        }
+      ],
+      "type": "mqtt",
+      "host": "mqtt-broker",
+      "port": 1883,
+      "protocol": "mqtt"
+    }
+  }
+}
