@@ -17,7 +17,16 @@ This file is the driver for the game component.
 
 It polls the agents for actions and advances frames and game state at a steady rate.
 """
+
+STATE_WAIT, STATE_GAMEOVER = 0
+STATE_READY = 1
+STATE_RUNNING = 2
+
+
+
 class GameDriver:
+
+    
     def run(self, level):
         print("running level: ", level)
         # The Pong environment
@@ -33,7 +42,7 @@ class GameDriver:
         score_r = 0
 
         # Emit state over MQTT and keep a running timer to track the interval
-        self.subscriber.emit_state(pong_environment.get_packet_info(), request_action=True)
+        self.subscriber.emit_state(pong_environment.get_packet_info(), request_action=True) #return: Tuple representing ((puck_x, puck_y), paddle1_y, paddle2_y, paddle1_score, paddle2_score, game_frame))
         last_frame_time = time.time()
 
         # Track skipped frame statistics
@@ -69,14 +78,14 @@ class GameDriver:
 
                 #Timer.start("step")
                 #pong.step(self, bottom_action, top_action, frames=3, motion_position=None):
-                state, reward, done = pong_environment.step(self.config.ACTIONS[action_l], self.config.ACTIONS[action_r], frames=1, motion_position=motion_l)
+                state, reward, done = pong_environment.step(self.config.ACTIONS[action_l], self.config.ACTIONS[action_r], self.subscriber, frames=1, motion_position=motion_l)
                 #Timer.stop("step")
                 reward_l, reward_r = reward
                 if reward_r < 0: score_l -= reward_r
                 if reward_r > 0: score_r += reward_r
                 #Timer.start("emit")
                 if i == self.config.AI_FRAME_INTERVAL - 1:
-                    self.subscriber.emit_state(pong_environment.get_packet_info(), request_action=True)
+                    self.subscriber.emit_state(pong_environment.get_packet_info(), request_action=True) # pulish topics "puck/position", paddle1/position", paddle2/position", "player1/score", "player2/score" and "game/frame"
                 else:
                     self.subscriber.emit_state(pong_environment.get_packet_info(), request_action=False)
                 # self.subscriber.emit_depth_feed(pong_environment.depth_feed)
@@ -103,8 +112,8 @@ class GameDriver:
             except Exception as excep:
                 print(excep)
 
-    def __init__(self, config, subscriber, bottom_agent, top_agent): # pipeline, decimation_filter, crop_percentage_w, crop_percentage_h, clipping_distance):
-        self.subscriber = subscriber
+    def __init__(self, config, subscriber, bottom_agent, top_agent, gameState): # pipeline, decimation_filter, crop_percentage_w, crop_percentage_h, clipping_distance):
+        #self.subscriber = subscriber
         self.bottom_agent = bottom_agent
         self.top_agent = top_agent
         # self.pipeline = pipeline
@@ -114,10 +123,24 @@ class GameDriver:
         # self.clipping_distance = clipping_distance
         self.config = config
         self.subscriber = subscriber
+        self.currentSate = gameState
 
 
+    def resetGame(self):
+        reset_counter = 0
+        level = 1
 
-# def main(in_q, config=Config.instance()):
+        
+    def waitForPaddleMoveLeft(self, setPosition):
+        while self.subscribe.motion_position > setPosition:
+            time.sleep(0.1)
+            
+
+    def waitForPaddleMoveRight(self, setPosition):
+        while self.subscribe.motion_position > setPosition:
+            time.sleep(0.1)
+   
+        
 def main(config=Config.instance()):
     subscriber = GameSubscriber()
     print(f'The current MAX_SCORE is set to {config.MAX_SCORE}')
@@ -134,71 +157,127 @@ def main(config=Config.instance()):
 
     print("Level is set to 0 and game driver is starting fresh")
     level = 0
-    # start at level 0, our start state when nobody is playing
-    time.sleep(1) # wait a second for connection stuff to happen. It was previoiusly connecting only after it tried to emit
+    currentState = STATE_WAIT
     subscriber.emit_level(level) 
 
-    game_instance = GameDriver(
-        config, subscriber, opponent, agent)
-
+    game_instance = GameDriver(config, subscriber, opponent, agent, currentState) # constructor __init__
     while True: # play the exhibit on loop forever
         print("Starting game management loop")
         start = time.time()
-        # if not in_q.empty(): # if there's something in the queue to read
-        #     dataQ = in_q.get() # remember that .get() removes the item from the queue
-        #     if dataQ == "endThreads":
-        #         print('thread quitting')
-        #         subscriber.client.disconnect()
-        #         print(f'in_q is {dataQ} and in_q.empty() is {in_q.empty()}')
-        #         while not in_q.empty: # clear out the q
-        #             dataQ = in_q.get()
-        #         cv2.destroyAllWindows() # close the Pong game window
-        #         in_q.put('noneActive') # a message back to GUI/main thread to signal that game_driver is ended
-        #         sys.exit() # kill the thread
-        #         print('the sys exit didnt work')
-        #         break
-        #     else:
-        #         print(f'in_q is {dataQ}')
-
-        # set the game to a waiting state - enables the detection of a player entering motion area and any idle animations that we may want to implement
-        # this should always be the case before starting any level - idle animations only when level == 0 and game state is waiting
-        subscriber.emit_game_state(0) # 0 waiting, 1 ready, 2 running 
-        time.sleep(2)  # gives a chance to catch the emitted message
-        # wait to verify someone is playing     
-        reset_counter = 0
-        reset = False
-        while not subscriber.motion_presence:
-            reset_counter += 1
-            if (reset_counter > 100):
-                print("no one detected, resetting game")
-                reset_counter = 0
-                level = 0
-                subscriber.emit_game_state(0)
-            time.sleep(0.1)
-        print("motion detected, beginning game")
-        print(f'level {level}')
-
-        if level < 3: # if the game hasn't started yet and the next level would be level 1
-            print("proceed to next level")
-            level = level + 1
-            
+        if currentState == STATE_WAIT:                  #in STATE_WAIT, STATE_GAMEOVER, wait for paddle to move left to change to next state (STATE_READY) where score and level are reset
+            game_instance.waitForPaddleMoveLeft (-100)
+            game_instance.resetGame()                   #reset_counter = 0, level = 1
+            currentState = STATE_READY
+            subscriber.emit_game_state(currentState) 
+        elif currentState == STATE_READY:
+            game_instance.waitForPaddleMoveRight (100)  #in STATE_READY, wait for padddle to move right to change to next state (STATE_RUNNING)
+                                                        #This is state is necessary in case the game ends with the paddle is in the left position
+            currentState = STATE_RUNNING
+            subscriber.emit_game_state(currentState) 
+        elif currentState == STATE_RUNNING:          
             subscriber.emit_level(level) 
-            subscriber.emit_game_state(1) # ready
-            subscriber.reset_game_state()
-            time.sleep(3) # delay for start here - gives a chance for components to give feedback
-            subscriber.emit_game_state(2) # running
-            time.sleep(1)
-            game_instance.run(level) # RUN LEVEL (1)
+            subscriber.reset_game_state() #reset score by publishing topics 'player1/score' and 'player2/score'
+            time.sleep(2) # delay for start here - gives a chance for components to give feedback
+            subscriber.emit_game_state(currentState) # running
+            game_instance.run(level)
+            if (not subscriber.motion_presence) or (level >= 2): #reset game if player is not detected or level is already at 2 
+                currentState == STATE_WAIT
+            else: 
+                print("proceed to next level")
+                level = level + 1
+    sys_exit()
 
-            if level == 2: # level == 3
-                level = 0 # the game is over so we need to reset to level 0 (the state before the game starts
-                print(f'            Game reset to level {level} (zero).')
-                subscriber.emit_level(level)
-                subscriber.emit_game_state(3)
-                time.sleep(6) # wait 6 second so person has time to leave and next person can come in
 
-    sys.exit()
+            
+        
 
+
+# def main(in_q, config=Config.instance()):
+# def main(config=Config.instance()):
+#     subscriber = GameSubscriber()
+#     print(f'The current MAX_SCORE is set to {config.MAX_SCORE}')
+
+#     agent = AIPlayer(subscriber, top=True)
+
+#     if config.USE_DEPTH_CAMERA:
+#         print("Configured to use depth Camera")
+#         opponent = MotionPlayer(subscriber)
+#     else:
+#         opponent = ControllerPlayer('a', 'd')
+#         print("setting opponent to be a ControllerPlayer")
+
+
+#     print("Level is set to 0 and game driver is starting fresh")
+#     level = 0
+#     # start at level 0, our start state when nobody is playing
+#     time.sleep(1) # wait a second for connection stuff to happen. It was previoiusly connecting only after it tried to emit
+#     subscriber.emit_level(level) 
+
+#     game_instance = GameDriver(
+#         config, subscriber, opponent, agent)
+
+#     while True: # play the exhibit on loop forever
+#         print("Starting game management loop")
+#         start = time.time()
+#         # if not in_q.empty(): # if there's something in the queue to read
+#         #     dataQ = in_q.get() # remember that .get() removes the item from the queue
+#         #     if dataQ == "endThreads":
+#         #         print('thread quitting')
+#         #         subscriber.client.disconnect()
+#         #         print(f'in_q is {dataQ} and in_q.empty() is {in_q.empty()}')
+#         #         while not in_q.empty: # clear out the q
+#         #             dataQ = in_q.get()
+#         #         cv2.destroyAllWindows() # close the Pong game window
+#         #         in_q.put('noneActive') # a message back to GUI/main thread to signal that game_driver is ended
+#         #         sys.exit() # kill the thread
+#         #         print('the sys exit didnt work')
+#         #         break
+#         #     else:
+#         #         print(f'in_q is {dataQ}')
+
+#         # set the game to a waiting state - enables the detection of a player entering motion area and any idle animations that we may want to implement
+#         # this should always be the case before starting any level - idle animations only when level == 0 and game state is waiting
+#         subscriber.emit_game_state(0) # 0 waiting, 1 ready, 2 running, 3 gameover
+#         time.sleep(2)  # gives a chance to catch the emitted message
+#         # wait to verify someone is playing     
+#         reset_counter = 0
+#         reset = False
+#         while not subscriber.motion_presence:
+#             reset_counter += 1
+#             if (reset_counter > 100):
+#                 print("no one detected, resetting game")
+#                 reset_counter = 0
+#                 level = 0
+#                 subscriber.emit_game_state(0)
+#             time.sleep(0.1)
+#         print("motion detected, beginning game")
+#         print(f'level {level}')
+
+#         if level < 3: # if the game hasn't started yet and the next level would be level 1
+#             print("proceed to next level")
+#             level = level + 1
+            
+#             subscriber.emit_level(level) 
+#             subscriber.emit_game_state(1) # ready
+#             subscriber.reset_game_state() #reset score by publishing topics 'player1/score' and 'player2/score'
+#             time.sleep(3) # delay for start here - gives a chance for components to give feedback
+#             subscriber.emit_game_state(2) # running
+#             time.sleep(1)
+#             game_instance.run(level) # RUN LEVEL (1)
+
+#             if level == 2: # level == 3
+#                 level = 0 # the game is over so we need to reset to level 0 (the state before the game starts
+#                 print(f'            Game reset to level {level} (zero).')
+#                 subscriber.emit_level(level)   # publish topic "game/level"
+#                 subscriber.emit_game_state(3)  # publish topic "game/state"
+#                 time.sleep(6) # wait 6 second so person has time to leave and next person can come in
+
+#     sys.exit()
+
+
+
+
+    
 
 if __name__ == "__main__":
     # main(Queue(), config=Config())

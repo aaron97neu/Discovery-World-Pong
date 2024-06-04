@@ -450,7 +450,7 @@ class Pong:
         screen = self.render()
         return screen, (reward_l, reward_r), done
 
-    def step(self, bottom_action, top_action, frames=3, motion_position=None):
+    def step(self, bottom_action, top_action, subscriber, frames=3, motion_position=None):
         """
         Game tick housekeeping
         :param bottom_action: Action from bottom agent
@@ -501,9 +501,7 @@ class Pong:
                 self.bottom.update()
                 self.top.update()
                 self.ball.update()
-                done = False
-                if self.score_top >= self.config.MAX_SCORE or self.score_bottom >= self.config.MAX_SCORE:
-                    done = True
+                done = self.score_top >= self.config.MAX_SCORE or self.score_bottom >= self.config.MAX_SCORE or subscriber.motion_presence
 
             screen_full = self.render()
             screen_top = self.render(top_only=True)

@@ -30,6 +30,11 @@ client.on('connect', function () {
   client.subscribe('motion/position', function (err) {
     if (!err) {
       console.log("connection position")
+      }
+
+  client.subscribe('game/state', function (err) {
+    if (!err) {
+        console.log("connection game state")
     }
   })
 });
@@ -75,7 +80,9 @@ export default function PongGame(props) {
           currentOpponentPosition = (data.position / scalar) - xOffset
           break;
         case "motion/position":
-          currentMotionPosition = ((data * 4.8) * 2) - 4.8
+              currentMotionPosition = ((data * 4.8) * 2) - 4.8
+        case "game/state":
+              console.log("new game state") 
       }
 
     })

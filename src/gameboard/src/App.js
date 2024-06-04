@@ -9,6 +9,8 @@ import {EffectComposer, Bloom} from "@react-three/postprocessing"
 import PongGame from './PongGame';
 import GameData from './GameData';
 import Stage from "./3DModels/Stage.js"
+import StateLeftInstruction from "./3DModels/StageLeftInstruction.js"
+import StateRightInstruction from "./3DModels/StageLeRight.js"
 import PlayArea from "./3DModels/PlayArea.js"
 
 import TransparentPlane from './3DComponents/TransparentPlane'
