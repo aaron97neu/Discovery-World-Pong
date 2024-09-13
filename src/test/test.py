@@ -271,7 +271,7 @@ def on_connect(client, userdata, flags, rc, propertiess=None):
     logging.info("Connected with result code " + str(rc))
     if (str(rc) == "Success"):
         userdata["connect_status"] = "connected"
-    if 
+
     client.subscribe("test/topic")
     client.subscribe("quit")
     client.subscribe("motion/position")
