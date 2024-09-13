@@ -1,5 +1,5 @@
 services:
-    mqtt-broker:
+    mqtt-broker: 
         container_name: mqtt-broker
         image: eclipse-mosquitto:2.0.15
         ports:
