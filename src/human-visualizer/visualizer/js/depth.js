@@ -31,9 +31,16 @@ const broker = "localhost";
 const options = {
     clean: true,
     connectTimeout: 4000,
+    port: 1883
+};
+const wsoptions = {
+    clean: true,
+    connectTimeout: 4000,
     port: 9001
 };
+
 const client = mqtt.connect("mqtt://" + broker, options);
+// const client = mqtt.connect("ws:// + broker, wsoptions")
 
 client.on('connect', function () {
     msg.textContent = "Connected; Waiting for images...";
