@@ -39,8 +39,8 @@ const wsoptions = {
     port: 9001
 };
 
-const client = mqtt.connect("mqtt://" + broker, options);
-// const client = mqtt.connect("ws:// + broker, wsoptions")
+//const client = mqtt.connect("mqtt://" + broker, options);
+const client = mqtt.connect("ws:// + broker, wsoptions")
 
 client.on('connect', function () {
     msg.textContent = "Connected; Waiting for images...";
