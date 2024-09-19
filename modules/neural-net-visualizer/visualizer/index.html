@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Neural Network Visualizer</title>
+    <meta name="description" content="Visualization">
+    <meta name="author" content="Alexander Neuwirth">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
+    <!-- To update integrity hash: https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"
+        integrity="sha384-Ljvyu+Te8lhYTZmOKkTuUHeKBt1i/g8TBMb1lDHfgOlI3c0ZTKEN9KVPBM/priIP" crossorigin="anonymous"
+        type="text/javascript">
+        </script>
+    <script src="models/easy.js"></script>
+    <script src="models/medium.js"></script>
+    <script src="models/hard.js"></script>
+    <script src="js/heap.js"></script>
+    <script src="js/render_utils.js"></script>
+    <script src="js/visualizer.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="info">
+            <h1> Neural Network Visualization </h1>
+            <p>
+                The Pong "AI" makes decisions by using a type of machine 
+                learning called Deep Reinforcement Learning. The graphic helps
+                us understand how the AI is making decisions. Starting from the
+                bottom, we see simplified picture of the pong game. This
+                simplistic version of the game helps the computer focus on the
+                important parts of the game (the paddles and the ball) and not
+                get distracted by things like the background. Above this, we
+                have the AI's "neurons". The number, weight (size), and
+                connections between these neurons is what determines the AI's
+                inteligence. The lines drawn between the pixels on the game and
+                the "activated" neurons show which pixels are important to the
+                network. The "importance" is determined by weights, which we
+                determine when we "train" the algorithm. From there, each neuron
+                can activate other neurons by using a similar mechanism. Neurons
+                communicating with other neurons is what makes our AI
+                <b>deep</b> reinforcement learning. From there, the activated
+                neurons try to activate one of the three possible actions the AI
+                can take. These are shown on top as "Left", "Right", and "None".
+                The output with the most activation, shows as a percentage above
+                the action, is what the opponent eventually does.
+            </p>
+        </div>
+        <div class="visualization">
+            <canvas id="visualizer"></canvas>
+        </div>
+</body>
+
+</html>

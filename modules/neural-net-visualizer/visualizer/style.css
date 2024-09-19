@@ -1,0 +1,32 @@
+* {
+   margin: 0;
+   padding: 0;
+}
+
+body, html {
+   height: 100%;
+}
+
+canvas {
+   position:absolute;
+}
+
+.container {
+   display: flex;
+   flex-direction: column;
+   height: 100vh; /* Make the container take up the full viewport height */
+ }
+ 
+ .info {
+   margin-top: 25px;
+   margin-left: 25px;
+   margin-right: 25px;
+   margin-bottom: 0px;
+   text-align: center;
+   font-family: 'Barlow', sans-serif;
+ }
+ 
+ .visualization {
+   flex: 1; /* Make the canvas div fill the remaining space */
+   overflow: auto; /* If necessary, add scrollbars when the content overflows */
+ }
