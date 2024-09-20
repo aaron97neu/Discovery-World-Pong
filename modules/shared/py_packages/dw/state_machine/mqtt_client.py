@@ -9,7 +9,7 @@ import logging
 from abc import ABC
 # import json
 import paho.mqtt.client as mqtt
-from game_state import GameState
+from dw.state_machine import BaseState
 
 class MQTTClient(ABC):
     """
@@ -18,7 +18,7 @@ class MQTTClient(ABC):
     This class handles MQTT communication and observes the GameState for changes.
     """
 
-    def __init__(self, client_id, game_state: GameState, enable_subscriptions=None):
+    def __init__(self, client_id, game_state: BaseState, enable_subscriptions=None):
         """
         Initializes the MQTTClient with the given GameState.
 

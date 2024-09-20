@@ -5,33 +5,28 @@ This module contains the GameState class which implements the application state 
 Global Object pattern and the Observer pattern.
 """
 
-class GameState:
+from dw.state_machine import BaseState
+
+class GameState(BaseState):
     """
     GameState Class
 
     This class manages the application state and notifies observers of state changes.
     """
 
-    def __init__(self, tts_text):
+    def __init__(self):
         """
         Initializes the GameState with default values and an empty list of observers.
         """
-        self.tts_text = tts_text
         self._state = {
-            'paddle1_action': None,
-            'paddle1_frame': None,
-            'paddle2_action': None,
-            'paddle2_frame': None,
-            'motion_position': None,
-            'motion_presence': None,
-            'game_level': None,
             'game_state': None,
-            'puck_position': None,
-            'paddle1_position': None,
-            'paddle2_position': None,
+            'paddle1_activated': None,
+            'paddle1_movement': None,
+            'paddle2_activated': None,
+            'paddle2_movement': None,
+            'ball_movement': None,
             'player1_score': None,
             'player2_score': None,
-            'game_frame': None
         }
         self._observers = []
 

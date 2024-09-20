@@ -6,13 +6,13 @@ This module is derived from the GameStateMachine class which implements a state 
 """
 
 import logging
-from config import Config
-from game_state_machine import GameStateMachine
+from dw.config import Config
+from dw.state_machine import BaseStateMachine
 from tts_text import TTSText
 from tts_synthesizer import TTSSynthesizer
 from audio_player import AudioPlayer
 
-class AudioStateMachine(GameStateMachine):
+class AudioStateMachine(BaseStateMachine):
     """
     AudioStateMachine Class
 

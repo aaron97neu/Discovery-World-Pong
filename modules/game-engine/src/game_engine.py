@@ -7,19 +7,12 @@ It manages the instantiation and composition of the application with dependency 
 
 import logging
 import time
-# from game_state import GameState
-# from mqtt_client import MQTTClient
-# from game_state_machine import GameStateMachine
-# from shared.config import Config
-
-from dw.state_machine import GameState, GameStateMachine
+from dw.state_machine import BaseState, MQTTClient
 from dw import Config
 from dw.utils import Timer
-from .tts_text import TTSText
 from player import AIPlayer, MotionPlayer
 
 logging.basicConfig(level=logging.INFO)
-
 
 class GameEngine:
     """
@@ -33,18 +26,12 @@ class GameEngine:
         Initializes the GameEngine with necessary components.
         """
         self.config = Config.instance()
-        self.tts_text = TTSText("./tts_text.json")
-        self.game_state = GameState(self.tts_text)
-        self.mqtt_client = MQTTClient(self.game_state)
+        self.game_state = BaseState()
+        self.mqtt_client = MQTTClient("game-engine", self.game_state)
         self.top_player = AIPlayer(self.game_state, top=True)
         self.bottom_player = AIPlayer(self.game_state, bottom=True)
         # self.bottom_player = MotionPlayer(self.game_state)
-        self.game_state_machine = GameStateMachine(self.game_state,
-                                              self.config,
-                                              self.top_player,
-                                              self.bottom_player,
-                                              self.mqtt_client,
-                                              self.mqtt_client)
+        self.game_state_machine = GameStateMachine(self.game_state)
 
     def start(self):
         """
