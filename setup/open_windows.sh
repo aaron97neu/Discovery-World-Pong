@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 set -x
 
 # We have 4 screens in the following layout:
@@ -46,22 +46,32 @@ export DISPLAY=:0
 echo "Current monitor configuration:"
 xrandr --listactivemonitors
 
-#! /bin/sh
 
-# neural-net-visualizer (top-left)
-firefox -P window2 --kiosk --new-instance --new-window "http://localhost:5002" --kiosk-monitor 2 > /dev/null 2>&1 & 
+function launch_browser() {
+    local profile=$1
+    local url=$2
+    local display=$3
+    
+    while true; do
+        # Launch browser instance
+        firefox -P "$profile" --kiosk --new-instance --new-window "$url" --kiosk-monitor "$display" # > /dev/null 2>&1
+        echo "Firefox ($profile) exited. Restarting..."
+    done
+}
+
+killall firefox
+
+launch_browser neural-net-visualizer http://localhost:5002 0 &
+sleep 2
+launch_browser clocktower-visualizer http://localhost:5003 2 &
+sleep 2
+launch_browser human-visualizer http://localhost:5001 1 &
+sleep 2
+launch_browser gameboard http://localhost:5000 3 &
 sleep 2
 
-# clocktower-visualizer (top-middle)
-firefox -P window3 --kiosk --new-instance --new-window "http://localhost:5003" --kiosk-monitor 3 > /dev/null 2>&1 & 
-sleep 2
-
-# human-visualizer (top-right)
-firefox -P window0 --kiosk --new-instance --new-window "http://localhost:5001" --kiosk-monitor 0 > /dev/null 2>&1 & 
-sleep 2
-
-# gameboard (bottom-Middle)
-firefox -P window1 --kiosk --new-instance --new-window "http://localhost:5000" --kiosk-monitor 1 > /dev/null 2>&1 & 
-sleep 2
-
-exit 0
+set +x
+while true;
+do
+	sleep 5
+done

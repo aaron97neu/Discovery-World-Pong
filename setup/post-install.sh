@@ -18,22 +18,67 @@ ovpn='physical-twin.ovpn' # OpenVPN conf file, assumed to be in same directory
 # ubuntu-desktop - GUI for pong
 # RealSense SDK - For camera support
 
+# Nvidia Drivers:
+# Server edition wants to install the non-graphical nvidia server drives.
+# We need to switch to grahical drivers
+sudo ubuntu-drivers install
+
 # Download package information 
 sudo apt-get update
 
+# Do the desktop seperate, we don't want all the extras and it's a big install
+sudo apt-get install -y \
+	--no-install-recommends ubuntu-desktop
+
+# Development note - we restarted the server here
+
 # Install additional software we need
 sudo apt-get install -y \
+	firefox \
 	chromium-broswer \  # Chrome is easier to move around the screen than firefox
 	xdotool \           # Used for moving widnows, emulating keypresses
-	openvpn \           # allowing remote-in
 	unattended-upgrades # automatic security updates
 
 # Install optional development tools
 if $devtools ; then
 	sudo apt-get install -y \
+		nvtop \
 		neovim \
 		inotify-tools
 fi
+
+##############
+# Networking #
+##############
+
+sudo apt-get install -y \
+	network-manager \
+	network-manager-openvpn
+
+# TODO: sed this
+# sudo vim /etc/netplan/00-installer-config.yaml 
+# Add renderer:
+# ```
+# # This is the network config written by 'subiquity'
+# network:
+#   renderer: NetworkManager
+#   ethernets:
+#     enp2s0:
+#       dhcp4: true
+#   version: 2
+# ```
+# sudo vim /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
+# ```
+# [keyfile]
+# unmanaged-devices=*,except:type:wifi,except:type:ethernet,except:type:gsm,except:type:cdma
+# ```
+
+sudo systemctl restart NetworkManager
+
+sudo nmcli dev set enp2s0 managed yes
+sudo nmcli c import type openvpn file $ovpn
+sudo nmcli connection up DiscoveryWorld
+
 
 # Enable unattended-upgrades
 sudo unattended-upgrades -d
@@ -55,7 +100,7 @@ echo \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker dwpong
 
 # Add Nvidia container toolkit
@@ -68,35 +113,6 @@ sudo apt-get update
 sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
-
-# Do the desktop seperate, we don't want all the extras and it's a big install
-sudo apt-get install -y \
-	--no-install-recommends ubuntu-desktop
-
-# Install Realsense Builder
-sudo mkdir /opt/realsense
-sudo chown dwpong:dwpong realsense/
-cd realsense/
-git clone https://github.com/IntelRealSense/librealsense.git
-cd librealsense/
-sudo ./scripts/setup_udev_rules.sh
-sudo apt install libdpkg-perl=1.21.1ubuntu2.1 libusb-1.0-0=2:1.0.25-1ubuntu1
-sudo ./scripts/patch-realsense-ubuntu-lts-hwe.sh
-cd ~
-
-#######################
-# Remote Access Setup #
-#######################
-autostart="AUTOSTART=\"$ovpn\""
-
-sudo mv $ovpn /etc/openvpn/$ovpn.conf
-
-if [ $(grep -o $autostart /etc/default/openvpn | wc -l) -lt 1 ]; then
-	echo $autostart | sudo tee -a /etc/default/openvpn
-fi
-sudo systemctl daemon-reload
-sudo systemctl enable openvpn
-sudo systemctl start openvpn
 
 ########################
 # Source Code Download #
@@ -135,13 +151,17 @@ git remote add origin git@github.com:Rockwell-Automation-Inc/Discovery-World-Pon
 git fetch origin
 git checkout -b main --track origin/main # origin/master is clone's default
 
+# Enable CI/CD
+echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFjs+VwfElX0NmRQ5GNRATpOsaFqP72t3iS7lcAdr2l8 github-continuous-deployment' >> ~/.ssh/authorized_keys
+echo '```'
+ssh-keyscan -H localhost 2>/dev/null
+echo '```'
+
+echo "Please copy the above-printed key into the GitHub Actions variables as the relevant public key. Once complete hit enter to continue"
+read
+
 # Add Firefox profiles to use in open_windows.sh
 /opt/pong/setup/create_profiles.sh 
-
-# Setup auto-start functionality
-sudo cp /opt/setup/pong.service /etc/systemd/system/pong.service
-sudo systemctl daemon-reload
-sudo systemctl enable my-custom-script.service
 
 # Automatic System Restart
 config_file='/etc/apt/apt.conf.d/50unattended-upgrades'
@@ -174,6 +194,12 @@ else
 	echo "Automatic reboot time already configured. Not touching that configuration"
 fi
 
+# Splashtop Management
+mkdir /tmp/st && cd /tmp/st
+wget https://download.splashtop.com/linux/STB_CSRS_Ubuntu_v3.6.4.0_amd64.tar.gz
+tar xzf STB_CSRS_Ubuntu_v3.6.4.0_amd64.tar.gz
+sudo apt install -y -f
+sudo dpkg -i Splashtop_Streamer_Ubuntu_amd64.deb
 
 ########
 # TODO #
@@ -184,7 +210,14 @@ fi
 # Package update check setup frequency
 
 
-# Auto-sleep
+# No-sleep
 # /home/dwpong/.config/dconf/user
 
-# 
+# Arrange displays and resolutions
+
+# Disable notifications and enable DnD mode
+
+# Window autostart
+cp /opt/pong/setup/pong_start.desktop ~/.config/autostart/
+
+echo 'All finished. Please restart the system'

@@ -1,8 +1,10 @@
 #cloud-config
+# See the autoinstall documentation at:
+# https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
 autoinstall:
   apt:
     disable_components: []
-    fallback: abort
+    fallback: offline-install
     geoip: true
     mirror-selection:
       primary:
@@ -28,9 +30,9 @@ autoinstall:
   codecs:
     install: false
   drivers:
-    install: true
+    install: false
   identity:
-    hostname: discovery-world-pong
+    hostname: discovery-world-pong-twin
     password: ***REMOVED***
     realname: Discovery World Pong
     username: dwpong
@@ -46,30 +48,26 @@ autoinstall:
       enp2s0:
         dhcp4: true
     version: 2
-    wifis:
-      wlp3s0:
-        access-points:
-          AT-Lab:
-            password: ***REMOVED***
-        dhcp4: true
+    wifis: {}
   oem:
     install: auto
-  snaps:
-  - channel: stable
-    classic: false
-    name: docker
   source:
     id: ubuntu-server
-    search_drivers: true
+    search_drivers: false
   ssh:
     allow-pw: true
     authorized-keys: []
     install-server: true
   storage:
     config:
+    - transport: pcie
+      preserve: true
+      id: nvme-controller-nvme0
+      type: nvme_controller
     - ptable: gpt
-      serial: KXG70PNV2T04_NVMe_KIOXIA_2048GB_12RFA0GDFTW5_1
-      wwn: eui.00000000000000008ce38e0500a839aa
+      serial: KXG70PNV2T04_NVMe_KIOXIA_2048GB_12RFA0CAFTW5_1
+      wwn: eui.00000000000000008ce38e0500a83917
+      nvme_controller: nvme-controller-nvme0
       path: /dev/nvme0n1
       wipe: superblock-recursive
       preserve: false

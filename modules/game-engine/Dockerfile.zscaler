@@ -21,4 +21,8 @@ COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
 COPY . .
 ENV PATH="/opt/venv/bin:$PATH"
+<<<<<<< HEAD:modules/game-engine/Dockerfile.zscaler
 CMD ["python", "game_engine.py"]
+=======
+CMD ["python", "game_driver.py"]
+>>>>>>> main:src/game-engine/Dockerfile.zscaler
