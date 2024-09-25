@@ -19,13 +19,16 @@ class PiperTTSSynthesizer(TTSSynthesizer):
     https://rhasspy.github.io/piper-samples/
     """
 
-    def __init__(self, audio_files_path: str):
+    def __init__(self, audio_files_path: str, 
+                 voice_files_path: str,
+                 voice_model: str):
         self.audio_files_path = audio_files_path
+        self.voice_files_path = voice_files_path
+        self.voice_model = voice_model
 
     def synthesize_to_file(self,
                            text: str,
-                           filename: str,
-                           voice_model: str = "en_US-hfc_male-medium"):
+                           filename: str):
         """
         This function synthesize a text utterance into a wave audio
         file based on a specified voice model using PiperVoice.
@@ -36,8 +39,9 @@ class PiperTTSSynthesizer(TTSSynthesizer):
             voice_model -- the name of the voice model to use.
         """
         filepath = f"{self.audio_files_path}/{filename}"
-        voicedir = "voices/"  # Where onnx model files are stored
-        model = voicedir + voice_model + ".onnx"
+        # voicedir = "voices/"  # Where onnx model files are stored
+        # model = voicedir + self.voice_model + ".onnx"
+        model = f"{self.voice_files_path}/{self.voice_model}.onnx"
         voice = PiperVoice.load(model)
         wav_file = wave.open(filepath, "w")
         voice.synthesize(text, wav_file)
@@ -52,7 +56,7 @@ class PiperTTSSynthesizer(TTSSynthesizer):
         Arguments:
             filename -- the audio file filename.
         """
-        filepath = f"{self.data_path}/{filename}"
+        filepath = f"{self.audio_files_path}/{filename}"
         os.remove(filepath)
 
 # if implementing streaming tts

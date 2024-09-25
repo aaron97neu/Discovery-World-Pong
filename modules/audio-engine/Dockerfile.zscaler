@@ -1,9 +1,9 @@
 # base to speed up the build when only src changes
 FROM python:3.11-slim-bookworm AS base
 WORKDIR /app
-COPY audio_files ./audio_files
-COPY voices ./voices
-COPY tts ./tts
+# COPY audio_files ./audio_files
+# COPY voices ./voices
+# COPY tts ./tts
 # simpleaudio & pydub audio player requires alsa-utils, portaudio19-dev, ffmpeg 
 # RUN apt-get update -y && apt-get upgrade -y && apt-get install -y alsa-utils portaudio19-dev ffmpeg && rm -rf /var/lib/apt/lists/*
 # vlc audio player requires vlc, libvlc-dev
@@ -30,5 +30,6 @@ WORKDIR /app
 COPY ./src .
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
+# COPY tts ./tts
 
 ENTRYPOINT ["python", "audio_engine.py"]

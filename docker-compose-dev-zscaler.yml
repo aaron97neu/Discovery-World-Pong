@@ -136,6 +136,8 @@ services:
     audio-engine:
         container_name: audio-engine
         image: audio-engine:latest
+        volumes:
+            - ./tts:/app/tts
         build:
             dockerfile: Dockerfile.zscaler
             context: ./modules/audio-engine
