@@ -1,7 +1,7 @@
 """
 Game State Machine Module
 
-This module contains the GameStateMachine class which implements a state machine using the 
+This module contains the BaseStateMachine class which implements a state machine using the 
 'transitions' package to control game flow.
 """
 
@@ -9,11 +9,11 @@ import logging
 import time
 from abc import ABC
 from transitions import Machine
-from dw.state_machine import BaseState
+from .base_state import BaseState
 
 class BaseStateMachine(ABC):
     """
-    GameStateMachine Class
+    BaseStateMachine Class
 
     This class implements a state machine to control game flow.
     """
@@ -23,13 +23,13 @@ class BaseStateMachine(ABC):
     def __init__(self,
                  base_state: BaseState):
         """
-        Initializes the GameStateMachine with the given GameState.
+        Initializes the BaseStateMachine with the given BaseState.
 
         Parameters:
-        game_state (GameState): The GameState instance to observe.
+        game_state (BaseState): The BaseState instance to observe.
         """
         self.base_state = base_state
-        self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped')
+        self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped', ignore_invalid_triggers=True)
         self.machine.add_transition(trigger='start_machine', source='stopped', dest='idle')
         self.machine.add_transition(trigger='intro', source='idle', dest='intro')
         self.machine.add_transition(trigger='level1', source='intro', dest='level1')
@@ -41,37 +41,41 @@ class BaseStateMachine(ABC):
 
     def start(self):
         """
-        Starts the GameStateMachine by transitioning to the 'idle' state.
+        Starts the BaseStateMachine by transitioning to the 'idle' state.
         """
-        logging.info("GameStateMachine Start")
-        self.game_state.add_observer(self, self._on_state_change)
+        logging.info("BaseStateMachine Start")
+        self.base_state.add_observer(self, self._on_state_change)
+        self.start_machine()
 
         while True:
-            logging.info("Starting audio-engine loop")
+            # logging.info("Starting audio-engine loop")
             time.sleep(5)
 
     def _on_state_change(self, changed_state):
         """
-        Callback method for when the GameState changes.
+        Callback method for when the BaseState changes.
 
         Parameters:
         changed_state (dict): The changed state values.
         """
+        logging.info("current_state: %s", self.state)
         logging.info("changed_state: %s", changed_state)
-        # if 'game_state' in changed_state:
-        #     new_state = changed_state['game_state']
-        #     if new_state == 'idle':
-        #         self.reset()
-        #     elif new_state == 'intro':
-        #         self.play_intro()
-        #     elif new_state == 'level1':
-        #         self.level1()
-        #     elif new_state == 'level2':
-        #         self.level2()
-        #     elif new_state == 'level3':
-        #         self.level3()
-        #     elif new_state == 'outro':
-        #         self.outro()
+        if 'game_state' in changed_state:
+            new_state = changed_state['game_state']
+            if new_state == 'idle':
+                self.reset()
+            elif new_state == 'intro':
+                self.intro()
+            elif new_state == 'level1':
+                self.level1()
+            elif new_state == 'level2':
+                self.level2()
+            elif new_state == 'level3':
+                self.level3()
+            elif new_state == 'outro':
+                self.outro()
+            elif new_state == 'reset':
+                self.reset()
 
     # def on_enter_idle(self):
     #     """

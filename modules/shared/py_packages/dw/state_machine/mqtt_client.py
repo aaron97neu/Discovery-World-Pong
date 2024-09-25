@@ -1,7 +1,7 @@
 """
 MQTT Client Module
 
-This module contains the MQTTClient class which is an observer of GameState and handles 
+This module contains the MQTTClient class which is an observer of BaseState and handles 
 MQTT communication.
 """
 
@@ -9,18 +9,18 @@ import logging
 from abc import ABC
 # import json
 import paho.mqtt.client as mqtt
-from dw.state_machine import BaseState
+from .base_state import BaseState
 
 class MQTTClient(ABC):
     """
     MQTTClient Class
 
-    This class handles MQTT communication and observes the GameState for changes.
+    This class handles MQTT communication and observes the BaseState for changes.
     """
 
     def __init__(self, client_id, game_state: BaseState, enable_subscriptions=None):
         """
-        Initializes the MQTTClient with the given GameState.
+        Initializes the MQTTClient with the given BaseState.
 
         Parameters:
         service_state (ServiceState): The ServiceState instance to observe.
@@ -112,7 +112,7 @@ class MQTTClient(ABC):
 
     def start(self):
         """
-        Starts the MQTTClient by connecting to the broker and observing the GameState.
+        Starts the MQTTClient by connecting to the broker and observing the BaseState.
         """
         self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
         self.client.loop_start()
@@ -120,7 +120,7 @@ class MQTTClient(ABC):
 
     def _on_state_change(self, changed_state):
         """
-        Callback method for when the GameState changes.
+        Callback method for when the BaseState changes.
 
         Parameters:
         changed_state (dict): The changed state values.

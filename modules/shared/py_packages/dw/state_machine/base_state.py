@@ -1,7 +1,7 @@
 """
 Game State Module
 
-This module contains the GameState class which implements the application state using the 
+This module contains the BaseState class which implements the application state using the 
 Global Object pattern and the Observer pattern.
 """
 
@@ -9,14 +9,14 @@ from abc import ABC
 
 class BaseState(ABC):
     """
-    GameState Class
+    BaseState Class
 
     This class manages the application state and notifies observers of state changes.
     """
 
     def __init__(self):
         """
-        Initializes the GameState with default values and an empty list of observers.
+        Initializes the BaseState with default values and an empty list of observers.
         """
         self._state = {
             'game_state': None,

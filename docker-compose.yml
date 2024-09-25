@@ -7,9 +7,9 @@ services:
             - 8883:8883
             - 9001:9001
         volumes:
-            - ./src/mqtt-broker/config:/mosquitto/config
-            - ./src/mqtt-broker/data:/mosquitto/data
-            - ./src/mqtt-broker/log:/mosquitto/log
+            - ./modules/mqtt-broker/config:/mosquitto/config
+            - ./modules/mqtt-broker/data:/mosquitto/data
+            - ./modules/mqtt-broker/log:/mosquitto/log
         restart: unless-stopped
         networks:
             - pong-network
@@ -17,10 +17,10 @@ services:
         container_name: ai-paddle-control
         image: ai-paddle-control:latest
         build: 
-          context: ./src/ai-paddle-control
+          context: ./modules/ai-paddle-control
           additional_contexts:
-            util: ./src/shared/code
-            validation: ./src/shared/validation
+            util: ./modules/shared/code
+            validation: ./modules/shared/validation
         restart: unless-stopped
         networks:
             - pong-network       
@@ -35,9 +35,9 @@ services:
         container_name: game-engine
         image: game-engine:latest
         build: 
-          context: ./src/game-engine
+          context: ./modules/game-engine
           additional_contexts:
-            util: ./src/shared/code
+            util: ./modules/shared/code
         restart: unless-stopped
         networks:
             - pong-network       
@@ -45,9 +45,9 @@ services:
         container_name: human-paddle-control
         image: human-paddle-control:latest
         build: 
-          context: ./src/human-paddle-control
+          context: ./modules/human-paddle-control
           additional_contexts:
-            util: ./src/shared/code
+            util: ./modules/shared/code
         volumes:
             - /dev:/dev
         device_cgroup_rules:
@@ -62,9 +62,9 @@ services:
         container_name: human-visualizer
         image: human-visualizer:latest
         build: 
-          context: ./src/human-visualizer
+          context: ./modules/human-visualizer
           additional_contexts:
-            util: ./src/shared/code
+            util: ./modules/shared/code
         ports:
             - 5001:8000
 #       environment:
@@ -76,10 +76,10 @@ services:
         container_name: neural-net-visualizer
         image: neural-net-visualizer:latest
         build: 
-          context: ./src/neural-net-visualizer
+          context: ./modules/neural-net-visualizer
           additional_contexts:
-            util: ./src/shared/code
-            models: ./src/shared/models
+            util: ./modules/shared/code
+            models: ./modules/shared/models
         ports:
             - 5002:8000        
         restart: unless-stopped
@@ -89,9 +89,9 @@ services:
         container_name: clocktower-visualizer
         image: clocktower-visualizer:latest
         build:
-          context: ./src/clocktower-visualizer
+          context: ./modules/clocktower-visualizer
           additional_contexts:
-            models: ./src/shared/models
+            models: ./modules/shared/models
         ports:
             - 5003:80        
         restart: unless-stopped
@@ -100,7 +100,7 @@ services:
     gameboard:
         container_name: gameboard
         image: gameboard:latest
-        build: ./src/gameboard
+        build: ./modules/gameboard
         ports:
             - 5000:80        
         restart: unless-stopped
@@ -110,7 +110,7 @@ services:
         container_name: audio-engine
         image: audio-engine:latest
         build: 
-          context: ./src/audio-engine
+          context: ./modules/audio-engine
         devices:
          - "/dev/snd"
         restart: unless-stopped

@@ -33,7 +33,7 @@ class VLCAudioPlayer(AudioPlayer):
         # self.media_players[filename].play()
 
         # creating Instance class object
-        player = Instance("--intf dummy")
+        player = Instance("--intf dummy --aout alsa")
 
         # creating a new media
         media = player.media_new(filepath)

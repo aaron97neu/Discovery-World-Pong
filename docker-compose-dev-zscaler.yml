@@ -14,9 +14,9 @@ services:
             - 8883:8883
             - 9001:9001
         volumes:
-            - ./src/mqtt-broker/config:/mosquitto/config
-            - ./src/mqtt-broker/data:/mosquitto/data
-            - ./src/mqtt-broker/log:/mosquitto/log
+            - ./modules/mqtt-broker/config:/mosquitto/config
+            - ./modules/mqtt-broker/data:/mosquitto/data
+            - ./modules/mqtt-broker/log:/mosquitto/log
         restart: unless-stopped
         networks:
             - pong-network
@@ -30,116 +30,117 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
-    ai-paddle-control:
-        container_name: ai-paddle-control
-        image: ai-paddle-control:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./src/ai-paddle-control
-            additional_contexts:
-                util: ./src/shared/code
-                validation: ./src/shared/validation
-                certs: ./certs
-        restart: unless-stopped
-        networks:
-            - pong-network
-        deploy:
-            resources:
-                reservations:
-                    devices:
-                        - driver: nvidia
-                          count: 1
-                          capabilities: [gpu]
-    game-engine:
-        container_name: game-engine
-        image: game-engine:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./src/game-engine
-            additional_contexts:
-                util: ./src/shared/code
-                certs: ./certs
-        restart: unless-stopped
-        networks:
-            - pong-network
-    human-paddle-control:
-        container_name: human-paddle-control
-        image: human-paddle-control:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./src/human-paddle-control
-            additional_contexts:
-                util: ./src/shared/code
-                certs: ./certs
-        volumes:
-            - /dev:/dev
-        device_cgroup_rules:
-            - "c 81:* rmw"
-            - "c 189:* rmw"
-        #       devices:
-        #        - "/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22:/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22"
-        restart: unless-stopped
-        networks:
-            - pong-network
-    human-visualizer:
-        container_name: human-visualizer
-        image: human-visualizer:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./src/human-visualizer
-            additional_contexts:
-                util: ./src/shared/code
-                certs: ./certs
-        ports:
-            - 5001:8000
-        restart: unless-stopped
-        #       environment:
-        #           - DEBUG=1 # No used right now
-        networks:
-            - pong-network
-    neural-net-visualizer:
-        container_name: neural-net-visualizer
-        image: neural-net-visualizer:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./src/neural-net-visualizer
-            additional_contexts:
-                util: ./src/shared/code
-                models: ./src/shared/models
-                certs: ./certs
-        ports:
-            - 5002:8000
-        restart: unless-stopped
-        networks:
-            - pong-network
-    clocktower-visualizer:
-        container_name: clocktower-visualizer
-        image: clocktower-visualizer:latest
-        build:
-            context: ./src/clocktower-visualizer
-            additional_contexts:
-                models: ./src/shared/models
-        ports:
-            - 5003:80
-        restart: unless-stopped
-        networks:
-            - pong-network
-    gameboard:
-        container_name: gameboard
-        image: gameboard:latest
-        build: ./src/gameboard
-        ports:
-            - 5000:80
-        restart: unless-stopped
-        networks:
-            - pong-network
+    # ai-paddle-control:
+    #     container_name: ai-paddle-control
+    #     image: ai-paddle-control:latest
+    #     build:
+    #         dockerfile: Dockerfile.zscaler
+    #         context: ./modules/ai-paddle-control
+    #         additional_contexts:
+    #             util: ./modules/shared/code
+    #             validation: ./modules/shared/validation
+    #             certs: ./certs
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    #     deploy:
+    #         resources:
+    #             reservations:
+    #                 devices:
+    #                     - driver: nvidia
+    #                       count: 1
+    #                       capabilities: [gpu]
+    # game-engine:
+    #     container_name: game-engine
+    #     image: game-engine:latest
+    #     build:
+    #         dockerfile: Dockerfile.zscaler
+    #         context: ./modules/game-engine
+    #         additional_contexts:
+    #             util: ./modules/shared/code
+    #             certs: ./certs
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    # human-paddle-control:
+    #     container_name: human-paddle-control
+    #     image: human-paddle-control:latest
+    #     build:
+    #         dockerfile: Dockerfile.zscaler
+    #         context: ./modules/human-paddle-control
+    #         additional_contexts:
+    #             util: ./modules/shared/code
+    #             certs: ./certs
+    #     volumes:
+    #         - /dev:/dev
+    #     device_cgroup_rules:
+    #         - "c 81:* rmw"
+    #         - "c 189:* rmw"
+    #     #       devices:
+    #     #        - "/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22:/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22"
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    # human-visualizer:
+    #     container_name: human-visualizer
+    #     image: human-visualizer:latest
+    #     build:
+    #         dockerfile: Dockerfile.zscaler
+    #         context: ./modules/human-visualizer
+    #         additional_contexts:
+    #             util: ./modules/shared/code
+    #             certs: ./certs
+    #     ports:
+    #         - 5001:8000
+    #     restart: unless-stopped
+    #     #       environment:
+    #     #           - DEBUG=1 # No used right now
+    #     networks:
+    #         - pong-network
+    # neural-net-visualizer:
+    #     container_name: neural-net-visualizer
+    #     image: neural-net-visualizer:latest
+    #     build:
+    #         dockerfile: Dockerfile.zscaler
+    #         context: ./modules/neural-net-visualizer
+    #         additional_contexts:
+    #             util: ./modules/shared/code
+    #             models: ./modules/shared/models
+    #             certs: ./certs
+    #     ports:
+    #         - 5002:8000
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    # clocktower-visualizer:
+    #     container_name: clocktower-visualizer
+    #     image: clocktower-visualizer:latest
+    #     build:
+    #         context: ./modules/clocktower-visualizer
+    #         additional_contexts:
+    #             models: ./modules/shared/models
+    #     ports:
+    #         - 5003:80
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    # gameboard:
+    #     container_name: gameboard
+    #     image: gameboard:latest
+    #     build: ./modules/gameboard
+    #     ports:
+    #         - 5000:80
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
     audio-engine:
         container_name: audio-engine
         image: audio-engine:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/audio-engine
+            context: ./modules/audio-engine
             additional_contexts:
+                util: ./modules/shared
                 certs: ./certs
         devices:
             - "/dev/snd"

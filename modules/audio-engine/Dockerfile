@@ -27,7 +27,7 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y alsa-utils por
 
 FROM base AS final
 WORKDIR /app
-COPY ./src .
+COPY ./modules .
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
