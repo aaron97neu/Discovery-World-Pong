@@ -12,7 +12,7 @@ class AudioPlayer(ABC):
     """
 
     @abstractmethod
-    def play(self, filename: str):
+    def play(self, filename: str, loop: bool=False):
         """
         Implementations of this function plays an audio file.
 
@@ -30,14 +30,14 @@ class AudioPlayer(ABC):
             filename -- the audio file filename.
         """
 
-    def play_async(self, filename: str):
+    def play_async(self, filename: str, loop: bool=False):
         """
         This function implements an asynchronous command to play and audio file.  
 
         Arguments:
             filename -- the audio file filename.
         """
-        Thread(target=self.play, args=(filename,)).start()
+        Thread(target=self.play, args=(filename,loop)).start()
 
     def stop_async(self, filename: str):
         """

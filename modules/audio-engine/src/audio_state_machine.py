@@ -54,7 +54,7 @@ class AudioStateMachine(BaseStateMachine):
         Starts the AudioStateMachine by transitioning to the 'idle' state.
         """
         logging.info("AudioStateMachine Start")
-        self.audio_player.play_async("exhibit_activation_noise.mp3")
+        self.audio_player.play_async("exhibit_activation_noise.mp3", True)
         super().start()
 
     def on_enter_idle(self):
