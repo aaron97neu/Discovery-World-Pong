@@ -30,25 +30,26 @@ class BaseStateMachine(ABC):
         """
         self.base_state = base_state
         self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped', ignore_invalid_triggers=True)
-        self.machine.add_transition(trigger='start_machine', source='stopped', dest='idle')
+        self.machine.add_transition(trigger='start', source='stopped', dest='idle')
         self.machine.add_transition(trigger='intro', source='idle', dest='intro')
         self.machine.add_transition(trigger='level1', source='intro', dest='level1')
         self.machine.add_transition(trigger='level2', source='level1', dest='level2')
         self.machine.add_transition(trigger='level3', source='level2', dest='level3')
         self.machine.add_transition(trigger='outro', source='level3', dest='outro')
         self.machine.add_transition(trigger='reset', source='outro', dest='idle')
+        self.machine.add_transition(trigger='stop', source='idle', dest='stopped')
 
 
-    def start(self):
+    def start_machine(self):
         """
         Starts the BaseStateMachine by transitioning to the 'idle' state.
         """
         logging.info("BaseStateMachine Start")
         self.base_state.add_observer(self, self._on_state_change)
-        self.start_machine()
+        self.start()
 
         while True:
-            # logging.info("Starting audio-engine loop")
+            # logging.info("Starting BaseStateMachine loop")
             time.sleep(5)
 
     def _on_state_change(self, changed_state):
@@ -58,24 +59,26 @@ class BaseStateMachine(ABC):
         Parameters:
         changed_state (dict): The changed state values.
         """
-        logging.info("current_state: %s", self.state)
+        logging.info("current_state: %s", self.base_state)
         logging.info("changed_state: %s", changed_state)
-        if 'game_state' in changed_state:
-            new_state = changed_state['game_state']
-            if new_state == 'idle':
-                self.reset()
-            elif new_state == 'intro':
+        if 'game_state_transition' in changed_state:
+            state_transition = changed_state['game_state_transition']
+            if state_transition == 'start':
+                self.start()
+            elif state_transition == 'intro':
                 self.intro()
-            elif new_state == 'level1':
+            elif state_transition == 'level1':
                 self.level1()
-            elif new_state == 'level2':
+            elif state_transition == 'level2':
                 self.level2()
-            elif new_state == 'level3':
+            elif state_transition == 'level3':
                 self.level3()
-            elif new_state == 'outro':
+            elif state_transition == 'outro':
                 self.outro()
-            elif new_state == 'reset':
+            elif state_transition == 'reset':
                 self.reset()
+            elif state_transition == 'stop':
+                self.stop()
 
     # def on_enter_idle(self):
     #     """

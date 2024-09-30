@@ -35,7 +35,7 @@ class MQTTClient(ABC):
 
         if not enable_subscriptions:
             self.enable_subscriptions = [
-                'game/state_changed', 
+                'game/state_transition', 
                 'paddle1/activated',
                 'paddle1/moved', 
                 'paddle2/activated',
@@ -48,7 +48,7 @@ class MQTTClient(ABC):
             self.enable_subscriptions = enable_subscriptions
 
         self.topic_to_state_map = {
-            'game/state_changed': 'game_state', 
+            'game/state_transition': 'game_state_transition', 
             'paddle1/activated': 'paddle1_activated',
             'paddle1/moved': 'paddle1_movemment', 
             'paddle2/activated': 'paddle2_activated',
@@ -59,7 +59,7 @@ class MQTTClient(ABC):
         }
 
         self.state_to_topic_map = {
-            'game_state': 'game/state_changed', 
+            'game_state_transition': 'game/state_transition', 
             'paddle1_activated': 'paddle1/activated',
             'paddle1_movemment': 'paddle1/moved', 
             'paddle2_activated': 'paddle2/activated',

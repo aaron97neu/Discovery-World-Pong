@@ -20,6 +20,7 @@ class BaseState(ABC):
         """
         self._state = {
             'game_state': None,
+            'game_state_transition': None,
             'paddle1_activated': None,
             'paddle1_movement': None,
             'paddle2_activated': None,

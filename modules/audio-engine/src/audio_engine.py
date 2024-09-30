@@ -58,7 +58,7 @@ class AudioEngine(object):
             time.sleep(0.1)
         logging.info("D21")
 
-        self.state_machine.start()
+        self.state_machine.start_machine()
         logging.info("D22")
 
 

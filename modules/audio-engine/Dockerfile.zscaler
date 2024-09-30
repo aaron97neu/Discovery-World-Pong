@@ -21,9 +21,9 @@ ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 COPY requirements.txt .
 RUN python -m venv /opt/venv
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
-RUN python3 -m pip install --upgrade build
-RUN python3 -m build py_packages
-RUN python3 -m pip install ./py_packages/dist/dw-0.2.0-py3-none-any.whl
+RUN python -m pip install --upgrade build
+RUN python -m build py_packages
+RUN python -m pip install ./py_packages/dist/dw-0.2.0-py3-none-any.whl
 
 FROM base AS final
 WORKDIR /app

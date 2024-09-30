@@ -42,7 +42,7 @@ class GameEngine:
         while self.mqtt_client.connected is not True:    #Wait for connection
             time.sleep(0.1)
 
-        self.game_state_machine.start()
+        self.game_state_machine.start_machine()
 
 if __name__ == "__main__":
     game_engine = GameEngine()

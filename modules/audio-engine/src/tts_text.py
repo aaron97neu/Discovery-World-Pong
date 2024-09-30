@@ -24,11 +24,11 @@ class TTSText:
         self.config_files_path = config_files_path
         self.json_file = f"{self.config_files_path}/tts_text.json"
         self.voice_model: str = "en_US-hfc_male-medium"
-        self.intro: str = ""
-        self.level_one_complete: str = ""
-        self.level_two_complete: str = ""
-        self.level_three_complete: str = ""
-        self.outro: str = ""
+        self.intro = None
+        self.level_one_complete = None
+        self.level_two_complete = None
+        self.level_three_complete = None
+        self.outro = None
         self.load_texts()
 
     def load_texts(self):

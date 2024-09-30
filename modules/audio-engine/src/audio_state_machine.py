@@ -38,31 +38,36 @@ class AudioStateMachine(BaseStateMachine):
         self.audio_player: AudioPlayer = audio_player
         logging.info("D14")
 
-        self.tts_synthesizer.synthesize_to_file(self.tts_text.intro, "intro.wav")
+        if self.tts_text.intro is not None:
+            self.tts_synthesizer.synthesize_to_file(self.tts_text.intro, "intro.wav")
         logging.info("D15")
-        self.tts_synthesizer.synthesize_to_file(self.tts_text.level_one_complete, "level_one_complete.wav")
+        if self.tts_text.level_one_complete is not None:
+            self.tts_synthesizer.synthesize_to_file(self.tts_text.level_one_complete, "level_one_complete.wav")
         logging.info("D16")
-        self.tts_synthesizer.synthesize_to_file(self.tts_text.level_two_complete, "level_two_complete.wav")
+        if self.tts_text.level_two_complete is not None:
+            self.tts_synthesizer.synthesize_to_file(self.tts_text.level_two_complete, "level_two_complete.wav")
         logging.info("D17")
-        self.tts_synthesizer.synthesize_to_file(self.tts_text.level_three_complete, "level_three_complete.wav")
+        if self.tts_text.level_three_complete is not None:
+            self.tts_synthesizer.synthesize_to_file(self.tts_text.level_three_complete, "level_three_complete.wav")
         logging.info("D18")
-        self.tts_synthesizer.synthesize_to_file(self.tts_text.outro, "outro.wav")
+        if self.tts_text.outro is not None:
+            self.tts_synthesizer.synthesize_to_file(self.tts_text.outro, "outro.wav")
         logging.info("D19")
 
-    def start(self):
+    def start_machine(self):
         """
         Starts the AudioStateMachine by transitioning to the 'idle' state.
         """
         logging.info("AudioStateMachine Start")
-        self.audio_player.play_async("exhibit_activation_noise.mp3", True)
-        super().start()
+        self.audio_player.play_async("exhibit_activation_noise.mp3")
+        super().start_machine()
 
     def on_enter_idle(self):
         """
         Method called when entering the 'idle' state.
         """
         logging.info("Entering idle state")
-        self.audio_player.play_async("music_idle.wav")
+        self.audio_player.play_async("music_idle.wav", True)
 
     def on_exit_idle(self):
         """
@@ -76,7 +81,7 @@ class AudioStateMachine(BaseStateMachine):
         Method called when entering the 'intro' state.
         """
         logging.info("Entering intro state")
-        self.audio_player.play_async("music_background.wav")
+        self.audio_player.play_async("music_background.wav", True)
         self.audio_player.play_async("intro.wav")
 
     def on_exit_intro(self):
@@ -92,7 +97,7 @@ class AudioStateMachine(BaseStateMachine):
         Method called when entering the 'level1' state.
         """
         logging.info("Entering level 1 state")
-        self.audio_player.play_async("music_background.wav")
+        self.audio_player.play_async("music_background.wav", True)
         self.audio_player.play_async("level_one_complete.wav")
 
     def on_exit_level1(self):
@@ -107,7 +112,7 @@ class AudioStateMachine(BaseStateMachine):
         Method called when entering the 'level2' state.
         """
         logging.info("Entering level 2 state")
-        self.audio_player.play_async("music_background.wav")
+        self.audio_player.play_async("music_background.wav", True)
         self.audio_player.play_async("level_two_complete.wav")
 
     def on_exit_level2(self):
@@ -123,7 +128,7 @@ class AudioStateMachine(BaseStateMachine):
         Method called when entering the 'level3' state.
         """
         logging.info("Entering level 3 state")
-        self.audio_player.play_async("music_background.wav")
+        self.audio_player.play_async("music_background.wav", True)
         self.audio_player.play_async("level_three_complete.wav")
 
     def on_exit_level3(self):
@@ -139,7 +144,7 @@ class AudioStateMachine(BaseStateMachine):
         Method called when entering the 'outro' state.
         """
         logging.info("Entering outro state")
-        self.audio_player.play_async("music_background.wav")
+        self.audio_player.play_async("music_background.wav", True)
         self.audio_player.play_async("outro.wav")
 
     def on_exit_outro(self):
@@ -149,4 +154,17 @@ class AudioStateMachine(BaseStateMachine):
         logging.info("Exiting outro state")
         self.audio_player.stop("outro.wav")
         self.audio_player.stop("music_background.wav")
+
+    def on_enter_stopped(self):
+        """
+        Method called when entering the 'stopped' state.
+        """
+        logging.info("Entering stopped state")
+
+    def on_exit_stopped(self):
+        """
+        Method called when exiting the 'stopped' state.
+        """
+        logging.info("Exiting stopped state")
+
 

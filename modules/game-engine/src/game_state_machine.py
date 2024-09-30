@@ -31,7 +31,7 @@ class GameStateMachine(BaseStateMachine):
         super().__init__(game_state)
         self.game_state = game_state
 
-    def start(self):
+    def start_machine(self):
         """
         Starts the GameStateMachine by transitioning to the 'idle' state.
         """
