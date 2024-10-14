@@ -5,34 +5,34 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import React, {useRef, useEffect} from "react";
 
-const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-ponggame.js'});
-console.log("Creating Gameplay connections");
-client.on('connect', function () {
-  client.subscribe('puck/position', function (err) {
-    if (!err) {
-      console.log("connection puck")
-    }
-  })
+// const mqtt = require('mqtt')
+// const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-ponggame.js'});
+// console.log("Creating Gameplay connections");
+// client.on('connect', function () {
+//   client.subscribe('puck/position', function (err) {
+//     if (!err) {
+//       console.log("connection puck")
+//     }
+//   })
 
-  client.subscribe('paddle1/position', function (err) {
-    if (!err) {
-      console.log("connection pad1")
-    }
-  })
+//   client.subscribe('paddle1/position', function (err) {
+//     if (!err) {
+//       console.log("connection pad1")
+//     }
+//   })
 
-  client.subscribe('paddle2/position', function (err) {
-    if (!err) {
-      console.log("connection pad2")
-    }
-  })
+//   client.subscribe('paddle2/position', function (err) {
+//     if (!err) {
+//       console.log("connection pad2")
+//     }
+//   })
 
-  client.subscribe('motion/position', function (err) {
-    if (!err) {
-      console.log("connection position")
-    }
-  })
-});
+//   client.subscribe('motion/position', function (err) {
+//     if (!err) {
+//       console.log("connection position")
+//     }
+//   })
+// });
 
 export default function PongGame(props) {
 
@@ -54,31 +54,31 @@ export default function PongGame(props) {
     let currentOpponentPosition = 0
 
   useEffect(() => {
-    client.on('message', function (topic, message) {
-      // message is Buffer
-      // console.log(topic)
-      // console.log(message.toString())
-      const data = JSON.parse(message.toString());
-      switch (topic) {
-        case "puck/position":
-          let pos = {
-            x: (data.x / scalar) - xOffset,
-            y: (data.y / scalar) - yOffset
-          }
-          currentBallPosition = pos;
-          break;
-        case "paddle1/position":
-          currentPlayerPosition = (data.position / scalar) - xOffset
-          break;
-        case "paddle2/position":
-          console.log("paddle" + data)
-          currentOpponentPosition = (data.position / scalar) - xOffset
-          break;
-        case "motion/position":
-          currentMotionPosition = ((data * 4.8) * 2) - 4.8
-      }
+    // client.on('message', function (topic, message) {
+    //   // message is Buffer
+    //   // console.log(topic)
+    //   // console.log(message.toString())
+    //   const data = JSON.parse(message.toString());
+    //   switch (topic) {
+    //     case "puck/position":
+    //       let pos = {
+    //         x: (data.x / scalar) - xOffset,
+    //         y: (data.y / scalar) - yOffset
+    //       }
+    //       currentBallPosition = pos;
+    //       break;
+    //     case "paddle1/position":
+    //       currentPlayerPosition = (data.position / scalar) - xOffset
+    //       break;
+    //     case "paddle2/position":
+    //       console.log("paddle" + data)
+    //       currentOpponentPosition = (data.position / scalar) - xOffset
+    //       break;
+    //     case "motion/position":
+    //       currentMotionPosition = ((data * 4.8) * 2) - 4.8
+    //   }
 
-    })
+    // })
   }, [])
 
     useFrame((state, delta) => {

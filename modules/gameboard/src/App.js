@@ -6,6 +6,7 @@ import GameStateMachine from './GameStateMachine';
 import {MQTTClient} from 'dw-state-machine';
 // import { logger } from 'dw-utils';
 // import mqtt from 'mqtt';
+import Gameboard from './Gameboard';
 
 const logger = require('./logger');
 // const mqtt = require('mqtt')
@@ -17,7 +18,9 @@ function App() {
   useEffect(() => {
     const gameState = new GameState();
     const gameStateMachine = new GameStateMachine(gameState);
-    const mqttClient = new MQTTClient('clientId', gameState, gameStateMachine);
+    const broker_url = process.env.REACT_APP_URL;
+    console.log('App: broker_url %s', broker_url)
+    const mqttClient = new MQTTClient(broker_url, 'gameboard', gameState, gameStateMachine);
     console.log('App: d1');
 
       // const client = mqtt.connect('ws://localhost:9001', {
@@ -41,11 +44,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Game State Machine</h1>
-      </header>
-    </div>
+    <Gameboard />
   );
 }
 

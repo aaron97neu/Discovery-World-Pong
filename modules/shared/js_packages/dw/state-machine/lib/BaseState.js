@@ -56,10 +56,10 @@ export default class BaseState {
       console.log("BaseState setState D1: %s, %s", key, value)
       console.log("BaseState setState D2: %s", this.state[key])
       if (this.state[key] !== value) {
-        console.log("BaseState setState D3")
+        console.log("BaseState setState D3: %s", this.state[key])
         this.state[key] = value;
         this.notifyObservers({ [key]: value }, caller);
-        console.log("BaseState setState D4")
+        console.log("BaseState setState D4: %s", this.state[key])
       }
     }
   

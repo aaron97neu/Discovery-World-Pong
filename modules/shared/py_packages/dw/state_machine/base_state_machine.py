@@ -9,6 +9,7 @@ import logging
 import time
 from abc import ABC
 from transitions import Machine
+from transitions.extensions import GraphMachine
 from .base_state import BaseState
 
 class BaseStateMachine(ABC):
@@ -19,6 +20,17 @@ class BaseStateMachine(ABC):
     """
 
     states = ['stopped', 'idle', 'intro', 'level1', 'level2', 'level3', 'outro']
+    transitions = [{'trigger': 'start', 'source': 'stopped', 'dest': 'idle'},
+        {'trigger': 'player_ready', 'source': 'idle', 'dest': 'intro'},
+        {'trigger': 'intro_complete', 'source': 'intro', 'dest': 'level1'},
+        {'trigger': 'game_complete', 'source': 'intro', 'dest': 'idle'},
+        {'trigger': 'level1_complete', 'source': 'level1', 'dest': 'level2'},
+        {'trigger': 'game_complete', 'source': 'level1', 'dest': 'idle'},
+        {'trigger': 'level2_complete', 'source': 'level2', 'dest': 'level3'},
+        {'trigger': 'game_complete', 'source': 'level2', 'dest': 'idle'},
+        {'trigger': 'level3_complete', 'source': 'level3', 'dest': 'outro'},
+        {'trigger': 'game_complete', 'source': 'outro', 'dest': 'idle'},
+        {'trigger': 'stop', 'source': 'idle', 'dest': 'stopped'}]
 
     def __init__(self,
                  base_state: BaseState):
@@ -29,16 +41,16 @@ class BaseStateMachine(ABC):
         game_state (BaseState): The BaseState instance to observe.
         """
         self.base_state = base_state
-        self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped', ignore_invalid_triggers=True)
-        self.machine.add_transition(trigger='start', source='stopped', dest='idle')
-        self.machine.add_transition(trigger='intro', source='idle', dest='intro')
-        self.machine.add_transition(trigger='level1', source='intro', dest='level1')
-        self.machine.add_transition(trigger='level2', source='level1', dest='level2')
-        self.machine.add_transition(trigger='level3', source='level2', dest='level3')
-        self.machine.add_transition(trigger='outro', source='level3', dest='outro')
-        self.machine.add_transition(trigger='reset', source='outro', dest='idle')
-        self.machine.add_transition(trigger='stop', source='idle', dest='stopped')
-
+        self.machine = Machine(model=self, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped', ignore_invalid_triggers=True)
+        # self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped', ignore_invalid_triggers=True)
+        # self.machine.add_transition(trigger='start', source='stopped', dest='idle')
+        # self.machine.add_transition(trigger='intro', source='idle', dest='intro')
+        # self.machine.add_transition(trigger='level1', source='intro', dest='level1')
+        # self.machine.add_transition(trigger='level2', source='level1', dest='level2')
+        # self.machine.add_transition(trigger='level3', source='level2', dest='level3')
+        # self.machine.add_transition(trigger='outro', source='level3', dest='outro')
+        # self.machine.add_transition(trigger='reset', source='outro', dest='idle')
+        # self.machine.add_transition(trigger='stop', source='idle', dest='stopped')
 
     def start_machine(self):
         """
@@ -65,88 +77,27 @@ class BaseStateMachine(ABC):
             state_transition = changed_state['game_state_transition']
             if state_transition == 'start':
                 self.start()
-            elif state_transition == 'intro':
-                self.intro()
-            elif state_transition == 'level1':
-                self.level1()
-            elif state_transition == 'level2':
-                self.level2()
-            elif state_transition == 'level3':
-                self.level3()
-            elif state_transition == 'outro':
-                self.outro()
-            elif state_transition == 'reset':
-                self.reset()
+            elif state_transition == 'player_ready':
+                self.player_ready()
+            elif state_transition == 'intro_complete':
+                self.intro_complete()
+            elif state_transition == 'level1_complete':
+                self.level1_complete()
+            elif state_transition == 'level2_complete':
+                self.level2_complete()
+            elif state_transition == 'level3_complete':
+                self.level3_complete()
+            elif state_transition == 'game_complete':
+                self.game_complete()
             elif state_transition == 'stop':
                 self.stop()
 
-    # def on_enter_idle(self):
-    #     """
-    #     Method called when entering the 'idle' state.
-    #     """
-    #     logging.info("Entering idle state")
-            
-    # def on_exit_idle(self):
-    #     """
-    #     Method called when exiting the 'idle' state.
-    #     """
-    #     logging.info("Exiting idle state")
+class DiagramModel():
+    pass
 
-    # def on_enter_intro(self):
-    #     """
-    #     Method called when entering the 'intro' state.
-    #     """
-    #     logging.info("Entering intro state")
-
-    # def on_exit_intro(self):
-    #     """
-    #     Method called when exiting the 'intro' state.
-    #     """
-    #     logging.info("Exiting intro state")
-
-    # def on_enter_level1(self):
-    #     """
-    #     Method called when entering the 'level1' state.
-    #     """
-    #     logging.info("Entering level 1 state")
-
-    # def on_exit_level1(self):
-    #     """
-    #     Method called when exiting the 'level1' state.
-    #     """
-
-    # def on_enter_level2(self):
-    #     """
-    #     Method called when entering the 'level2' state.
-    #     """
-    #     logging.info("Entering level 2 state")
-
-    # def on_exit_level2(self):
-    #     """
-    #     Method called when exiting the 'level2' state.
-    #     """
-    #     logging.info("Exiting level2 state")
-
-    # def on_enter_level3(self):
-    #     """
-    #     Method called when entering the 'level3' state.
-    #     """
-    #     logging.info("Entering level 3 state")
-
-    # def on_exit_level3(self):
-    #     """
-    #     Method called when exiting the 'level3' state.
-    #     """
-    #     logging.info("Exiting level3 state")
-
-    # def on_enter_outro(self):
-    #     """
-    #     Method called when entering the 'outro' state.
-    #     """
-    #     logging.info("Entering outro state")
-
-    # def on_exit_outro(self):
-    #     """
-    #     Method called when exiting the 'outro' state.
-    #     """
-    #     logging.info("Exiting outro state")
+if __name__ == "__main__":
+    logging.info("Diagram BaseStateMachine.")
+    model = DiagramModel() # type: ignore
+    # base_state_machine = GraphMachine(model, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped', show_auto_transitions=True) # type: ignore
+    base_state_machine = GraphMachine(model, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped') # type: ignore
+    model.get_graph(title='State Machine Diagram for Pong').draw('dw_state_machine_diagram.png', prog='dot') # type: ignore

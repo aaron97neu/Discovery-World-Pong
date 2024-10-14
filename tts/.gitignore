@@ -1,0 +1,6 @@
+# .gitignore
+/audio_files/intro.wav
+/audio_files/level_one_complete.wav
+/audio_files/level_three_complete.wav
+/audio_files/level_two_complete.wav
+/audio_files/outro.wav

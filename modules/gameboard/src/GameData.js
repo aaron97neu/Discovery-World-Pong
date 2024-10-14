@@ -9,35 +9,35 @@ import { Group } from 'three';
 
 
 
-const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-gamedata.js'});
-console.log("Creating UI connections");
-client.on('connect', function () {
+// const mqtt = require('mqtt')
+// const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-gamedata.js'});
+// console.log("Creating UI connections");
+// client.on('connect', function () {
  
-  client.subscribe('player1/score', function (err) {
-    if (!err) {
-      console.log("connection score")
-    }
-  })
+//   client.subscribe('player1/score', function (err) {
+//     if (!err) {
+//       console.log("connection score")
+//     }
+//   })
 
-  client.subscribe('player2/score', function (err) {
-    if (!err) {
-      console.log("connection score2")
-    }
-  })
+//   client.subscribe('player2/score', function (err) {
+//     if (!err) {
+//       console.log("connection score2")
+//     }
+//   })
 
-  client.subscribe('game/level', function (err) {
-    if (!err) {
-      console.log("connection level")
-    }
-  })
+//   client.subscribe('game/level', function (err) {
+//     if (!err) {
+//       console.log("connection level")
+//     }
+//   })
 
-  client.subscribe('game/state', function (err) {
-      if(!err) {
-          console.log("connection game state")
-      }
-  })
-});
+//   client.subscribe('game/state', function (err) {
+//       if(!err) {
+//           console.log("connection game state")
+//       }
+//   })
+// });
 
 
 export default function GameData(props) {
@@ -50,42 +50,42 @@ export default function GameData(props) {
 
     useEffect(() => {
         
-        client.on('message', function (topic, message) {
-            const data = JSON.parse(message.toString());
-            switch (topic) {
-            case "player1/score":
-                let score1 = data.score;
-                if (score1 != score.player1) {
-                    setScore(prevState => ({
-                        ...prevState,
-                        player1: score1
-                    }))
-                }
-                break;
-            case "player2/score":
-                let score2 = data.score;
-                if (score2 != score.player2) {
-                    setScore(prevState => ({
-                        ...prevState,
-                        player2: score2
-                    }))
-                }
-                break;
-            case "game/level":
-                let levelNumber = data.level;
-                if (levelNumber != level) {
-                    setLevel(levelNumber)
-                }
-                break;
-            case "game/state":
-                let newState = data.state;
-                if(newState != currentState) {
-                    setCurrentState(newState)
-                    if(newState < 2)
-                    setScore({player1: 0, player2: 0})
-                }
-            }
-        })
+        // client.on('message', function (topic, message) {
+        //     const data = JSON.parse(message.toString());
+        //     switch (topic) {
+        //     case "player1/score":
+        //         let score1 = data.score;
+        //         if (score1 != score.player1) {
+        //             setScore(prevState => ({
+        //                 ...prevState,
+        //                 player1: score1
+        //             }))
+        //         }
+        //         break;
+        //     case "player2/score":
+        //         let score2 = data.score;
+        //         if (score2 != score.player2) {
+        //             setScore(prevState => ({
+        //                 ...prevState,
+        //                 player2: score2
+        //             }))
+        //         }
+        //         break;
+        //     case "game/level":
+        //         let levelNumber = data.level;
+        //         if (levelNumber != level) {
+        //             setLevel(levelNumber)
+        //         }
+        //         break;
+        //     case "game/state":
+        //         let newState = data.state;
+        //         if(newState != currentState) {
+        //             setCurrentState(newState)
+        //             if(newState < 2)
+        //             setScore({player1: 0, player2: 0})
+        //         }
+        //     }
+        // })
     },[])
 
     const userPrompt = () => {

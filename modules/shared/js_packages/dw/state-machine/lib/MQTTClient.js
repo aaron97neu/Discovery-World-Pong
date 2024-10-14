@@ -7,7 +7,8 @@ import mqtt from 'mqtt';
 
 // class MQTTClient {
 export default class MQTTClient {
-    constructor(client_id, baseState) {
+    constructor(broker_url, client_id, baseState) {
+        this.broker_url = broker_url;
         this.client_id = client_id;
         this.baseState = baseState;
         this.connected = false;
@@ -25,8 +26,9 @@ export default class MQTTClient {
      * Connects to the MQTT broker.
      */
     start() {
-        this.client = mqtt.connect('ws://localhost:9001', {
-            clientId: this.client_id,
+        // this.client = mqtt.connect('ws://localhost:9001', {
+        this.client = mqtt.connect(this.broker_url, {
+                clientId: this.client_id,
             keepalive: 60
         });
 
