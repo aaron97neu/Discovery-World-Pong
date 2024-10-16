@@ -54,6 +54,11 @@ services:
                 game_engine: ./src/game-engine
         environment:
             MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/test/test.py
+                  target: /app/test.py
         restart: no
         networks:
             - pong-network

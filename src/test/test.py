@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 import paho.mqtt.subscribe as subscribe
 import paho.mqtt.publish as publish
 import os
+import pytest
 
 #containers built settings
 #hostname = "mqtt-broker"
@@ -16,12 +17,12 @@ import os
 hostname = os.environ.get ('MQTTBROKER',"localhost")
 import shared.code.config as Config
 
-
-
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('paho.mqtt.client')
-logger.setLevel(logging.ERROR)
+logger.setLevel(0)
 
+# global var to store last message from each topic. This is used spin lock on
+# messages creating a pseudo blocking read.
 mqtt_data = {"quit":0, "connect_status":"not connected"}
 
 
@@ -121,12 +122,17 @@ def test_moveBottomPaddleLeft(mqtt_client):
 #     #     #it's possible to stop the program by disconnecting
 #     #     client.disconnect()
 
-def test_game_engine(mqtt_client, mqtt_data):
-    logging.info("in test game engine")
+def test_game_engine(mqtt_client):
+    logging.info("Game Engine Test Started")
+    mqtt_data = mqtt_client.user_data_get()
     logging.info (mqtt_data)
     
     ##############  Start the game-engine loop  #################################
     #line 170 of main in game_driver waits for subscriber.motion_presence
+    logging.info("publish motion/presence false")  
+    mqtt_client.publish("motion/presence", "false")
+    time.sleep(2)
+
     logging.info("publish motion/presence true")  
     mqtt_client.publish("motion/presence", "true")
     
@@ -138,37 +144,7 @@ def test_game_engine(mqtt_client, mqtt_data):
     #mqtt_client.publish("game/state", payload=json.dumps({"state": state}))
     assert (mqtt_data["game/state"] != 0)
 
-    ########### Setting paddle1 which is controlled by human (bottom player)  from Depth camera input ########
-    #self.bottom_agent.act = MotionPlayer(subscriber) see player.py
-    #action_l, motion_l, prob_l = self.bottom_agent.act() #action_1 will be 3 when bottom_agent is MotionPlayer
-                #return (3 absolute), 0.5, 1
-    #    if topic == "paddle1/action": self.paddle1_action = int(payload["action"])
-    #mqtt_client.publish ("paddle1/position", payload=json.dumps({"position": 90}))
-    #publish topic motion/position a value between 0.0 to 1.0, paddle1/position changes from 1 to 192
-    #paddle1 position is calculated in Pong(config = config, level = level) step method see pong.py
-    #       Config.ACTIONS = ["LEFT", "RIGHT", "NONE", "ABSOLUTE"]
-    #       Config.ACTIONS[action_l = 3] is "ABSOLUTE"
-    #       self.bottom.handle_action(bottom_action, motion_position)
-    #         Paddle
-    #           def MotionMove(self, motion_position):
-    #               #print(f'depthMove with value = {depth}')
-    #               desiredPos = motion_position * self.config.WIDTH #((depth-500)/2000) * Pong.HEIGHT
-    #               distance = desiredPos - self.x
-    #               vel = (self.speed * (distance/self.config.WIDTH) * 25)
-    #               s  elf.velocity[0] += vel
-    #           def update(self):
-    #                """
-    #                Run game tick housekeeping logic
-    #                """
-    #                # First blindly increment position by velocity
-    #                next_x = self.x + self.velocity[0]
-    #                next_y = self.y + self.velocity[1]  # Y should never actually change, but it feels right to include it
-    #                self.velocity = [0, 0]  # We don't actually want velocity to persist from tick to tick, so deplete it all
-    #                # Then back up position if we cross the screen border
-    #                max = self.config.WIDTH - Pong.Paddle.EDGE_BUFFER
-    #                if not math.ceil(next_x - self.w / 2) > max and not math.ceil(next_x + self.w / 2) < Pong.Paddle.EDGE_BUFFER:
-    #                self.x = next_x
-    #move paddle position to the left edge
+
     logging.info("publish motion/position 0.0")
     mqtt_client.publish("motion/position", "0.0")           # motion/position value ranges from 0.0 to 1.0 which will change the paddle1/position
     while (not ("paddle1/position" in mqtt_data.keys())):   #wait for mqtt broker update
@@ -265,12 +241,11 @@ def test_game_engine(mqtt_client, mqtt_data):
 #     # if userdata["message_count"] >= 5:
 #     #     #it's possible to stop the program by disconnecting
 #     #     client.disconnect()
-
+def test_assert(mqtt_client):
+    assert(1 == 1)
 
 def on_connect(client, userdata, flags, rc, propertiess=None):
-    logging.info("Connected with result code " + str(rc))
-    if (str(rc) == "Success"):
-        userdata["connect_status"] = "connected"
+    logging.info("MQTT Client connected with result code " + str(rc))
 
     client.subscribe("test/topic")
     client.subscribe("quit")
@@ -280,63 +255,40 @@ def on_connect(client, userdata, flags, rc, propertiess=None):
     client.subscribe("paddle1/position")
     
 def on_message(client, userdata, msg):
-    logging.info(msg.topic + " " + str(msg.payload))
+    logging.info("on_message: " + msg.topic + " " + str(msg.payload))
     payloadContent = json.loads(msg.payload)
     userdata[msg.topic] = payloadContent
-    
-    
-def setup_mqtt_client(data):
+
+# Request arguement gives information about the test requester
+# Technically our mqtt_client fixture is requesting the built in request fixture
+@pytest.fixture
+def mqtt_client(request):
+
     # Create an MQTT client instance
-    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="integration_test", userdata=data)
-    logging.info("successfully create client")
+    logging.info("Creating MQTT Client")
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=request.node.name, userdata=mqtt_data)
+    logging.info("MQTT Client Created")
 
-    #request for connection
-    client.connect_async(hostname, port=1883, keepalive=60)
-    logging.info("successfully connect")
-
-    # Assign the callback functions
     client.on_connect = on_connect
     client.on_message = on_message
-    #client.on_connect = lambda client, data, flags, rc : on_connect(client, data, flags, rc)
-    #client.on_message = lambda client, userdata, msg : on_message(client, userdata, msg) 
-   
+
+    #request for connection
+    logging.info("MQTT Client Connecting")
+    client.connect_async(hostname, port=1883, keepalive=60)
+    
     # Start the loop
+    logging.info("MQTT Client Requesting Prosessing Loop Start")
     client.loop_start()
+    logging.info("MQTT Client Processing Loop Start Request Successful")
     
     #wait for connection before returning
-    while (mqtt_data["connect_status"] == "not connected"):
-        time.sleep(2.0)
+    while (client.is_connected()):
+        time.sleep(0.2)
+    logging.info("MQTT Client Validated Sucessful Connect")
 
-    return client
+    # https://docs.pytest.org/en/stable/how-to/fixtures.html#teardown-cleanup-aka-fixture-finalization
+    logging.info("Yielding MQTT client to test")
+    yield client
 
-def main():
-    #logging.info("YEP2")
-    global mqtt_data
-    #logging.info("YEP3")
-    logging.info("integration test main routine")
-    
-    #create mqtt client
-    mqtt_client = setup_mqtt_client(mqtt_data)
-    #logging.info("YEP4")
-    
-    logging.info("successfully setup mqtt")
-    
-    #test code go in here
-      
-    test_game_engine(mqtt_client, mqtt_data)
-    
-    #end of test
-
-    while (mqtt_data["quit"] == 0):
-        # mqtt_client.publish ("motion/position", 0.31)
-        # mqtt_client.publish ("motion/presence", "false")
-        # logging.info(mqtt_data)
-        time.sleep(2.0)
-
-    mqtt_client.disconnect()
-    logging.info("exit main")
-        
-
-if __name__ == "__main__":
-    #logging.info("YEP")
-    main()    
+    logging.info("Teardown started. Disconnecting Client")
+    client.disconnect()
