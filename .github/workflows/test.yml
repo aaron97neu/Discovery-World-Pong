@@ -10,7 +10,35 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Build Images
         run: docker compose build --parallel
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
+      - name: Build and Run Tests
+        working-directory: ${{ github.workspace }}
+        run: docker-compose up -d
+
+      - name: Wait for Container Startup
+        run: echo "Waiting for container..." && sleep 120
+         
+      - name: Check Logs
+        run: docker logs integration-test
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-artifacts
+          path: results.xml
+     

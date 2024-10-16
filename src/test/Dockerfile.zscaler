@@ -18,4 +18,4 @@ COPY --from=builder /opt/venv /opt/venv
 COPY --from=util . ./shared/code/
 COPY . .
 ENV PATH="/opt/venv/bin:$PATH"
-CMD ["pytest", "--log-cli-level=DEBUG", "test.py"]
+CMD ["pytest", "--log-cli-level=DEBUG", "--junitxml=results.xml", "test.py"]
