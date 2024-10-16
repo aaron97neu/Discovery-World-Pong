@@ -1,4 +1,4 @@
-name: Compile Test
+name: Testing
 
 # Testing should be run on every push, no matter the branch
 on: push
@@ -16,14 +16,15 @@ jobs:
 
       - name: Build Images
         run: docker compose build --parallel
+
   pytest:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Docker
-        uses: docker/setup-docker@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
