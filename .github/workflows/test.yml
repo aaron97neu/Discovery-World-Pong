@@ -31,7 +31,7 @@ jobs:
         run: docker compose -f docker-compose-dev-zscaler-integrationtest.yml up --build -d
 
       - name: Wait for integration-test container to exit
-        run: docker wait integration-test
+        run: timeout 600 docker wait integration-test
 
       - name: Stop Container
         if: always()
