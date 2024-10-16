@@ -36,6 +36,12 @@ jobs:
       - name: Check Logs
         run: docker logs integration-test
 
+      - name: Copy Test Results
+        run: docker cp integration-test:/app/results.xml ${{ github.workspace }}/results.xml
+
+      - name: Stop Container
+        run: docker-compose down
+
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v3
