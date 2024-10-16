@@ -31,7 +31,7 @@ jobs:
         run: docker compose -f docker-compose-dev-zscaler-integrationtest.yml up --build -d
 
       - name: Wait for Container Startup
-        run: echo "Waiting for container..." && sleep 10
+        run: echo "Waiting for container..." && sleep 2
          
       - name: Check Logs
         run: docker logs integration-test
