@@ -30,21 +30,18 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: docker compose -f docker-compose-dev-zscaler-integrationtest.yml up --build -d
 
-      - name: Wait for Container Startup
-        run: echo "Waiting for container..." && sleep 2
-
       - name: Wait for integration-test container to exit
         run: docker wait integration-test
+
+      - name: Stop Container
+        if: always()
+        run: docker compose down
 
       - name: Check Logs
         run: docker logs integration-test
 
       - name: Copy Test Results
         run: docker cp integration-test:/app/results.xml ${{ github.workspace }}/results.xml
-
-      - name: Stop Container
-        if: always()
-        run: docker compose down
           
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
