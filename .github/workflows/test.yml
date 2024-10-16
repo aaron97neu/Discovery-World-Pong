@@ -32,7 +32,10 @@ jobs:
 
       - name: Wait for Container Startup
         run: echo "Waiting for container..." && sleep 2
-         
+
+      - name: Wait for integration-test container to exit
+        run: docker wait integration-test
+
       - name: Check Logs
         run: docker logs integration-test
 
