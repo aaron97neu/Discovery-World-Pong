@@ -28,7 +28,7 @@ jobs:
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
-        run: docker compose -f docker-compose-dev-zscaler-integrationtest.yml up -d
+        run: docker compose -f docker-compose-dev-zscaler-integrationtest.yml up --build -d
 
       - name: Wait for Container Startup
         run: echo "Waiting for container..." && sleep 120
