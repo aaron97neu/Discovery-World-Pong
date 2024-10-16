@@ -26,6 +26,51 @@ logger.setLevel(0)
 mqtt_data = {"quit":0, "connect_status":"not connected"}
 
 
+def test_game_presense_start(mqtt_client):
+    mqtt_data = mqtt_client.user_data_get()
+    logging.info (mqtt_data)
+    
+    logging.info("publish motion/presence false")  
+    mqtt_client.publish("motion/presence", "false")
+    time.sleep(5)
+
+    logging.info("publish motion/presence true")  
+    mqtt_client.publish("motion/presence", "true")
+    
+    time_elapsed = 0
+    check_interval = 0.1
+    max_wait = 5
+    while (not ("game/state" in mqtt_data.keys())): #wait for mqtt broker update
+        time.sleep (check_interval)
+        time_elapsed = time_elapsed + check_interval
+
+        if time_elapsed > max_wait:
+            pytest.fail(f"Game did not start within {max_wait}s of presence being detected")
+
+    # Should be an integer representing the state of the game
+    state = (mqtt_data["game/state"])['state']
+    logging.info(f"game/state: {state}")    
+    
+    assert(state != 0)
+
+    logging.info("publish motion/presence false")  
+    mqtt_client.publish("motion/presence", "false")
+    time_elapsed = 0
+    check_interval = 0.1
+    max_wait = 60
+    while ((mqtt_data["game/state"])['state'] != 0): #wait for mqtt broker update
+        time.sleep (check_interval)
+        time_elapsed = time_elapsed + check_interval
+        
+        if time_elapsed > max_wait:
+            pytest.fail(f"Game did not stop within {max_wait}s of presence no longer being detected")
+
+    state = (mqtt_data["game/state"])['state']
+    logging.info(f"game/state: {state}")    
+    
+    assert((mqtt_data["game/state"])['state'] == 0)
+
+
 def test_moveBottomPaddleLeft(mqtt_client):
     logging.info("in move Bottom Paddle left")
     

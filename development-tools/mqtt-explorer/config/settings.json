@@ -66,5 +66,13 @@
       "port": 1883,
       "protocol": "mqtt"
     }
+  },
+  "Settings": {
+    "timeLocale": "en-US",
+    "topicOrder": "none",
+    "highlightTopicUpdates": true,
+    "valueRendererDisplayMode": "diff",
+    "selectTopicWithMouseOver": false,
+    "theme": "light"
   }
 }
