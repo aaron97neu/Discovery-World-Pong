@@ -1,60 +1,49 @@
 import './App.css';
 
-import React, {useState, Suspense, useEffect} from 'react'
-import { Canvas } from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei"; // can be commented in for debugging
-import { KernelSize } from 'postprocessing'
-import {EffectComposer, Bloom} from "@react-three/postprocessing"
-
-import PongGame from './PongGame';
-import GameData from './GameData';
-import Stage from "./3DModels/Stage.js"
-import PlayArea from "./3DModels/PlayArea.js"
+import React, {useState, useEffect} from 'react'
+import { useLoader } from '@react-three/fiber';
+import { Stage } from "@react-three/drei"; // can be commented in for debugging
+import * as THREE from 'three';
+import HudView from "./HudView.js"
+import image1 from './imgs/PONG_Board_2.svg';
 
 import TransparentPlane from './3DComponents/TransparentPlane'
 
-
 function Gameboard() {
+  // const screenWidth = window.innerWidth;
+  // const screenHeight = window.innerHeight;
+
+  const [image1Dimensions, setImage1Dimensions] = useState({ width: 1, height: 1 });  
+  // const [aspectRatio1, setAspectRatio1] = useState({aspectRatio1: 1});  
+  const texture1 = useLoader(THREE.TextureLoader, image1);
+
+  useEffect(() => {
+    const img1 = new Image();
+    img1.src = image1;
+    img1.onload = () => {
+      setImage1Dimensions({ width: img1.width, height: img1.height });
+      // const aspectRatio1 = image1Dimensions.width / image1Dimensions.height;
+      // console.log("image1Dimensions.width: %s", image1Dimensions.width);
+      // console.log("image1Dimensions.height: %s", image1Dimensions.height);
+      // console.log("aspectRatio1: %s", aspectRatio1);  
+      // setAspectRatio1({ aspectRatio1: aspectRatio1 });  
+    };
+  }, [image1]);
+
+  const aspectRatio1 = image1Dimensions.width / image1Dimensions.height;
+  console.log("image1Dimensions.width: %s", image1Dimensions.width);
+  console.log("image1Dimensions.height: %s", image1Dimensions.height);
+  console.log("aspectRatio1: %s", aspectRatio1);
 
   return (
-    // <Canvas className='App' mode="concurrent" camera={{position: [0,5.5,3.2]}}>
-    <Canvas mode="concurrent" camera={{position: [0,5.5,3.2]}}>
-    {/* Add this line back into enable camera controls */}
-      {/* <OrbitControls></OrbitControls> */}
-
-      <ambientLight intensity={0.3}></ambientLight>
-      <spotLight position={[0,15,0]} angle={0.4} intensity={0.3} />
-      <spotLight position={[0,15,0]} angle={0.3} intensity={0.2} />
-
-      <TransparentPlane position={[0,-1,0]} size={[100,100,100]} color={"black"} opacity={0.3} />
-      <TransparentPlane position={[0,-0.6,0]} size={[100,100,100]} color={"black"} opacity={0.3} />
-      {/* <GameData /> */}
-      {/* Load our 3d files here */}
-      <Suspense fallback={null} >
-        <PlayArea position={[0,.6,0]} />
-       <TransparentPlane position={[0,-0.4,0]} size={[9.2,8,1]} color={"blue"} opacity={0.5} />
-        <Stage position={[-11.25, 0, 0]}/> 
-        <Stage position={[0, 0, 0]}/> 
-        <Stage position={[11.25, 0, 0]}/> 
-        {/* <Stage position={[-11.25, 0, -27]}/> 
-        <Stage position={[0, 0, -27]}/> 
-        <Stage position={[11.25, 0, -27]}/>  */}
-        <Stage position={[-11.25, 0, -13.5]}/> 
-        <Stage position={[0, 0, -13.5]}/> 
-        <Stage position={[11.25, 0, -13.5]}/> 
-        {/* <Stage position={[-11.25, 0, 13.5]}/> 
-        <Stage position={[0, 0, 13.5]}/> 
-        <Stage position={[11.25, 0, 13.5]}/>   */}
-
-        {/* <PongGame /> */}
-
-        {/* <EffectComposer multisampling={8}>
-          <Bloom kernelSize={3} luminanceThreshold={0} luminanceSmoothing={1} intensity={0.1} />
-          <Bloom kernelSize={KernelSize.HUGE} luminanceThreshold={0} luminanceSmoothing={0} intensity={0.1} /> 
-        </EffectComposer> */}
-      
-      </Suspense>
-    </Canvas>
+    // <mesh rotation={[-Math.PI/6.0,0,0]} position={[0,0,0]} >
+    // <mesh rotation={[-Math.PI/2.0,0,0]}  position={[0,0,-7]} >
+    <mesh position={[0,0,-5]} rotation={[-Math.PI/2.0,0,0]} >
+      {/* <planeGeometry attach="geometry" args={[aspectRatio1 * width, 1 * height]} /> */}
+      <planeGeometry attach="geometry" args={[aspectRatio1 * 22, 1 * 22]} />
+      <meshBasicMaterial attach="material" map={texture1} />
+      {/* <meshBasicMaterial attach="material" map={texture1} transparent opacity={1.0} /> */}
+    </mesh> 
   );
 }
 

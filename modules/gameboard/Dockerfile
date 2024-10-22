@@ -4,6 +4,7 @@ WORKDIR /app
 COPY --from=util ./js_packages ./js_packages
 COPY package*.json ./
 RUN npm install
+RUN npm install ./js_packages/dw/state-machine
 COPY . ./
 RUN npm run build
 

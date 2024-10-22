@@ -2,7 +2,7 @@
 // import AIPuck from './3DModels/AIPuck'
 // import Ball from './3DModels/Ball'
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import React, {useRef, useEffect} from "react";
 
 // const mqtt = require('mqtt')
@@ -42,14 +42,14 @@ export default function PongGame(props) {
 
 
     
-    const scalar = 20; // reduction from pixel size of playing field to size of visual
-    const xOffset = 4.8; // half playfield width
-    const yOffset = 4; // half playfield height
+    // const scalar = 20; // reduction from pixel size of playing field to size of visual
+    // const xOffset = 4.8; // half playfield width
+    // const yOffset = 4; // half playfield height
 
     const paddleOffset = 3.5;
 
     let currentBallPosition = {x: 0, y: 0}
-    let currentPlayerPosition = 0
+    // let currentPlayerPosition = 0
     let currentMotionPosition = 0
     let currentOpponentPosition = 0
 

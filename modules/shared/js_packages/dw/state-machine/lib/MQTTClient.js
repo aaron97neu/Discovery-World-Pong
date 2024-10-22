@@ -26,22 +26,24 @@ export default class MQTTClient {
      * Connects to the MQTT broker.
      */
     start() {
+        console.log("MQTTClient broker_url: %s", this.broker_url)
         // this.client = mqtt.connect('ws://localhost:9001', {
         this.client = mqtt.connect(this.broker_url, {
-                clientId: this.client_id,
-            keepalive: 60
+            clientId: this.client_id,
+            // keepalive: 60
         });
 
         this.client.on('connect', this.onConnect.bind(this));
         this.client.on('disconnect', this.onDisconnect.bind(this));
         this.client.on('message', this.onMessage.bind(this));
-        // this.baseState.addObserver(this, this.onStateChange.bind(this));        
+        this.baseState.addObserver(this, this.onStateChange.bind(this));        
     }
 
     /**
      * Handles MQTT connect event.
      */
     onConnect() {
+        console.log("MQTT onConnect")
         this.connected = true;
         for (let topic in this.subscribeMap) {
             this.client.subscribe(topic);
@@ -52,6 +54,7 @@ export default class MQTTClient {
      * Handles MQTT disconnect event.
      */
     onDisconnect() {
+        console.log("MQTT onDisconnect")
         this.connected = false;
     }
 
@@ -75,6 +78,7 @@ export default class MQTTClient {
      * @param {Object} changedState - The changed state values.
      */
     onStateChange(changedState) {
+        console.log("MQTT onStateChange")
         for (let key in changedState) {
             const topic = this.publishMap[key];
             if (topic) {

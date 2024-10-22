@@ -1,9 +1,8 @@
-import * as THREE from 'three'
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry'
 import {FontLoader} from 'three/examples/jsm/loaders/FontLoader'
 import Roboto from './Roboto Medium_Regular.json'
-import React, { forwardRef, useLayoutEffect, useRef, useMemo } from 'react'
-import { useLoader, extend } from '@react-three/fiber'
+import React from 'react'
+import { extend } from '@react-three/fiber'
 
 extend({TextGeometry});
 

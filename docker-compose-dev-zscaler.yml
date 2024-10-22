@@ -135,9 +135,17 @@ services:
                 # certs: ./certs
         ports:
             - 5000:80
+        depends_on:
+            - mqtt-broker         
         restart: unless-stopped
         networks:
             - pong-network
+        volumes:
+        - .:/app
+        - /app/node_modules
+        environment:
+        - CHOKIDAR_USEPOLLING=true            
+
     # audio-engine:
     #     container_name: audio-engine
     #     image: audio-engine:latest

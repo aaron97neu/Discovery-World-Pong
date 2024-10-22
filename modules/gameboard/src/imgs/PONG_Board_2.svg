@@ -1,0 +1,38 @@
+<svg width="4800" height="4000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="#343435" />
+  
+  <!-- Outer Border -->
+  <rect x="0" y="0" width="4800" height="4000" fill="none" stroke="#fcd848" stroke-width="36" />
+  
+  <!-- Inner Grid Lines -->
+  <!-- Vertical Lines -->
+  <line x1="475.2" y1="36" x2="475.2" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="950.4" y1="36" x2="950.4" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="1425.6" y1="36" x2="1425.6" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="1900.8" y1="36" x2="1900.8" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="2376" y1="36" x2="2376" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="2851.2" y1="36" x2="2851.2" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="3326.4" y1="36" x2="3326.4" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="3801.6" y1="36" x2="3801.6" y2="3964" stroke="#fcd848" stroke-width="6" />
+  <line x1="4276.8" y1="36" x2="4276.8" y2="3964" stroke="#fcd848" stroke-width="6" />
+  
+  <!-- Horizontal Lines -->
+  <line x1="36" y1="225" x2="4764" y2="225" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="450" x2="4764" y2="450" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="675" x2="4764" y2="675" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="900" x2="4764" y2="900" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="1125" x2="4764" y2="1125" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="1350" x2="4764" y2="1350" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="1575" x2="4764" y2="1575" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="1800" x2="4764" y2="1800" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="2025" x2="4764" y2="2025" stroke="#c5202f" stroke-width="24" />
+  <line x1="36" y1="2250" x2="4764" y2="2250" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="2475" x2="4764" y2="2475" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="2700" x2="4764" y2="2700" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="2925" x2="4764" y2="2925" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="3150" x2="4764" y2="3150" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="3375" x2="4764" y2="3375" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="3600" x2="4764" y2="3600" stroke="#fcd848" stroke-width="6" />
+  <line x1="36" y1="3825" x2="4764" y2="3825" stroke="#fcd848" stroke-width="6" />
+</svg>

@@ -54,7 +54,7 @@ class AudioEngine(object):
         self.mqtt_client.start()
         logging.info("D20")
 
-        while self.mqtt_client.connected is not True:  # Wait for connection
+        while self.mqtt_client.client.is_connected is not True:  # Wait for connection
             time.sleep(0.1)
         logging.info("D21")
 

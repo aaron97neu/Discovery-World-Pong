@@ -31,7 +31,7 @@ class MQTTClient(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
-        self.connected = False
+        # self.connected = False
 
         if not enable_subscriptions:
             self.enable_subscriptions = [
@@ -79,10 +79,16 @@ class MQTTClient(ABC):
         flags (dict): Response flags sent by the broker.
         rc (int): The connection result.
         """
-        self.connected = True
+        # self.connected = True
         for topic in self.enable_subscriptions:
             logging.info("MQTT sub: %s", topic)
             client.subscribe(topic)
+
+    def is_connect(self):
+        """
+        """
+        self.client.is_connected;
+
 
     def _on_disconnect(self, client, userdata, rc):
         """
@@ -93,7 +99,7 @@ class MQTTClient(ABC):
         userdata (any): The private user data.
         rc (int): The disconnection result.
         """
-        self.connected = False
+        # self.connected = False
 
     def _on_message(self, client, userdata, msg):
         """

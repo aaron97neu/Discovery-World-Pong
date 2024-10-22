@@ -1,11 +1,11 @@
 // keep level and score count
 
 import React, {useEffect, useState} from 'react'
-import {Canvas, useFrame} from '@react-three/fiber'
+// import {Canvas, useFrame} from '@react-three/fiber'
 
 import Text from './3DComponents/Text';
 import TransparentPlane from './3DComponents/TransparentPlane';
-import { Group } from 'three';
+// import { Group } from 'three';
 
 
 
@@ -42,11 +42,11 @@ import { Group } from 'three';
 
 export default function GameData(props) {
 
-    const [score, setScore] = useState({player1: 0, player2: 0})
-    const [player1Score, setPlayer1Score] = useState(0);
-    const [player2Score, setPlayer2Score] = useState(0);
-    const [level, setLevel] = useState(0)
-    const [currentState, setCurrentState] = useState(0);
+    // const [score, setScore] = useState({player1: 0, player2: 0})
+    // const [player1Score, setPlayer1Score] = useState(0);
+    // const [player2Score, setPlayer2Score] = useState(0);
+    // const [level, setLevel] = useState(0)
+    // const [currentState, setCurrentState] = useState(0);
 
     useEffect(() => {
         
