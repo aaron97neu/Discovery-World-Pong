@@ -1,31 +1,3 @@
-// type HudProps = {
-//     /** Any React node */
-//     children: React.ReactNode
-//     /** Render priority, default: 1 */
-//     renderPriority?: number
-//   }
-  
-
-// {
-//     /* Renders on top of the default scene with a perspective camera */
-//   }
-//   ;<Hud>
-//     <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-//     <mesh>
-//       <ringGeometry />
-//     </mesh>
-//   </Hud>
-  
-//   {
-//     /* Renders on top of the previous HUD with an orthographic camera */
-//   }
-//   ;<Hud renderPriority={2}>
-//     <OrthographicCamera makeDefault position={[0, 0, 10]} />
-//     <mesh>
-//       <boxGeometry />
-//     </mesh>
-//   </Hud>
-
 import { useEffect, useState, useRef } from 'react';
 import { useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -38,7 +10,7 @@ function HudView({ width, height }) {
   const [image2Dimensions, setImage2Dimensions] = useState({ width: 1, height: 1 });  
   const [image3Dimensions, setImage3Dimensions] = useState({ width: 1, height: 1 });  
 
-  const outerPlaneRef = useRef();
+  const outerPlaneRef = useRef<mesh | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   
   const offsetX = 0.1; // 0.1 units from the right edge
@@ -127,11 +99,11 @@ function HudView({ width, height }) {
     //     <meshBasicMaterial attach="material" map={texture3} />
     //   </mesh>
     // </mesh>
-    <mesh position={[0, 0, 9]} ref={outerPlaneRef}>
+    <mesh position={[0, 0, 5]} ref={outerPlaneRef}>
       {/* <planeGeometry attach="geometry" args={[visibleWidthAtZDepth(3, camera), visibleHeightAtZDepth(3, camera)]} /> */}
       <planeGeometry attach="geometry" args={[dimensions.width, dimensions.height]} />
       {/* <meshBasicMaterial attach="material" color="red" transparent opacity={0.2} /> */}
-      <meshBasicMaterial attach="material" transparent opacity={0.2} />
+      <meshBasicMaterial attach="material" transparent opacity={0.2} color="red"/>
       {/* <mesh rotation={[-Math.PI/2,0,0]} position={[-width / 4, height / 4, 0.1]} >
         <planeGeometry attach="geometry" args={[width / 5, height / 5]} />
         <meshBasicMaterial attach="material" map={texture1} />

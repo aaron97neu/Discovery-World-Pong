@@ -6,7 +6,7 @@ import GameState from './GameState';
 import GameStateMachine from './GameStateMachine';
 import {MQTTClient} from 'dw-state-machine';
 // import { logger } from 'dw-utils';
-import Scene from './Scene';
+import MainScene from './MainScene';
 
 const logger = require('./logger');
 
@@ -47,7 +47,7 @@ function App() {
 
   return (
     <div className="App">
-      <Scene width={screenWidth} height={screenHeight} />
+      <MainScene width={screenWidth} height={screenHeight} />
     </div>
   );
 }

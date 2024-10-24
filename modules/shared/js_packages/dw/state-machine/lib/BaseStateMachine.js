@@ -9,7 +9,7 @@ import { BaseState } from './BaseState.js';
 
 // class BaseStateMachine {
 export default class BaseStateMachine {
-    constructor(baseState) {
+  constructor(baseState) {
     this.baseState = baseState;
     this.fsm = new StateMachine({
       init: 'stopped',

@@ -1,8 +1,8 @@
-import {useState, useEffect} from 'react'
+import { useEffect, useState } from 'react';
 import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
-function Gameboard({image, position = [0, 0, 0], scale = 1.0}) {
+function HudImage({image, position = [0, 0, 0], scale = 1.0}) {
   const texture = useLoader(THREE.TextureLoader, image);
   const [aspectRatio, setAspectRatio] = useState(1);  
 
@@ -11,11 +11,11 @@ function Gameboard({image, position = [0, 0, 0], scale = 1.0}) {
   }, []);
 
   return (
-    <mesh position={position} rotation={[-Math.PI/2.0,0,0]} >
+    <mesh position={position}>
       <planeGeometry attach="geometry" args={[aspectRatio * scale, scale]} />
       <meshBasicMaterial attach="material" map={texture} transparent opacity={1.0} />
-    </mesh>
+    </mesh>         
   );
 }
 
-export default Gameboard;
+export default HudImage;

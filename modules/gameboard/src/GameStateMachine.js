@@ -6,13 +6,22 @@ import { BaseStateMachine } from 'dw-state-machine';
  */
 class GameStateMachine extends BaseStateMachine {
   // Additional methods or overrides can be added here
+
+  constructor(baseState) {
+    super(baseState);
+  }
+
     
   // Define onEnter<state> and onExit<state> methods for each state
   onEnterStopped() { console.log('GameStateMachine Entered Stopped state'); }
   onExitStopped() { console.log('GameStateMachine Exited Stopped state'); }
-  onEnterIdle() { console.log('Entered Idle state'); }
+  onEnterIdle() {
+    console.log('Entered Idle state'); 
+  }
   onExitIdle() { console.log('GameStateMachine Exited Idle state'); }
-  onEnterIntro() { console.log('Entered Intro state'); }
+  onEnterIntro() { 
+    console.log('Entered Intro state'); 
+  }
   onExitIntro() { console.log('GameStateMachine Exited Intro state'); }
   onEnterLevel1() { console.log('Entered Level1 state'); }
   onExitLevel1() { console.log('GameStateMachine Exited Level1 state'); }
