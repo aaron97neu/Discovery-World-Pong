@@ -41,6 +41,9 @@ export default class BaseStateMachine {
         onExitLevel3: this.onExitLevel3.bind(this),
         onEnterOutro: this.onEnterOutro.bind(this),
         onExitOutro: this.onExitOutro.bind(this),
+        onInvalidTransition: function(transition, from, to) {
+          console.log("transition '%s' not allowed from state '%s'", transition, from);
+        }
       },
     });
   }

@@ -1,9 +1,13 @@
+import { useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types';
 import {Hud, PerspectiveCamera} from "@react-three/drei";
 import HudImage from './HudImage';
 import { noImage } from './loadImages';
 
-function PlayerInstructionsHud({ playerInstructions=defaultSubProps }) { 
+function PlayerInstructionsHud({ playerInstructions=defaultSubProps }) {
+// function PlayerInstructionsHud() {
+//   const [playerInstructions, setPlayerInstructions] = useState(defaultSubProps);
+
   return (
     <Hud>
       <PerspectiveCamera makeDefault position={[0, 0, 10]} />

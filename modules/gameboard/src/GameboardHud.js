@@ -3,7 +3,7 @@ import {Hud, PerspectiveCamera} from "@react-three/drei";
 import HudImage from './HudImage';
 import { noImage } from './loadImages';
 
-function GameHud({ score=defaultSubProps, level=defaultSubProps, countdown=defaultSubProps }) { 
+function GameboardHud({ score=defaultSubProps, level=defaultSubProps, countdown=defaultSubProps }) { 
   
   return (
     <Hud>
@@ -24,7 +24,7 @@ const subPropTypes = {
 };
 
 // Define PropTypes for the main properties
-GameHud.propTypes = {
+GameboardHud.propTypes = {
   score: PropTypes.shape(subPropTypes),
   level: PropTypes.shape(subPropTypes),
   countdown: PropTypes.shape(subPropTypes),
@@ -38,10 +38,10 @@ const defaultSubProps = {
 };
 
 // Define DefaultProps for the main properties
-GameHud.defaultProps = {
+GameboardHud.defaultProps = {
   score: defaultSubProps,
   level: defaultSubProps,
   countdown: defaultSubProps,
 };
 
-export default GameHud;
+export default GameboardHud;

@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, {useEffect} from 'react'
+import React, {useEffect, useRef} from 'react'
 
 import GameState from './GameState';
 import GameStateMachine from './GameStateMachine';
@@ -16,38 +16,29 @@ function App() {
   const screenWidth = window.innerWidth;
   const screenHeight = window.innerHeight;
 
+  const mainSceneRef = useRef(null);
+
+  const gameState = new GameState();
+  const gameStateMachine = new GameStateMachine(gameState);
+  const brokerUrl = process.env.REACT_APP_MQTT_BROKER_URL || 'ws://localhost:1883';
+  // const broker_url = process.env.REACT_APP_URL;
+  console.log('App: brokerUrl %s', brokerUrl)
+  const mqttClient = new MQTTClient(brokerUrl, 'gameboard', gameState, gameStateMachine);
+
   useEffect(() => {
-    const gameState = new GameState();
-    const gameStateMachine = new GameStateMachine(gameState);
-    const brokerUrl = process.env.REACT_APP_MQTT_BROKER_URL || 'ws://localhost:1883';
-    // const broker_url = process.env.REACT_APP_URL;
-    console.log('App: brokerUrl %s', brokerUrl)
-    const mqttClient = new MQTTClient(brokerUrl, 'gameboard', gameState, gameStateMachine);
-    console.log('App: d1');
-
-      // const client = mqtt.connect('ws://localhost:9001', {
-      //     clientId: "client_id",
-      //     keepalive: 60
-      // });
-
     mqttClient.start();
-    console.log('App: d2');
+    gameStateMachine.setMainSceneRef(mainSceneRef);
     gameStateMachine.startMachine();
-    console.log('App: d3');
-
-    // Example state change
-    // gameState.setState('game_state', 'idle', null);
-    // gameState.setState('game_state_transition', 'player_ready', null);
-    // console.log('App: d4');
 
     return () => {
       // Cleanup if necessary
+      mqttClient.stop();
     };
   }, []);
 
   return (
     <div className="App">
-      <MainScene width={screenWidth} height={screenHeight} />
+      <MainScene ref={mainSceneRef} width={screenWidth} height={screenHeight} />
     </div>
   );
 }

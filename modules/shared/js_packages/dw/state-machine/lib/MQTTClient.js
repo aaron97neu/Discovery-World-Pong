@@ -39,6 +39,10 @@ export default class MQTTClient {
         this.baseState.addObserver(this, this.onStateChange.bind(this));        
     }
 
+    stop() {
+        this.client.end();
+    }
+    
     /**
      * Handles MQTT connect event.
      */
