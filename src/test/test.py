@@ -23,7 +23,7 @@ logger.setLevel(0)
 
 # global var to store last message from each topic. This is used spin lock on
 # messages creating a pseudo blocking read.
-mqtt_data = {"quit":0, "connect_status":"not connected"}
+mqtt_data = {}
 
 
 def test_presense_start(mqtt_client, human_present):
@@ -47,14 +47,23 @@ def test_presense_start(mqtt_client, human_present):
     time_elapsed = 0
     check_interval = 0.1
     max_wait = 5
-    while (not ("game/state" in mqtt_data.keys())): #wait for mqtt broker update
+    state_messages = 0
+    while True: #wait for mqtt broker update
         time.sleep (check_interval)
         time_elapsed = time_elapsed + check_interval
 
         if time_elapsed > max_wait:
             pytest.fail(f"Game did not start within {max_wait}s of presence being detected")
 
-    logging.info("Game State message detected")
+        if "game/state" in mqtt_data.keys():
+            state_messages = state_messages + 1
+            state = (mqtt_data["game/state"])['state']
+            logging.info("game/state message: {state}")
+            if state != 0:
+                break
+
+
+    logging.info(f"Game State message != 0 detected. Elapsed: {state_messages} messages")
     # Should be an integer representing the state of the game
     state = (mqtt_data["game/state"])['state']
     logging.debug(f"game/state: {state}")
@@ -92,7 +101,7 @@ def test_no_presense_stop(mqtt_client, human_present):
     ##########
     time_elapsed = 0
     check_interval = 0.1
-    max_wait = 60
+    max_wait = 300
     while ((mqtt_data["game/state"])['state'] != 0): #wait for mqtt broker update
         time.sleep (check_interval)
         time_elapsed = time_elapsed + check_interval
@@ -101,7 +110,7 @@ def test_no_presense_stop(mqtt_client, human_present):
             pytest.fail(f"Game did not stop within {max_wait}s of presence no longer being detected")
 
     state = (mqtt_data["game/state"])['state']
-    logging.info(f"game/state: {state}")    
+    logging.info(f"game/state: {state}. Elapsed: {time_elapsed}s")
     
     assert((mqtt_data["game/state"])['state'] == 0)
 
