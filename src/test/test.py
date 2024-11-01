@@ -7,6 +7,9 @@ import paho.mqtt.client as mqtt
 import paho.mqtt.subscribe as subscribe
 import paho.mqtt.publish as publish
 import os
+import cv2
+import numpy as np
+import pyautogui
 
 #containers built settings
 #hostname = "mqtt-broker"
@@ -266,6 +269,14 @@ def test_game_engine(mqtt_client, mqtt_data):
 #     #     #it's possible to stop the program by disconnecting
 #     #     client.disconnect()
 
+def test_game_board(mqtt_client, mqtt_data):
+    #Start game engine, GameBoard (localhost:5000) should change to ready to play and start the game
+    #line 170 of main in game_driver waits for subscriber.motion_presence
+    logging.info("publish motion/presence true")  
+    mqtt_client.publish("motion/presence", "true")   
+    
+    #Move bottom paddle (paddle control by a human) to the middle of the gameboard
+    mqtt_client.publish("motion/position", "0.5") 
 
 def on_connect(client, userdata, flags, rc, propertiess=None):
     logging.info("Connected with result code " + str(rc))
@@ -309,6 +320,25 @@ def setup_mqtt_client(data):
 
     return client
 
+def screenCapture():
+
+    # Capture the screen
+    screenshot = pyautogui.screenshot()
+
+    # Convert the screenshot to a NumPy array
+    screenshot_np = np.array(screenshot)
+
+    # Convert RGB to BGR (OpenCV uses BGR format)
+    screenshot_np = cv2.cvtColor(screenshot_np, cv2.COLOR_RGB2BGR)
+
+    # Save the image using OpenCV
+    cv2.imwrite('screenshot.png', screenshot_np)
+
+    # Display the image
+    cv2.imshow('Screenshot', screenshot_np)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    
 def main():
     #logging.info("YEP2")
     global mqtt_data
@@ -323,7 +353,8 @@ def main():
     
     #test code go in here
       
-    test_game_engine(mqtt_client, mqtt_data)
+    #test_game_engine(mqtt_client, mqtt_data)
+    test_game_board(mqtt_client, mqtt_data)
     
     #end of test
 
