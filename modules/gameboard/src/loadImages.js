@@ -2,12 +2,12 @@ export { default as noImage } from './imgs/no_image.svg';
 
 export { default as welcomeScreen } from './imgs/WelcomeScreen.png';
 
-export { default as playerInstructionsStand } from './imgs/playerInstructions/PlayerInstructions-Stand.png';
+// export { default as playerInstructionsStand } from './imgs/playerInstructions/PlayerInstructions-Stand.png';
 export { default as playerInstructionsMoveLeft } from './imgs/playerInstructions/PlayerInstructions-MoveLeft.png';
-export { default as playerInstructionsMoveLeftCorrect } from './imgs/playerInstructions/PlayerInstructions-MoveLeft_Correct.png';
+// export { default as playerInstructionsMoveLeftCorrect } from './imgs/playerInstructions/PlayerInstructions-MoveLeft_Correct.png';
 export { default as playerInstructionsMoveRight } from './imgs/playerInstructions/PlayerInstructions-MoveRight.png';
-export { default as playerInstructionsMoveRightCorrect } from './imgs/playerInstructions/PlayerInstructions-MoveRight_Correct.png';
-export { default as playerInstructionsStart } from './imgs/playerInstructions/PlayerInstructions-Start.png';
+// export { default as playerInstructionsMoveRightCorrect } from './imgs/playerInstructions/PlayerInstructions-MoveRight_Correct.png';
+// export { default as playerInstructionsStart } from './imgs/playerInstructions/PlayerInstructions-Start.png';
 
 export { default as gameboard } from './imgs/PONG_Board_2.svg';
 

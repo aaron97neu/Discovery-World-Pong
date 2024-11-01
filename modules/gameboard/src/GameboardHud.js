@@ -1,47 +1,41 @@
-import PropTypes from 'prop-types';
-import {Hud, PerspectiveCamera} from "@react-three/drei";
+import { useContext} from 'react'
+import {Hud, PerspectiveCamera, Text} from "@react-three/drei";
 import HudImage from './HudImage';
-import { noImage } from './loadImages';
+import {SceneContext} from './SceneContext';
+import mainFont from './fonts/Roboto-Bold.ttf';
+import * as IMAGES from './loadImages';
 
-function GameboardHud({ score=defaultSubProps, level=defaultSubProps, countdown=defaultSubProps }) { 
-  
+function GameboardHud() {
+  const {isGameboardVisible, countdown, level, scoreRed, scoreBlue} = useContext(SceneContext);
+
   return (
     <Hud>
-      <PerspectiveCamera makeDefault position={[0, 0, 10]} />
+      <group>
+        <PerspectiveCamera makeDefault position={[0, 0, 10]} />
 
-      <HudImage image={score.image} position={score.position} scale={score.scale}/>
-      <HudImage image={level.image} position={level.position} scale={level.scale}/>
-      <HudImage image={countdown.image} position={countdown.position} scale={countdown.scale}/>
+        <group position={[7.2, 2.4, 0.0]} >
+           <HudImage position={[0.0, 0.0, 0.0]} scale={4.0} image={IMAGES.score}/>
+           <Text position={[0.0, 0.2, 0.0]} font={mainFont} fontSize={1.2} color="black" text={scoreRed}/>
+           <Text position={[0.0, -1.6, 0.0]} font={mainFont} fontSize={1.2} color="black" text={scoreBlue}/>
+        </group>
+
+        <group position={[-6.8, 4.0, 0.0]} >
+          <Text position={[0.0, 0.0, 0.0]} font={mainFont} fontSize={0.8} color="white" text={'LEVEL:'}/>
+          <Text position={[1.6, 0.0, 0.0]} font={mainFont} fontSize={0.8} color="white" text={level}/>
+        </group> 
+      
+        <Text position={[0.0, 0, 0]} font={mainFont} fontSize={1.7} color="white" text={countdown} />
+      </group>
+
+
+        {/* Example of how to add a material to the text and change opacity
+        <Text position={[0.0, 0, 0]} font={mainFont} fontSize={1.0} color="white">
+          {countdown2}
+          <meshStandardMaterial attach="material" opacity={0.2}/>
+        </Text> 
+        */}
     </Hud>
   );
 }
-
-// Define PropTypes for the sub-properties
-const subPropTypes = {
-  image:  PropTypes.string,
-  position: PropTypes.arrayOf(PropTypes.number), // Expecting an array of three numbers
-  scale: PropTypes.number, // Expecting a float
-};
-
-// Define PropTypes for the main properties
-GameboardHud.propTypes = {
-  score: PropTypes.shape(subPropTypes),
-  level: PropTypes.shape(subPropTypes),
-  countdown: PropTypes.shape(subPropTypes),
-};
-
-// Define DefaultProps for the sub-properties
-const defaultSubProps = {
-  image: noImage,
-  position: [0, 0, 0], // Default position array
-  scale: 1.0, // Default scale as a float
-};
-
-// Define DefaultProps for the main properties
-GameboardHud.defaultProps = {
-  score: defaultSubProps,
-  level: defaultSubProps,
-  countdown: defaultSubProps,
-};
 
 export default GameboardHud;

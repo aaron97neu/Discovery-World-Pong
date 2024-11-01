@@ -6,6 +6,7 @@ import { BaseState } from 'dw-state-machine';
  */
 class GameState extends BaseState {
   // Additional methods or overrides can be added here
+
 }
 
 export default GameState;

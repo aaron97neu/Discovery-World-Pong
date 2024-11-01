@@ -1,10 +1,10 @@
-import React, {Suspense, useEffect, useState, forwardRef, useImperativeHandle} from 'react'
+import React, {Suspense, useEffect, useContext} from 'react'
 import { Canvas, useThree } from "@react-three/fiber";
 import {GizmoHelper, GizmoViewcube, GizmoViewport} from "@react-three/drei"; // can be commented in for debugging
-
 import Gameboard from './Gameboard';
 import GameboardHud from './GameboardHud';
 import PlayerInstructionsHud from './PlayerInstructionHud';
+import { SceneContext } from './SceneContext';
 
 function CameraController() {
   const { camera } = useThree();
@@ -17,29 +17,24 @@ function CameraController() {
   return null;
 }
 
-const MainScene = forwardRef(({ width, height }, ref) => {
-  const [playerInstructionsProps, setPlayerInstructionsProps] = useState(PlayerInstructionsHud.defaultProps);
-
-  useImperativeHandle(ref, () => ({
-    customMethod() {
-      console.log('Custom method called');
-      // setCount(prevCount => prevCount + 1);
-    },
-    changeProps(prop) {
-      console.log("prop: ", prop);
-      setPlayerInstructionsProps(prop);
-    }      
-  }));
+function MainScene({ width, height }) {
+  const {isGameboard} = useContext(SceneContext);
 
   return (
       <Canvas mode="concurrent" args={[width, height]} shadows >
       <CameraController />
 
         <Suspense fallback={null} >
-          {/* <Gameboard {...gameboardProps}/>
-          <GameboardHud {...gameboardHud} /> */}
-
-          <PlayerInstructionsHud {...playerInstructionsProps} />
+        {isGameboard ? (
+          <group> 
+            <Gameboard/>
+            <GameboardHud/>
+          </group>
+        ) : (
+          <group>
+            <PlayerInstructionsHud/>
+          </group>  
+         )}         
         </Suspense>
 
         {/* <axesHelper args={[10]} position={[0,1,0]} />
@@ -49,6 +44,6 @@ const MainScene = forwardRef(({ width, height }, ref) => {
         </GizmoHelper>*/}
       </Canvas>
   );
-});
+}
 
 export default MainScene;

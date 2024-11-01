@@ -3,7 +3,6 @@
  * @class BaseStateMachine
  * @description Implements a state machine using 'javascript-state-machine'.
  */
-
 import StateMachine from 'javascript-state-machine';
 import { BaseState } from './BaseState.js';
 
@@ -16,12 +15,19 @@ export default class BaseStateMachine {
       transitions: [
         { name: 'start', from: 'stopped', to: 'idle' },
         { name: 'playerReady', from: 'idle', to: 'intro' },
-        { name: 'introComplete', from: 'intro', to: 'level1' },
-        { name: 'gameComplete', from: 'intro', to: 'idle' },
+        // { name: 'playerExit', from: 'intro', to: 'idle' },
+        { name: 'introLeftRight', from: 'intro', to: 'introLeftRight' },
+        // { name: 'playerExit', from: 'introLeftRight', to: 'idle' },
+        { name: 'playerLeft', from: 'introLeftRight', to: 'playerLeft' },
+        // { name: 'playerExit', from: 'playerLeft', to: 'idle' },
+        { name: 'playerRight', from: 'playerLeft', to: 'playerRight' },
+        // { name: 'playerExit', from: 'introRight', to: 'idle' },
+        { name: 'startGame', from: 'playerRight', to: 'level1' },
+        // { name: 'playerExit', from: 'level1', to: 'idle' },
         { name: 'level1Complete', from: 'level1', to: 'level2' },
-        { name: 'gameComplete', from: 'level1', to: 'idle' },
+        // { name: 'playerExit', from: 'level2', to: 'idle' },
         { name: 'level2Complete', from: 'level2', to: 'level3' },
-        { name: 'gameComplete', from: 'level2', to: 'idle' },
+        // { name: 'playerExit', from: 'level3', to: 'idle' },
         { name: 'level3Complete', from: 'level3', to: 'outro' },
         { name: 'gameComplete', from: 'outro', to: 'idle' },
         { name: 'stop', from: 'idle', to: 'stopped' },
@@ -33,6 +39,12 @@ export default class BaseStateMachine {
         onExitIdle: this.onExitIdle.bind(this),
         onEnterIntro: this.onEnterIntro.bind(this),
         onExitIntro: this.onExitIntro.bind(this),
+        onEnterIntroLeftRight: this.onEnterIntroLeftRight.bind(this),
+        onExitIntroLeftRight: this.onExitIntroLeftRight.bind(this),
+        onEnterPlayerLeft: this.onEnterPlayerLeft.bind(this),
+        onExitPlayerLeft: this.onExitPlayerLeft.bind(this),
+        onEnterPlayerRight: this.onEnterPlayerRight.bind(this),
+        onExitPlayerRight: this.onExitPlayerRight.bind(this),
         onEnterLevel1: this.onEnterLevel1.bind(this),
         onExitLevel1: this.onExitLevel1.bind(this),
         onEnterLevel2: this.onEnterLevel2.bind(this),
@@ -48,7 +60,16 @@ export default class BaseStateMachine {
     });
   }
 
+  // render() {
+  //   return (
+  //     <div>
+  //       <h1>Hello, I am a class component!</h1>
+  //     </div>
+  //   );
+  // }
+  
   startMachine() {
+    console.log('BaseStateMachine Entered startMachine'); 
     this.baseState.addObserver(this, this.onStateChange.bind(this));
     this.fsm.start();
     // this.runLoop();
@@ -81,12 +102,25 @@ export default class BaseStateMachine {
           case 'player_ready':
               this.fsm.playerReady();
               break;
-          case 'intro_complete':
-              this.fsm.introComplete();
+          case 'player_exit':
+              this.fsm.playerExit();
               break;
+          case 'intro_left_right':
+              this.fsm.introLeftRight();
+              break;
+          case 'player_left':
+            this.fsm.playerLeft();
+            break;
+          case 'player_right':
+            this.fsm.playerRight();
+            break;
+          case 'player_right':
+            this.fsm.startGame();
+            break;
+
           case 'level1_complete':
-              this.fsm.level1Complete();
-              break;
+            this.fsm.level1Complete();
+            break;
           case 'level2_complete':
               this.fsm.level2Complete();
               break;
@@ -112,6 +146,12 @@ export default class BaseStateMachine {
   onExitIdle() { console.log('Exited Idle state'); }
   onEnterIntro() { console.log('Entered Intro state'); }
   onExitIntro() { console.log('Exited Intro state'); }
+  onEnterIntroLeftRight() { console.log('Entered IntroLeftRight state'); }
+  onExitIntroLeftRight() { console.log('Exited IntroLeftRight state'); }
+  onEnterPlayerLeft() { console.log('Entered PlayerLeft state'); }
+  onExitPlayerLeft() { console.log('Exited PlayerLeft state'); }
+  onEnterPlayerRight() { console.log('Entered PlayerLeft state'); }
+  onExitPlayerRight() { console.log('Exited Intro state'); }
   onEnterLevel1() { console.log('Entered Level1 state'); }
   onExitLevel1() { console.log('Exited Level1 state'); }
   onEnterLevel2() { console.log('Entered Level2 state'); }
