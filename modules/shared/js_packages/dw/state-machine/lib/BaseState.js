@@ -9,9 +9,11 @@
     constructor() {
       this.state = {
         countdown: null,
+        ball_position: null,
         bottom_paddle_position: null,
         top_paddle_position: null,
-        ball_position: null,
+        bottom_score: null,
+        top_score: null,
         game_state: null,
         game_state_transition: null,
       };

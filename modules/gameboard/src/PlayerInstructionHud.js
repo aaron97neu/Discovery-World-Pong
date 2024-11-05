@@ -4,7 +4,7 @@ import HudImage from './HudImage';
 import {SceneContext} from './SceneContext';
 
 function PlayerInstructionsHud() {
-  const {isPlayerInstructionsVisible, playerInstructionProps} = useContext(SceneContext);
+  const {playerInstructionProps} = useContext(SceneContext);
 
   return (
     <Hud>

@@ -16,17 +16,21 @@ export default class MQTTClient {
             'game/state': 'game_state',
             'game/state_transition': 'game_state_transition',
             'game/countdown': 'game_countdown',
+            'game/ball_position': 'game_ball_position',            
             'game/bottom_paddle_position': 'game_bottom_paddle_position',
             'game/top_paddle_position': 'game_top_paddle_position',
-            'game/ball_position': 'game_ball_position',            
+            'game/bottom_score': 'game_bottom_score',
+            'game/top_score': 'game_top_score',
         };
         this.publishMap = {
             'game_state': 'game/state',
             'game_state_transition': 'game/state_transition',
             'game_countdown': 'game/countdown',
+            'game_ball_position': 'game/ball_position',
             'game_bottom_paddle_position': 'game/bottom_paddle_position',
             'game_top_paddle_position': 'game/top_paddle_position',
-            'game_ball_position': 'game/ball_position',
+            'game_bottom_score': 'game/bottom_score',
+            'game_top_score': 'game/top_score',
         };
     }
 

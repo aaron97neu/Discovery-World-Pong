@@ -14,8 +14,8 @@ const SceneProvider = ({ children }) => {
 
   const [countdown, setCountdown] = useState('GET READY');
   const [level, setLevel] = useState('1');
-  const [scoreRed, setScoreRed] = useState('0');
-  const [scoreBlue, setScoreBlue] = useState('0');
+  const [topScore, setTopScore] = useState('0');
+  const [bottomScore, setBottomScore] = useState('0');
 
   return (
     <SceneContext.Provider value={{ 
@@ -23,8 +23,8 @@ const SceneProvider = ({ children }) => {
       playerInstructionProps, setPlayerInstructionProps,
       countdown, setCountdown,
       level, setLevel,
-      scoreRed, setScoreRed,
-      scoreBlue, setScoreBlue
+      topScore, setTopScore,
+      bottomScore, setBottomScore
       }}>
       {children}
     </SceneContext.Provider>

@@ -22,8 +22,15 @@ class GamePlay {
       this.sceneContext.setCountdown(countdown);
     }
 
+    if ('game_top_score' in changes) {
+      const topScore = changes['game_top_score'];
+      this.sceneContext.setTopScore(topScore);
+    }
+    if ('game_bottom_score' in changes) {
+      const bottomScore = changes['game_bottom_score'];
+      this.sceneContext.setBottomScore(bottomScore);
+    }
   }
-
 
 }
 

@@ -6,7 +6,7 @@ import mainFont from './fonts/Roboto-Bold.ttf';
 import * as IMAGES from './loadImages';
 
 function GameboardHud() {
-  const {isGameboardVisible, countdown, level, scoreRed, scoreBlue} = useContext(SceneContext);
+  const {countdown, level, topScore, bottomScore} = useContext(SceneContext);
 
   return (
     <Hud>
@@ -15,8 +15,8 @@ function GameboardHud() {
 
         <group position={[7.2, 2.4, 0.0]} >
            <HudImage position={[0.0, 0.0, 0.0]} scale={4.0} image={IMAGES.score}/>
-           <Text position={[0.0, 0.2, 0.0]} font={mainFont} fontSize={1.2} color="black" text={scoreRed}/>
-           <Text position={[0.0, -1.6, 0.0]} font={mainFont} fontSize={1.2} color="black" text={scoreBlue}/>
+           <Text position={[0.0, 0.2, 0.0]} font={mainFont} fontSize={1.2} color="black" text={topScore}/>
+           <Text position={[0.0, -1.6, 0.0]} font={mainFont} fontSize={1.2} color="black" text={bottomScore}/>
         </group>
 
         <group position={[-6.8, 4.0, 0.0]} >
