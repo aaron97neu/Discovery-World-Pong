@@ -14,11 +14,19 @@ export default class MQTTClient {
         this.connected = false;
         this.subscribeMap = {
             'game/state': 'game_state',
-            'game/state_transition': 'game_state_transition'
+            'game/state_transition': 'game_state_transition',
+            'game/countdown': 'game_countdown',
+            'game/bottom_paddle_position': 'game_bottom_paddle_position',
+            'game/top_paddle_position': 'game_top_paddle_position',
+            'game/ball_position': 'game_ball_position',            
         };
         this.publishMap = {
             'game_state': 'game/state',
-            'game_state_transition': 'game/state_transition'
+            'game_state_transition': 'game/state_transition',
+            'game_countdown': 'game/countdown',
+            'game_bottom_paddle_position': 'game/bottom_paddle_position',
+            'game_top_paddle_position': 'game/top_paddle_position',
+            'game_ball_position': 'game/ball_position',
         };
     }
 
@@ -68,11 +76,8 @@ export default class MQTTClient {
      * @param {Buffer} message - The message payload.
      */
     onMessage(topic, message) {
-        console.log("MQTTClient onMessage D1: %s, %s", topic, message)
         const stateKey = this.subscribeMap[topic];
-        console.log("MQTTClient onMessage D2: %s", stateKey)
         if (stateKey) {
-            console.log("MQTTClient onMessage D3")
             this.baseState.setState(stateKey, message.toString(), this);
         }
     }

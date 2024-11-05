@@ -5,9 +5,13 @@
  */
 
 // class BaseState {
-export default class BaseState {
+  export default class BaseState {
     constructor() {
       this.state = {
+        countdown: null,
+        bottom_paddle_position: null,
+        top_paddle_position: null,
+        ball_position: null,
         game_state: null,
         game_state_transition: null,
       };
@@ -53,13 +57,9 @@ export default class BaseState {
      * @param {Object} caller - The caller object.
      */
     setState(key, value, caller) {
-      console.log("BaseState setState D1: %s, %s", key, value)
-      console.log("BaseState setState D2: %s", this.state[key])
       if (this.state[key] !== value) {
-        console.log("BaseState setState D3: %s", this.state[key])
         this.state[key] = value;
         this.notifyObservers({ [key]: value }, caller);
-        console.log("BaseState setState D4: %s", this.state[key])
       }
     }
   
