@@ -138,7 +138,7 @@ services:
         image: web-paddle-control:latest
         build: ./src/web-paddle-control
         environment:
-            - REACT_APP_MQTT_BROKER=mqtt-broker        
+            - MQTT_BROKER=mqtt-broker        
         ports:
             - 5004:80
         restart: unless-stopped
