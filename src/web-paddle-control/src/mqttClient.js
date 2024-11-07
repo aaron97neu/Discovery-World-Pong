@@ -11,6 +11,10 @@ class MQTTClient {
     const port = process.env.REACT_APP_MQTT_PORT;
     const clientId = process.env.REACT_APP_MQTT_CLIENT_ID;
 
+    console.log("broker", broker);
+    console.log("port", port);
+    console.log("clientId", clientId);
+
     this.client = mqtt.connect(`ws://${broker}:${port}`, { clientId });
     this.onConnectCallback = onConnectCallback;
 
