@@ -62,7 +62,7 @@
         }
       ],
       "type": "mqtt",
-      "host": "mqtt-broker",
+      "host": "192.168.200.10",
       "port": 1883,
       "protocol": "mqtt"
     }
@@ -71,8 +71,8 @@
     "timeLocale": "en-US",
     "topicOrder": "none",
     "highlightTopicUpdates": true,
-    "valueRendererDisplayMode": "diff",
+    "valueRendererDisplayMode": "raw",
     "selectTopicWithMouseOver": false,
-    "theme": "light"
+    "theme": "dark"
   }
 }
