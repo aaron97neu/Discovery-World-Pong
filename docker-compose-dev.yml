@@ -132,7 +132,16 @@ services:
            - "/dev/snd"
         restart: unless-stopped
         networks:
-            - pong-network                   
+            - pong-network
+    web-paddle-control:
+        container_name: web-paddle-control
+        image: web-paddle-control:latest
+        build: ./src/web-paddle-control
+        ports:
+            - 5004:80
+        restart: unless-stopped
+        networks:
+            - pong-network                             
 networks:
     pong-network:
         name: pong-network
