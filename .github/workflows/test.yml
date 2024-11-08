@@ -28,7 +28,8 @@ jobs:
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
-        run: docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
+        run: docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml config && \  
+          docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
           mqtt-broker \
           game-engine \
           game-engine-integration-test \
@@ -71,7 +72,8 @@ jobs:
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
-        run: docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
+        run: docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml config && \  
+          docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
           mqtt-broker \
           game-engine \
           human-visualizer-integration \
