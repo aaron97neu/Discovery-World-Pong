@@ -19,6 +19,8 @@ jobs:
 
   pytest-game-engine:
     runs-on: ubuntu-latest
+    env:
+      tester: game-engine-integration
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,30 +32,30 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml config \
+            mqtt-broker \
             game-engine \
-            game-engine-integration \
-            mqtt-broker
+            $tester
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
         run: |
           docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
+            mqtt-broker \
             game-engine \
-            game-engine-integration \
-            mqtt-broker
+            $tester
 
-      - name: Wait for integration-test container to exit
-        run: timeout 600 docker wait integration-test
+      - name: Wait for $tester container to exit
+        run: timeout 600 docker wait $tester
 
       - name: Stop Container
         if: always()
         run: docker compose down
 
       - name: Check Logs
-        run: docker logs integration-test
+        run: docker logs $tester
 
       - name: Copy Test Results
-        run: docker cp integration-test:/app/results.xml ${{ github.workspace }}/results.xml
+        run: docker cp $tester:/app/results.xml ${{ github.workspace }}/results.xml
           
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
@@ -70,6 +72,8 @@ jobs:
 
   pytest-human-visualizer:
     runs-on: ubuntu-latest
+    env:
+      tester: human-visualizer-integration
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,7 +87,7 @@ jobs:
           docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml config \
             mqtt-broker \
             game-engine \
-            human-visualizer-integration
+            $tester
 
       - name: Build and Run Tests
         working-directory: ${{ github.workspace }}
@@ -91,20 +95,19 @@ jobs:
           docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d \
           mqtt-broker \
           game-engine \
-          human-visualizer-integration
-
-      - name: Wait for integration-test container to exit
-        run: timeout 600 docker wait integration-test
+          $tester
+      - name: Wait for $tester container to exit
+        run: timeout 600 docker wait $tester
 
       - name: Stop Container
         if: always()
         run: docker compose down
 
       - name: Check Logs
-        run: docker logs integration-test
+        run: docker logs $tester
 
       - name: Copy Test Results
-        run: docker cp integration-test:/app/results.xml ${{ github.workspace }}/results.xml
+        run: docker cp $tester:/app/results.xml ${{ github.workspace }}/results.xml
           
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
