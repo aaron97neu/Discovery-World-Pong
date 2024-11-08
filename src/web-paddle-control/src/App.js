@@ -16,16 +16,19 @@ const App = () => {
 
   const handleMouseDown = (direction) => {
     intervalRef.current = setInterval(() => {
-      setPosition((prevPosition) => {
-        let newPosition = prevPosition;
-        if (direction === 'L') {
-          newPosition = Math.max(0.0, prevPosition - 0.01);
-        } else if (direction === 'R') {
-          newPosition = Math.min(1.0, prevPosition + 0.01);
-        }
-        mqttClient.current.publish('motion/position', newPosition.toFixed(2));
-        return newPosition;
-      });
+    if (!mqttClient.isConnected()) {
+      console.log('MQTT client is not connected');
+      return;
+    }
+
+    let newPosition = position;
+    if (direction === 'L') {
+      newPosition = Math.max(0.0, position - 0.01);
+    } else if (direction === 'R') {
+      newPosition = Math.min(1.0, position + 0.01);
+    }
+    setPosition(newPosition);
+    mqttClient.publish('motion/position', position.toFixed(2));
     }, 100); // Adjust the interval time as needed
   };
 
