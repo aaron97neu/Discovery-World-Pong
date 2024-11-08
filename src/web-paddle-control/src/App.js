@@ -3,10 +3,10 @@ import './App.css';
 import MQTTClient from './mqttClient';
 
 const mqttClient = new MQTTClient();
-const intervalRef = useRef(null);
 
 const App = () => {
   const [position, setPosition] = useState(0.5);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     mqttClient.connect(() => {
