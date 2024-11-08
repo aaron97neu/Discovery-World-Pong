@@ -127,7 +127,8 @@ services:
     gameboard:
         container_name: gameboard
         image: gameboard:latest
-        build: ./src/gameboard
+        build: 
+            context: ./src/gameboard
         ports:
             - 5000:80
         restart: unless-stopped
