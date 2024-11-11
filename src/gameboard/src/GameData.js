@@ -11,7 +11,7 @@ import { Group } from 'three';
 
 const mqtt = require('mqtt')
 // const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-gamedata.js'});
-const client = mqtt.connect(window.location.hostname, {clientId: 'gameboard-gamedata.js'});
+const client = mqtt.connect('ws://'+window.location.hostname+':9001', {clientId: 'gameboard-gamedata.js'});
 console.log("Creating UI connections");
 client.on('connect', function () {
  

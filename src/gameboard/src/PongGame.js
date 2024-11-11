@@ -7,7 +7,7 @@ import React, {useRef, useEffect} from "react";
 
 const mqtt = require('mqtt')
 // const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-ponggame.js'});
-const client = mqtt.connect(window.location.hostname, {clientId: 'gameboard-ponggame.js'});
+const client = mqtt.connect('ws://'+window.location.hostname+':9001', {clientId: 'gameboard-ponggame.js'});
 console.log("Creating Gameplay connections");
 client.on('connect', function () {
   client.subscribe('puck/position', function (err) {
