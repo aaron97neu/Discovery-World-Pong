@@ -1,0 +1,19 @@
+name: Container Build Test
+
+# This workflow is never run directly, but called by each container's integration testing
+on:
+  push
+
+jobs:
+  # The most basic of all tests: Does it compile?
+  docker-compose-build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Images
+        run: docker compose build --parallel

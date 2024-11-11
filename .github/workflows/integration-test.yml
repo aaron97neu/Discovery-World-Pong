@@ -1,0 +1,70 @@
+name: Container Level Integration Testing
+
+# This workflow is never run directly, but called by each container's integration testing
+on:
+  workflow_call:
+    inputs:
+      test-container:
+        required: true
+        type: string
+      support-containers:
+        required: true
+        type: string
+      container-under-test:
+        required: true
+        type: string
+
+env:
+  all-containers: ${{ inputs.test-container }} ${{ inputs.support-containers }} ${{ inputs.container-under-test }}
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Describe Test Plan
+        run: |
+          echo "This test will be testing container ${{ inputs.container-under-test}}"
+          echo "by using ${{ inputs.test-container }} and using the following support"
+          echo "containers: ${{ inputs.support-containers }}"
+
+      - name: Show Config
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml config ${{ env.all-containers }}
+
+      - name: Build and Run Tests
+        working-directory: ${{ github.workspace }}
+        run: |
+          docker compose -f docker-compose-dev-zscaler.yml -f docker-compose-tests.yml up --build -d ${{ env.all-containers }}
+
+      - name: Wait for ${{ inputs.test-container }} container to exit
+        run: timeout 600 docker wait ${{ inputs.test-container }}
+
+      - name: Stop Container
+        if: always()
+        run: docker compose down
+
+      - name: Check Logs
+        run: docker logs ${{ inputs.test-container }}
+
+      - name: Copy Test Results
+        run: docker cp ${{ inputs.test-container }}:/app/results.xml ${{ github.workspace }}/results.xml
+          
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: ${{ github.workspace }}/results-${{ inputs.test-container }}.xml
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: results.xml

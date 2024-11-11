@@ -1,0 +1,19 @@
+name: Container Level Integration Testing
+
+# Testing should be run on every push, no matter the branch
+on: push
+
+jobs:
+  pytest-game-engine:
+    uses: ./.github/workflows/integration-test.yml
+    with:
+      container-under-test: "game-engine"
+      test-container: "game-engine-integration"
+      support-containers: "mqtt-broker"
+
+  pytest-human-visualizer:
+    uses: ./.github/workflows/integration-test.yml
+    with:
+      container-under-test: "human-visualizer"
+      test-container: "human-visualizer-integration"
+      support-containers: "mqtt-broker"
