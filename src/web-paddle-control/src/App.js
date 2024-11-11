@@ -9,6 +9,8 @@ const App = () => {
   let lIntervalId = null;
   let rIntervalId = null;
   const interval = process.env.REACT_APP_INTERVAL;
+  const max = process.env.REACT_APP_MAX;
+  const min = process.env.REACT_APP_MIN;
 
   useEffect(() => {
     mqttClient.connect(() => {
@@ -38,9 +40,9 @@ const App = () => {
 
     let newPosition = position;
     if (direction === 'L') {
-      newPosition = Math.max(0.0, position - 0.01);
+      newPosition = Math.max(min, position - 0.01);
     } else if (direction === 'R') {
-      newPosition = Math.min(1.0, position + 0.01);
+      newPosition = Math.min(max, position + 0.01);
     }
     position = newPosition;
     mqttClient.publish('motion/position', position.toFixed(2));
