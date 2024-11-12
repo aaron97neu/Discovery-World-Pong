@@ -47,6 +47,42 @@ services:
         restart: no
         networks:
             - pong-network
+
+    ai-paddle-control-integration:
+        container_name: ai-paddle-control-integration
+        image: ai-paddle-control-integration:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/test/ai-paddle-control-integration
+            additional_contexts:
+                util: ./src/shared/code
+                certs: ./certs
+                game_engine: ./src/game-engine
+        environment:
+            MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/test/ai-paddle-control/test.py
+                  target: /app/test.py
+        restart: no
+        networks:
+            - pong-network
+
+    ai-paddle-control-no-gpu:
+        container_name: ai-paddle-control
+        image: ai-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/ai-paddle-control
+            additional_contexts:
+                util: ./src/shared/code
+                validation: ./src/shared/validation
+                certs: ./certs
+        restart: unless-stopped
+        networks:
+            - pong-network
+
 networks:
     pong-network:
         name: pong-network

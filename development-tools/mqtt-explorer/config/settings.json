@@ -49,7 +49,7 @@
       "certValidation": false,
       "clientId": "mqtt-explorer-8d4af0b0",
       "id": "b7a48d0b-0f13-48ab-bcea-4f207087434f",
-      "name": "dw",
+      "name": "192.168.200.10",
       "encryption": false,
       "subscriptions": [
         {
@@ -71,7 +71,7 @@
     "timeLocale": "en-US",
     "topicOrder": "none",
     "highlightTopicUpdates": true,
-    "valueRendererDisplayMode": "raw",
+    "valueRendererDisplayMode": "diff",
     "selectTopicWithMouseOver": false,
     "theme": "dark"
   }

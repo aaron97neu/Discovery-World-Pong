@@ -1,5 +1,11 @@
 name: Container Level Integration Testing
 
+permissions:
+    contents: read
+    checks: write
+    id-token: write
+
+
 # This workflow is never run directly, but called by each container's integration testing
 on:
   workflow_call:
@@ -67,4 +73,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-artifacts
-          path: results.xml
+          path: results-${{ inputs.test-container }}.xml
