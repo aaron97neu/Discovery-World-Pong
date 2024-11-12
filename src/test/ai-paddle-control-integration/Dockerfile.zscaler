@@ -1,0 +1,22 @@
+FROM python:3.8-slim-bookworm AS builder
+# Handle ZSclaer Cert Issues
+COPY --from=certs . ./certs
+RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
+ENV PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY requirements.txt .
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
+
+FROM builder AS final
+WORKDIR /app
+COPY --from=builder /app .
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=util . ./shared/code/
+COPY test.py .
+ENV PATH="/opt/venv/bin:$PATH"
+CMD ["pytest", "--log-cli-level=DEBUG", "--junitxml=results.xml", "test.py"]
