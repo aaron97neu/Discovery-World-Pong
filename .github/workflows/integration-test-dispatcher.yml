@@ -5,6 +5,7 @@ on: push
 
 jobs:
   pytest-game-engine:
+    runs-on: ubuntu-latest
     uses: ./.github/workflows/integration-test.yml
     with:
       container-under-test: "game-engine"
@@ -12,6 +13,7 @@ jobs:
       support-containers: "mqtt-broker"
 
   pytest-human-visualizer:
+    runs-on: ubuntu-latest
     uses: ./.github/workflows/integration-test.yml
     with:
       container-under-test: "human-visualizer"
@@ -19,6 +21,7 @@ jobs:
       support-containers: "mqtt-broker"
 
   pytest-ai-paddle-control:
+    runs-on: self-hosted
     uses: ./.github/workflows/integration-test.yml
     with:
       container-under-test: "ai-paddle-control-no-gpu"
