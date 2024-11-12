@@ -19,6 +19,9 @@ env:
 
 jobs:
   integration-test:
+    permissions: # Used by publish test report step
+      checks: write
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,9 +60,6 @@ jobs:
         run: docker cp ${{ inputs.test-container }}:/app/results.xml ${{ github.workspace }}/results-${{ inputs.test-container }}.xml
           
       - name: Publish Test Report
-        permissions:
-          checks: write
-          id-token: write
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
         with:
