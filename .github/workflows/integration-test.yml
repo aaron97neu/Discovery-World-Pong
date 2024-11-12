@@ -1,11 +1,5 @@
 name: Container Level Integration Testing
 
-permissions:
-    contents: read
-    checks: write
-    id-token: write
-
-
 # This workflow is never run directly, but called by each container's integration testing
 on:
   workflow_call:
@@ -60,9 +54,12 @@ jobs:
         run: docker logs ${{ inputs.test-container }}
 
       - name: Copy Test Results
-        run: docker cp ${{ inputs.test-container }}:/app/results.xml ${{ github.workspace }}/results.xml
+        run: docker cp ${{ inputs.test-container }}:/app/results.xml ${{ github.workspace }}/results-${{ inputs.test-container }}.xml
           
       - name: Publish Test Report
+        permissions:
+          checks: write
+          id-token: write
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
         with:

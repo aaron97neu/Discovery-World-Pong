@@ -22,5 +22,5 @@ jobs:
     uses: ./.github/workflows/integration-test.yml
     with:
       container-under-test: "ai-paddle-control-no-gpu"
-      test-container: "ai-paddle-contol-integration"
+      test-container: "ai-paddle-control-integration"
       support-containers: "mqtt-broker"
