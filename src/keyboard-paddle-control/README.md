@@ -5,7 +5,7 @@ The 'a' and 'd' keys will move the paddle left and right respectively.
 
 # Development
 ## Dependencies
-Docker (and Docker Compose) are required to build the containers.
+Docker is required to build the container.
 Other OCI compliant runtimes like Podman should work.
 
 ## Build
