@@ -1,10 +1,10 @@
 # Discovery World Pong
 This repository contains the code behind the Rockwell Automation "Pong" exhibit at the Discovery World Museum in Milwaukee, WI
 
-An overview of this repo's history and goals can be found in the [vision.md](/docs/vision.md) document.
+An overview of this repo's history and goals can be found in the [vision.md](/docs/API/overview/vision.md) document.
 
 # Contributing
-See [Contributing.md](docs/CONTRIBUTING.md)
+See [Contributing.md](/docs/CONTRIBUTING.md)
 
 # Development
 ## Dependencies
