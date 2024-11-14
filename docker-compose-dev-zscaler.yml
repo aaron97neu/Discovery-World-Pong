@@ -146,6 +146,16 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
+    single-screen-development:
+        container_name: single-screen-development
+        image: single-screen-development:latest
+        build:
+          context: ./src/single-screen-development
+        ports:
+            - 5005:80        
+        restart: unless-stopped
+        networks:
+            - pong-network             
 networks:
     pong-network:
         name: pong-network
