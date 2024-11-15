@@ -58,7 +58,7 @@ function Body() {
     const containerWidth = containerSize.width;
     const containerHeight = containerSize.height;
 
-    let newWidth = containerWidth / 3;
+    let newWidth = containerWidth / 3.15;
     let newHeight = newWidth / aspectRatio;
 
     if (newHeight > containerHeight * 0.95) {
@@ -90,7 +90,7 @@ function Body() {
             alignContent: "flex-start",
             alignItems: "flex-start",
             justifyContent: "center",
-            gap: `${verticalScreensCount === 1 ? "0" : "60px"}`,
+            gap: `${verticalScreensCount === 1 ? "0" : "20px"}`,
             transition: "all 0.3s ease",
           }}
         >
@@ -98,19 +98,19 @@ function Body() {
             width={divSize.width}
             height={divSize.height}
             open={screenState.networkVisualizer}
-            connectionString="NETWORK"
+            connectionString="http://localhost:5002"
           />
           <ExhibitScreen
             width={divSize.width}
             height={divSize.height}
             open={screenState.clockVisualizer}
-            connectionString="CLOCK"
+            connectionString="http://localhost:5003"
           />
           <ExhibitScreen
             width={divSize.width}
             height={divSize.height}
             open={screenState.humanVisualizer}
-            connectionString="HUMAN"
+            connectionString="http://localhost:5001"
           />
         </Box>
       ) : (
@@ -121,7 +121,7 @@ function Body() {
             display: "flex",
           }}
         >
-          <GameScreen connectionString="Game screen"></GameScreen>
+          <GameScreen connectionString="http://localhost:5000"></GameScreen>
         </Box>
       )}
     </Box>
