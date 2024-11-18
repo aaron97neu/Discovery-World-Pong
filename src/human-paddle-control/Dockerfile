@@ -23,6 +23,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
 
 FROM --platform=amd64 ubuntu:22.04 AS final
+
+LABEL org.opencontainers.image.source https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses MIT
+
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install curl sudo lsb-base lsb-release -y
 ENV DEBIAN_FRONTEND=noninteractive
