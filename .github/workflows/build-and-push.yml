@@ -1,9 +1,13 @@
 # Modified from: https://github.com/oats-center/isoblue/blob/master/.github/workflows/build-and-push-services.yml
-name: Build and push Pong Containers
+name: Build and Push Pong Containers
 
 on:
   push:
   pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  ORG: aaron97neu
 
 jobs:
   build-and-push-services:
@@ -20,7 +24,14 @@ jobs:
           - neural-net-visualizer
           
     runs-on: ubuntu-latest
-
+   
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,7 +64,7 @@ jobs:
         run: |
           echo 'Processing git ref:' $GITHUB_REF
 
-          DOCKER_IMAGE=isoblue/${{ matrix.service }}
+          DOCKER_IMAGE=${{ env.REGISTRY }}/${{ env.ORG }}/${{ matrix.service }}
 
           # Release version is just the release number
           if [[ $GITHUB_REF == refs/heads/release/* ]]; then
@@ -105,8 +116,9 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3.3.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6.9.0
@@ -123,7 +135,7 @@ jobs:
             GIT_REF=${{ github.sha }}
           labels: |
             org.opencontainers.image.title=${{ matrix.service }}
-            org.opencontainers.image.description=An Avena Service for ISOBlue
+            org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
             org.opencontainers.image.url=${{ github.event.repository.html_url }}
             org.opencontainers.image.source=${{ github.event.repository.clone_url }}
             org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
