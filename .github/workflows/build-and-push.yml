@@ -124,8 +124,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6.9.0
         with:
-          context: ${{ CONTAINER_DIR }}/${{ matrix.service }}
-          file: ${{ CONTAINER_DIR }}/${{ matrix.service }}/Dockerfile
+          context: ${{ env.CONTAINER_DIR }}/${{ matrix.service }}
+          file: ${{ env.CONTAINER_DIR }}/${{ matrix.service }}/Dockerfile
 
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: ${{ github.event_name != 'pull_request' }}
