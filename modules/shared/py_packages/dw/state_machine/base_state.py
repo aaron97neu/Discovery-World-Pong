@@ -6,28 +6,38 @@ Global Object pattern and the Observer pattern.
 """
 
 from abc import ABC
+from typing import TypedDict
 
+   
 class BaseState(ABC):
     """
     BaseState Class
 
     This class manages the application state and notifies observers of state changes.
     """
+    class State(TypedDict):
+        game_countdown: int
+        game_ball_position: int
+        game_bottom_paddle_position: int
+        game_top_paddle_position: int
+        game_bottom_score: int
+        game_top_score: int
+        game_state: str
+        game_state_transition: str  
 
     def __init__(self):
         """
         Initializes the BaseState with default values and an empty list of observers.
         """
-        self._state = {
-            'game_state': None,
-            'game_state_transition': None,
-            'paddle1_activated': None,
-            'paddle1_movement': None,
-            'paddle2_activated': None,
-            'paddle2_movement': None,
-            'ball_movement': None,
-            'player1_score': None,
-            'player2_score': None,
+        self._state: BaseState.State = {
+            'game_countdown': 0,
+            'game_ball_position': 0,
+            'game_bottom_paddle_position': 0,
+            'game_top_paddle_position': 0,
+            'game_bottom_score': 0,
+            'game_top_score': 0,
+            'game_state': "",
+            'game_state_transition': "",
         }
         self._observers = []
 

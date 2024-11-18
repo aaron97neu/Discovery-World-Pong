@@ -7,7 +7,7 @@ MQTT communication.
 
 import logging
 from abc import ABC
-# import json
+import json
 import paho.mqtt.client as mqtt
 from .base_state import BaseState
 
@@ -18,7 +18,7 @@ class MQTTClient(ABC):
     This class handles MQTT communication and observes the BaseState for changes.
     """
 
-    def __init__(self, client_id, game_state: BaseState, enable_subscriptions=None):
+    def __init__(self, client_id, game_state: BaseState, broker='mqtt-broker', port=1883, enable_subscriptions=None):
         """
         Initializes the MQTTClient with the given BaseState.
 
@@ -31,42 +31,42 @@ class MQTTClient(ABC):
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
-        # self.connected = False
+        self.connected = False
 
         if not enable_subscriptions:
             self.enable_subscriptions = [
-                'game/state_transition', 
-                'paddle1/activated',
-                'paddle1/moved', 
-                'paddle2/activated',
-                'paddle2/moved', 
-                'ball/moved',
-                'player1/scored',
-                'player2/scored',
+                'game/state',
+                'game/state_transition',
+                'game/countdown',
+                'game/ball_position',            
+                'game/bottom_paddle_position',
+                'game/top_paddle_position',
+                'game/bottom_score',
+                'game/top_score',
             ]
         else:
             self.enable_subscriptions = enable_subscriptions
 
         self.topic_to_state_map = {
-            'game/state_transition': 'game_state_transition', 
-            'paddle1/activated': 'paddle1_activated',
-            'paddle1/moved': 'paddle1_movemment', 
-            'paddle2/activated': 'paddle2_activated',
-            'paddle2/moved': 'paddle2_movement', 
-            'ball/moved': 'ball_movement',
-            'player1/scored': 'player1_score',
-            'player2/scored': 'player2_score',
+            'game/state': 'game_state',
+            'game/state_transition': 'game_state_transition',
+            'game/countdown': 'game_countdown',
+            'game/ball_position': 'game_ball_position',            
+            'game/bottom_paddle_position': 'game_bottom_paddle_position',
+            'game/top_paddle_position': 'game_top_paddle_position',
+            'game/bottom_score': 'game_bottom_score',
+            'game/top_score': 'game_top_score',
         }
 
         self.state_to_topic_map = {
-            'game_state_transition': 'game/state_transition', 
-            'paddle1_activated': 'paddle1/activated',
-            'paddle1_movemment': 'paddle1/moved', 
-            'paddle2_activated': 'paddle2/activated',
-            'paddle2_movement': 'paddle2/moved', 
-            'ball_movement': 'ball/moved',
-            'player1_score': 'player1/scored',
-            'player2_score': 'player2/scored',
+            'game_state': 'game/state',
+            'game_state_transition': 'game/state_transition',
+            'game_countdown': 'game/countdown',
+            'game_ball_position': 'game/ball_position',
+            'game_bottom_paddle_position': 'game/bottom_paddle_position',
+            'game_top_paddle_position': 'game/top_paddle_position',
+            'game_bottom_score': 'game/bottom_score',
+            'game_top_score': 'game/top_score',
         }
 
     def _on_connect(self, client, userdata, flags, rc):
@@ -79,15 +79,16 @@ class MQTTClient(ABC):
         flags (dict): Response flags sent by the broker.
         rc (int): The connection result.
         """
-        # self.connected = True
+        self.connected = True
         for topic in self.enable_subscriptions:
             logging.info("MQTT sub: %s", topic)
             client.subscribe(topic)
 
-    def is_connect(self):
+    def is_connected(self):
         """
         """
-        self.client.is_connected;
+        # return self.connected;
+        return self.client.is_connected();
 
 
     def _on_disconnect(self, client, userdata, rc):
@@ -99,7 +100,7 @@ class MQTTClient(ABC):
         userdata (any): The private user data.
         rc (int): The disconnection result.
         """
-        # self.connected = False
+        self.connected = False
 
     def _on_message(self, client, userdata, msg):
         """
@@ -113,8 +114,12 @@ class MQTTClient(ABC):
         logging.info("MQTT msg")
         logging.info("MQTT msg.topic: %s, msg.payload: %s", msg.topic, msg.payload.decode())
         state_key = self.topic_to_state_map.get(msg.topic)
+        logging.info("MQTT state_key: %s", state_key)
         if state_key:
-            self.game_state.set_state(state_key, msg.payload.decode(), caller=self)
+            payload_str = msg.payload.decode('utf-8')
+            payload_json = json.loads(payload_str)
+            self.game_state.set_state(state_key, payload_json[f"{state_key}"], caller=self)
+            # self.game_state.set_state(state_key, msg.payload.decode(), caller=self)
 
     def start(self):
         """
@@ -132,6 +137,11 @@ class MQTTClient(ABC):
         changed_state (dict): The changed state values.
         """
         for key, value in changed_state.items():
+            logging.info(f"key: {key}, value: {value}")
             topic = self.state_to_topic_map.get(key)
+            logging.info(f"topic: {topic}")
             if topic:
+                jsonValue = f"{{{topic}: {value}}}"
+                json.dumps(value)
                 self.client.publish(topic, value)
+                # self.client.publish(topic, value)

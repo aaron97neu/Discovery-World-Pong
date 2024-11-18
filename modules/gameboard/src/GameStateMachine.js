@@ -20,7 +20,8 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
-    this.sceneContext.setGameboard(false);
+    // this.sceneContext.setGameboard(false);
+    this.sceneContext.setGameboard(true);
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.welcomeScreen,
       position: [0.0, 0.2, 0.0],

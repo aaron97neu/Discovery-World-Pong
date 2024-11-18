@@ -19,18 +19,26 @@ class BaseStateMachine(ABC):
     This class implements a state machine to control game flow.
     """
 
-    states = ['stopped', 'idle', 'intro', 'level1', 'level2', 'level3', 'outro']
-    transitions = [{'trigger': 'start', 'source': 'stopped', 'dest': 'idle'},
+    states = ['stopped', 'idle', 'intro', 'moveLeftIntro', 'moveRightIntro', 'level1', 'level2', 'level3', 'outro']
+    transitions = [
+        {'trigger': 'start', 'source': 'stopped', 'dest': 'idle'},
         {'trigger': 'player_ready', 'source': 'idle', 'dest': 'intro'},
-        {'trigger': 'intro_complete', 'source': 'intro', 'dest': 'level1'},
-        {'trigger': 'game_complete', 'source': 'intro', 'dest': 'idle'},
+        {'trigger': 'start_game', 'source': 'intro', 'dest': 'level1'},
+        {'trigger': 'player_exit', 'source': 'intro', 'dest': 'idle'},
+        {'trigger': 'intro_complete', 'source': 'intro', 'dest': 'move_left_intro'},
+        {'trigger': 'player_exit', 'source': 'move_left_intro', 'dest': 'idle'},
+        {'trigger': 'move_left_intro_complete', 'source': 'move_left_intro', 'dest': 'move_right_intro'},
+        {'trigger': 'player_exit', 'source': 'move_right_intro', 'dest': 'idle'},
+        {'trigger': 'start_game', 'source': 'move_right_intro', 'dest': 'level1'},
+        {'trigger': 'player_exit', 'source': 'level1', 'dest': 'idle'},
         {'trigger': 'level1_complete', 'source': 'level1', 'dest': 'level2'},
-        {'trigger': 'game_complete', 'source': 'level1', 'dest': 'idle'},
+        {'trigger': 'player_exit', 'source': 'level2', 'dest': 'idle'},
         {'trigger': 'level2_complete', 'source': 'level2', 'dest': 'level3'},
-        {'trigger': 'game_complete', 'source': 'level2', 'dest': 'idle'},
+        {'trigger': 'player_exit', 'source': 'level3', 'dest': 'idle'},
         {'trigger': 'level3_complete', 'source': 'level3', 'dest': 'outro'},
-        {'trigger': 'game_complete', 'source': 'outro', 'dest': 'idle'},
-        {'trigger': 'stop', 'source': 'idle', 'dest': 'stopped'}]
+        {'trigger': 'player_exit', 'source': 'outro', 'dest': 'idle'},
+        {'trigger': 'stop', 'source': 'idle', 'dest': 'stopped'}
+        ]
 
     def __init__(self,
                  base_state: BaseState):
@@ -42,15 +50,6 @@ class BaseStateMachine(ABC):
         """
         self.base_state = base_state
         self.machine = Machine(model=self, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped', ignore_invalid_triggers=True)
-        # self.machine = Machine(model=self, states=BaseStateMachine.states, initial='stopped', ignore_invalid_triggers=True)
-        # self.machine.add_transition(trigger='start', source='stopped', dest='idle')
-        # self.machine.add_transition(trigger='intro', source='idle', dest='intro')
-        # self.machine.add_transition(trigger='level1', source='intro', dest='level1')
-        # self.machine.add_transition(trigger='level2', source='level1', dest='level2')
-        # self.machine.add_transition(trigger='level3', source='level2', dest='level3')
-        # self.machine.add_transition(trigger='outro', source='level3', dest='outro')
-        # self.machine.add_transition(trigger='reset', source='outro', dest='idle')
-        # self.machine.add_transition(trigger='stop', source='idle', dest='stopped')
 
     def start_machine(self):
         """
@@ -79,8 +78,14 @@ class BaseStateMachine(ABC):
                 self.start()
             elif state_transition == 'player_ready':
                 self.player_ready()
+            elif state_transition == 'player_exit':
+                self.player_exit()
             elif state_transition == 'intro_complete':
                 self.intro_complete()
+            elif state_transition == 'move_left_intro_complete':
+                self.move_left_intro_complete()
+            elif state_transition == 'start_game':
+                self.start_game()
             elif state_transition == 'level1_complete':
                 self.level1_complete()
             elif state_transition == 'level2_complete':
@@ -91,6 +96,9 @@ class BaseStateMachine(ABC):
                 self.game_complete()
             elif state_transition == 'stop':
                 self.stop()
+            else:
+                logging.info(f"Unknown state transition: {state_transition}")
+                return "Default case"
 
 class DiagramModel():
     pass

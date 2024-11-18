@@ -16,6 +16,10 @@ const SceneProvider = ({ children }) => {
   const [level, setLevel] = useState('1');
   const [topScore, setTopScore] = useState('0');
   const [bottomScore, setBottomScore] = useState('0');
+  const [topPaddlePosition, setTopPaddlePosition] = useState('0.5');
+  const [bottomPaddlePosition, setBottomPaddlePosition] = useState('0.5');
+  // const [topPaddlePosition, setTopPaddlePosition] = useState('1.0');
+  // const [bottomPaddlePosition, setBottomPaddlePosition] = useState('0.0');
 
   return (
     <SceneContext.Provider value={{ 
@@ -24,7 +28,9 @@ const SceneProvider = ({ children }) => {
       countdown, setCountdown,
       level, setLevel,
       topScore, setTopScore,
-      bottomScore, setBottomScore
+      bottomScore, setBottomScore,
+      topPaddlePosition, setTopPaddlePosition,
+      bottomPaddlePosition, setBottomPaddlePosition,
       }}>
       {children}
     </SceneContext.Provider>

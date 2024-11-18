@@ -8,12 +8,12 @@
   export default class BaseState {
     constructor() {
       this.state = {
-        countdown: null,
-        ball_position: null,
-        bottom_paddle_position: null,
-        top_paddle_position: null,
-        bottom_score: null,
-        top_score: null,
+        game_countdown: null,
+        game_ball_position: null,
+        game_bottom_paddle_position: null,
+        game_top_paddle_position: null,
+        game_bottom_score: null,
+        game_top_score: null,
         game_state: null,
         game_state_transition: null,
       };

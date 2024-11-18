@@ -146,22 +146,39 @@ services:
         environment:
         - CHOKIDAR_USEPOLLING=true            
 
-    # audio-engine:
-    #     container_name: audio-engine
-    #     image: audio-engine:latest
-    #     volumes:
-    #         - ./tts:/app/tts
-    #     build:
-    #         dockerfile: Dockerfile.zscaler
-    #         context: ./modules/audio-engine
-    #         additional_contexts:
-    #             util: ./modules/shared
-    #             certs: ./certs
-    #     devices:
-    #         - "/dev/snd"
-    #     restart: unless-stopped
-    #     networks:
-    #         - pong-network
+    audio-engine:
+        container_name: audio-engine
+        image: audio-engine:latest
+        volumes:
+            - ./tts:/app/tts
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/audio-engine
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        devices:
+            - "/dev/snd"
+        restart: unless-stopped
+        networks:
+            - pong-network
+
+    keyboard-paddle-control:
+        container_name: keyboard-paddle-control
+        image: keyboard-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/keyboard-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        volumes:
+            - /dev:/dev
+        environment:
+            - PADDLE_ID=bottom_paddle  
+        restart: unless-stopped
+        networks:
+            - pong-network    
 networks:
     pong-network:
         name: pong-network

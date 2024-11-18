@@ -30,6 +30,15 @@ class GamePlay {
       const bottomScore = changes['game_bottom_score'];
       this.sceneContext.setBottomScore(bottomScore);
     }
+
+    if ('game_top_paddle_position' in changes) {
+      const topPaddlePosition = changes['game_top_paddle_position'];
+      this.sceneContext.setTopPaddlePosition(topPaddlePosition);
+    }
+    if ('game_bottom_paddle_position' in changes) {
+      const bottomPaddlePosition = changes['game_bottom_paddle_position'];
+      this.sceneContext.setBottomPaddlePosition(bottomPaddlePosition);
+    }
   }
 
 }
