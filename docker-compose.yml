@@ -15,7 +15,7 @@ services:
             - pong-network
     ai-paddle-control:
         container_name: ai-paddle-control
-        image: aaron97neu/ai-paddle-control:
+        image: ai-paddle-control:latest
         build: 
           context: ./src/ai-paddle-control
           additional_contexts:
