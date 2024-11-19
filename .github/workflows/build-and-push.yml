@@ -131,11 +131,13 @@ jobs:
             ${{ matrix.service }}.tags=${{ steps.prepare.outputs.tags }}
             ${{ matrix.service }}.cache-from=type=local,src=/tmp/.buildx-cache
             ${{ matrix.service }}.cache-to=type=local,dest=/tmp/.buildx-cache
-            ${{ matrix.service }}.labels=org.opencontainers.image.title=${{ matrix.service }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
-            ${{ matrix.service }}.labels=org.opencontainers.image.url=${{ github.event.repository.html_url }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.source=${{ github.event.repository.clone_url }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.revision=${{ github.sha }}
-            ${{ matrix.service }}.labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+            ${{ matrix.service }}.labels={ \
+                                      org.opencontainers.image.title=${{ matrix.service }}, \
+                                      org.opencontainers.image.description=An Container for the Discovery World Pong Exhibit, \
+                                      org.opencontainers.image.url=${{ github.event.repository.html_url }}, \ 
+                                      org.opencontainers.image.source=${{ github.event.repository.clone_url }}, \
+                                      org.opencontainers.image.version=${{ steps.prepare.outputs.version }}, \
+                                      org.opencontainers.image.created=${{ steps.prepare.outputs.created }}, \
+                                      org.opencontainers.image.revision=${{ github.sha }}, \
+                                      org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }} \
+                                      }
