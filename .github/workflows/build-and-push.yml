@@ -128,14 +128,14 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           targets: ${{ matrix.service }}
           set: |
-            target.args.tags=${{ steps.prepare.outputs.tags }}
-            target.args.cache-from=type=local,src=/tmp/.buildx-cache
-            target.args.cache-to=type=local,dest=/tmp/.buildx-cache
-            target.args.labels=org.opencontainers.image.title=${{ matrix.service }}
-            target.args.labels=org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
-            target.args.labels=org.opencontainers.image.url=${{ github.event.repository.html_url }}
-            target.args.labels=org.opencontainers.image.source=${{ github.event.repository.clone_url }}
-            target.args.labels=org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
-            target.args.labels=org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
-            target.args.labels=org.opencontainers.image.revision=${{ github.sha }}
-            target.args.labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+            ${{ matrix.service }}.tags=${{ steps.prepare.outputs.tags }}
+            ${{ matrix.service }}.cache-from=type=local,src=/tmp/.buildx-cache
+            ${{ matrix.service }}.cache-to=type=local,dest=/tmp/.buildx-cache
+            ${{ matrix.service }}.labels=org.opencontainers.image.title=${{ matrix.service }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
+            ${{ matrix.service }}.labels=org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.revision=${{ github.sha }}
+            ${{ matrix.service }}labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
