@@ -125,17 +125,18 @@ jobs:
         uses: docker/bake-action@v5
         with:
           files: docker-compose.yml # Provides context
-          targets: ${{ matrix.service }}
           push: ${{ github.event_name != 'pull_request' }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-          tags: ${{ steps.prepare.outputs.tags }}
-          labels: |
-            org.opencontainers.image.title=${{ matrix.service }}
-            org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
-            org.opencontainers.image.url=${{ github.event.repository.html_url }}
-            org.opencontainers.image.source=${{ github.event.repository.clone_url }}
-            org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
-            org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+          targets: ${{ matrix.service }}
+          set: |
+            target.args.tags=${{ steps.prepare.outputs.tags }}
+            target.args.cache-from=type=local,src=/tmp/.buildx-cache
+            target.args.cache-to=type=local,dest=/tmp/.buildx-cache
+            target.args.labels=org.opencontainers.image.title=${{ matrix.service }}
+            target.args.labels=org.opencontainers.image.title=${{ matrix.service }}
+            target.args.labels=org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
+            target.args.labels=org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            target.args.labels=org.opencontainers.image.source=${{ github.event.repository.clone_url }}
+            target.args.labels=org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
+            target.args.labels=org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
+            target.args.labels=org.opencontainers.image.revision=${{ github.sha }}
+            target.args.labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
