@@ -122,18 +122,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/bake-action@v5
         with:
-          context: ${{ env.CONTAINER_DIR }}/${{ matrix.service }}
-          file: ${{ env.CONTAINER_DIR }}/${{ matrix.service }}/Dockerfile
-
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          files: docker-compose.yml # Provides context
+          targets: ${{ matrix.service }}
+          platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prepare.outputs.tags }}
-          build-args: |
-            VERSION=${{ steps.prepare.outputs.version }}
-            BUILD_DATE=${{ steps.prepare.outputs.created }}
-            GIT_REF=${{ github.sha }}
           labels: |
             org.opencontainers.image.title=${{ matrix.service }}
             org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
