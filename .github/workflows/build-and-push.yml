@@ -79,7 +79,7 @@ jobs:
             type=semver,pattern={{version}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
             type=semver,pattern={{major}}.{{minor}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
             type=semver,pattern={{major}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
-            type=ref,event=push
+            type=ref,event=branch
             type=ref,event=pr
             type=raw,value=next,enable={{is_default_branch}}
 
