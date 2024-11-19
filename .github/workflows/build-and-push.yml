@@ -141,8 +141,8 @@ jobs:
         uses: docker/bake-action@v5
         with:
           files: |
-            docker-compose.yml # Provides context
-            ${{ steps.meta.outputs.bake-file }} # Provides labels and tags
+            docker-compose.yml
+            ${{ steps.meta.outputs.bake-file }}
           push: ${{ github.event_name != 'pull_request' }}
           targets: ${{ matrix.service }}
           set: |
