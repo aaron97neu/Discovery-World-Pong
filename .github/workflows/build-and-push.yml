@@ -107,9 +107,9 @@ jobs:
             TAGS="$TAGS,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           fi
 
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=tags::${TAGS}
-          echo ::set-output name=created::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo "{version}=${VERSION}" >> $GITHUB_OUTPUT
+          echo "{tags}=${TAGS}" >> $GITHUB_OUTPUT
+          echo "{created}=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
           echo ${{ github.event.repository.license }}
 
@@ -126,8 +126,9 @@ jobs:
         with:
           files: docker-compose.yml # Provides context
           targets: ${{ matrix.service }}
-          platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
           tags: ${{ steps.prepare.outputs.tags }}
           labels: |
             org.opencontainers.image.title=${{ matrix.service }}
@@ -138,5 +139,3 @@ jobs:
             org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
-            cache-from: type=local,src=/tmp/.buildx-cache
-            cache-to: type=local,dest=/tmp/.buildx-cache
