@@ -30,8 +30,8 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install -y alsa-utils por
 
 FROM base AS final
 
-LABEL org.opencontainers.image.source https://github.com/aaron97neu/Discovery-World-Pong
-LABEL org.opencontainers.image.licenses MIT
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
 
 WORKDIR /app
 COPY . .
