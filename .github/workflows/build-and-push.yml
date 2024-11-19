@@ -107,9 +107,9 @@ jobs:
             TAGS="$TAGS,${DOCKER_IMAGE}:sha-${GITHUB_SHA::8}"
           fi
 
-          echo "{version}=${VERSION}" >> $GITHUB_OUTPUT
-          echo "{tags}=${TAGS}" >> $GITHUB_OUTPUT
-          echo "{created}=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
           echo ${{ github.event.repository.license }}
 
@@ -131,7 +131,6 @@ jobs:
             target.args.tags=${{ steps.prepare.outputs.tags }}
             target.args.cache-from=type=local,src=/tmp/.buildx-cache
             target.args.cache-to=type=local,dest=/tmp/.buildx-cache
-            target.args.labels=org.opencontainers.image.title=${{ matrix.service }}
             target.args.labels=org.opencontainers.image.title=${{ matrix.service }}
             target.args.labels=org.opencontainers.image.description=An Container for Discovery World's Pong Exhibit
             target.args.labels=org.opencontainers.image.url=${{ github.event.repository.html_url }}
