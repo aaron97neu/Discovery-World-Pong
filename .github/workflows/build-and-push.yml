@@ -90,9 +90,7 @@ jobs:
         with:
           files: |
             docker-compose.yml
-            ${{ steps.meta.outputs.bake-file }}
             ${{ steps.meta.outputs.bake-file-tags }}
-            ${{ steps.meta.outputs.bake-file-annotations }}
           push: ${{ github.event_name != 'pull_request' }}
           targets: ${{ matrix.service }}
           set: |
