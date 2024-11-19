@@ -138,4 +138,4 @@ jobs:
             ${{ matrix.service }}.labels=org.opencontainers.image.version=${{ steps.prepare.outputs.version }}
             ${{ matrix.service }}.labels=org.opencontainers.image.created=${{ steps.prepare.outputs.created }}
             ${{ matrix.service }}.labels=org.opencontainers.image.revision=${{ github.sha }}
-            ${{ matrix.service }}labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
+            ${{ matrix.service }}.labels=org.opencontainers.image.licenses=${{ github.event.repository.license.spdx_id }}
