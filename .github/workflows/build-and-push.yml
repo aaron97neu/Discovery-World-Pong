@@ -72,6 +72,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
+          flavor: |
+            latest=false
           images: |
             ${{ env.REGISTRY }}/${{ env.ORG }}/${{ matrix.service }}
           tags: |
@@ -91,10 +93,10 @@ jobs:
         with:
           files: |
             docker-compose.yml
-            ${{ steps.meta.outputs.bake-file-tags }}
+            ${{ steps.meta.outputs.bake-file-annotations }}
+            ${{ steps.meta.outputs.bake-file }}
           push: ${{ github.event_name != 'pull_request' }}
           targets: ${{ matrix.service }}
           set: |
-            ${{ matrix.service }}.tags=${{ steps.meta.outputs.tags }}
             ${{ matrix.service }}.cache-from=type=local,src=/tmp/.buildx-cache
             ${{ matrix.service }}.cache-to=type=local,dest=/tmp/.buildx-cache
