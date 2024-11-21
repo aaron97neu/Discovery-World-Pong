@@ -92,10 +92,10 @@ jobs:
         run: |
           echo Bake File: 
           cat ${{ steps.meta.outputs.bake-file }}
-          echo Bake File Annotations:
+          echo -e \nBake File Annotations:
           cat ${{ steps.meta.outputs.bake-file-annotations }}
-          echo Bake File tags:
-          cat ${{ steps.meta.output.bake-file-tags }}
+          echo -e \nBake File tags:
+          cat ${{ steps.meta.outputs.bake-file-tags }}
 
       - name: Build and push
         uses: docker/bake-action@v5
