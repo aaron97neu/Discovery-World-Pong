@@ -38,11 +38,9 @@ RUN sudo mkdir -p /etc/apt/keyrings
 RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
 RUN sudo apt-get install apt-transport-https -y
 RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list
-RUN sudo apt-get update
-RUN sudo apt-get install -y librealsense2-dkms \
-			    librealsense2-utils \
-                            librealsense2-dev \
-                            librealsense2-dbg
+RUN sudo apt-get update --fix-missing
+RUN sudo apt-get install -y librealsense2-utils
+
 WORKDIR /app
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
