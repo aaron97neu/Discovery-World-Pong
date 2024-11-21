@@ -74,6 +74,8 @@ jobs:
         with:
           flavor: |
             latest=false
+          bake-target:
+            ${{ matrix.service }}
           images: |
             ${{ env.REGISTRY }}/${{ env.ORG }}/${{ matrix.service }}
           tags: |
@@ -90,11 +92,11 @@ jobs:
 
       - name: Print out bake files for debugging
         run: |
-          echo Bake File: 
+          echo Bake File:
           cat ${{ steps.meta.outputs.bake-file }}
-          echo -e \nBake File Annotations:
+          echo -e "\nBake File Annotations:"
           cat ${{ steps.meta.outputs.bake-file-annotations }}
-          echo -e \nBake File tags:
+          echo -e "\nBake File tags:"
           cat ${{ steps.meta.outputs.bake-file-tags }}
 
       - name: Build and push
@@ -102,7 +104,6 @@ jobs:
         with:
           files: |
             docker-compose.yml
-            ${{ steps.meta.outputs.bake-file-annotations }}
             ${{ steps.meta.outputs.bake-file }}
           push: ${{ github.event_name != 'pull_request' }}
           targets: ${{ matrix.service }}
