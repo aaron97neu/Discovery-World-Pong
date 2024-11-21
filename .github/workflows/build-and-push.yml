@@ -91,11 +91,11 @@ jobs:
 
       - name: Print out bake files for debugging
         run: |
-          echo Bake File (${{ steps.meta.outputs.bake-file }})
+          echo Bake File:
           cat ${{ steps.meta.outputs.bake-file }}
-          echo -e "\nBake File Annotations ${{ steps.meta.outputs.bake-file-annotations }}"
+          echo -e "\nBake File Annotations:"
           cat ${{ steps.meta.outputs.bake-file-annotations }}
-          echo -e "\nBake File tags ${{ steps.meta.outputs.bake-file-tags }}"
+          echo -e "\nBake File tags:"
           cat ${{ steps.meta.outputs.bake-file-tags }}
 
       - name: Build and push
