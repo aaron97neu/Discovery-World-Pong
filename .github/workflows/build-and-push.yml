@@ -88,6 +88,15 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ matrix.service }}
 
+      - name: Print out bake files for debugging
+        run: |
+          echo Bake File: 
+          cat ${{ steps.meta.outputs.bake-file }}
+          echo Bake File Annotations:
+          cat ${{ steps.meta.outputs.bake-file-annotations }}
+          echo Bake File tags:
+          cat ${{ steps.meta.output.bake-file-tags }}
+
       - name: Build and push
         uses: docker/bake-action@v5
         with:
