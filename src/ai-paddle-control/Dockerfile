@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.13.0-gpu as runner
+FROM tensorflow/tensorflow:2.13.0-gpu AS runner
 
 LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
 LABEL org.opencontainers.image.licenses=MIT
