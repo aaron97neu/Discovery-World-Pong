@@ -2,6 +2,7 @@ services:
     mqtt-broker:
         container_name: mqtt-broker
         image: eclipse-mosquitto:2.0.15
+        profiles: [dev, prod]
         ports:
             - 1883:1883
             - 8883:8883
@@ -13,109 +14,140 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
+    mqtt-explorer:
+        container_name: mqtt-explorer
+        image: smeagolworms4/mqtt-explorer
+        profiles: [dev]
+        ports:
+            - 4000:4000
+        volumes:
+            - ./development-tools/mqtt-explorer/config:/mqtt-explorer/config
+        restart: unless-stopped
+        networks:
+            - pong-network
     ai-paddle-control:
         container_name: ai-paddle-control
         image: ai-paddle-control:latest
-        build: 
-          context: ./src/ai-paddle-control
-          additional_contexts:
-            util: ./src/shared/code
-            validation: ./src/shared/validation
+        build:
+            context: ./src/ai-paddle-control
+            additional_contexts:
+                util: ./src/shared/code
+                validation: ./src/shared/validation
+                certs: ./certs
+        profiles: [dev, prod]
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
         deploy:
-          resources:
-            reservations:
-              devices:
-                - driver: nvidia
-                  count: 1
-                  capabilities: [gpu]
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
     game-engine:
         container_name: game-engine
         image: game-engine:latest
-        build: 
-          context: ./src/game-engine
-          additional_contexts:
-            util: ./src/shared/code
+        build:
+            context: ./src/game-engine
+            additional_contexts:
+                util: ./src/shared/code
+        profiles: [dev, prod]
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
     human-paddle-control:
         container_name: human-paddle-control
         image: human-paddle-control:latest
-        build: 
-          context: ./src/human-paddle-control
-          additional_contexts:
-            util: ./src/shared/code
+        build:
+            context: ./src/human-paddle-control
+            additional_contexts:
+                util: ./src/shared/code
+        profiles: [dev, prod]
         volumes:
             - /dev:/dev
         device_cgroup_rules:
-            - 'c 81:* rmw'
-            - 'c 189:* rmw'               
-#       devices:
-#        - "/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22:/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22"
+            - "c 81:* rmw"
+            - "c 189:* rmw"
+        #       devices:
+        #        - "/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22:/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22"
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
     human-visualizer:
         container_name: human-visualizer
         image: human-visualizer:latest
-        build: 
-          context: ./src/human-visualizer
-          additional_contexts:
-            util: ./src/shared/code
+        build:
+            context: ./src/human-visualizer
+            additional_contexts:
+                util: ./src/shared/code
+        profiles: [dev, prod]
         ports:
             - 5001:8000
-#       environment:
-#           - DEBUG=0 # Not used right now
+        #       environment:
+        #           - DEBUG=0 # Not used right now
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
     neural-net-visualizer:
         container_name: neural-net-visualizer
         image: neural-net-visualizer:latest
-        build: 
-          context: ./src/neural-net-visualizer
-          additional_contexts:
-            util: ./src/shared/code
-            models: ./src/shared/models
+        build:
+            context: ./src/neural-net-visualizer
+            additional_contexts:
+                util: ./src/shared/code
+                models: ./src/shared/models
+        profiles: [dev, prod]
         ports:
-            - 5002:8000        
+            - 5002:8000
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
     clocktower-visualizer:
         container_name: clocktower-visualizer
         image: clocktower-visualizer:latest
         build:
-          context: ./src/clocktower-visualizer
-          additional_contexts:
-            models: ./src/shared/models
+            context: ./src/clocktower-visualizer
+            additional_contexts:
+                models: ./src/shared/models
+        profiles: [dev, prod]
         ports:
-            - 5003:80        
+            - 5003:80
         restart: unless-stopped
         networks:
-            - pong-network       
+            - pong-network
     gameboard:
         container_name: gameboard
         image: gameboard:latest
         build: ./src/gameboard
+        profiles: [dev, prod]
         ports:
-            - 5000:80        
+            - 5000:80
         restart: unless-stopped
         networks:
             - pong-network
     audio-engine:
         container_name: audio-engine
         image: audio-engine:latest
-        build: 
-          context: ./src/audio-engine
+        build:
+            context: ./src/audio-engine
+        profiles: [dev, prod]
         devices:
-         - "/dev/snd"
+            - "/dev/snd"
         restart: unless-stopped
         networks:
-            - pong-network                       
+            - pong-network
+    single-screen-development:
+        container_name: single-screen-development
+        image: single-screen-development:latest
+        build:
+          context: ./src/single-screen-development
+        profiles: [dev]
+        ports:
+            - 5005:80        
+        restart: unless-stopped
+        networks:
+            - pong-network    
 networks:
     pong-network:
         name: pong-network
