@@ -1,4 +1,13 @@
-FROM node:18-slim AS builder
+ARG CERTS=default
+
+FROM node:18-slim AS base_default
+
+FROM base_default AS base_zscaler
+COPY --from=certs . ./certs
+RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+
+FROM base_${CERTS} AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=optional
