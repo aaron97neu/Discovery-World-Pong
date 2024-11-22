@@ -82,6 +82,11 @@ services:
           context: ./src/human-visualizer
           additional_contexts:
             util: ./src/shared/code
+        develop:
+            watch:
+            - action: sync
+              path: ./src/human-visualizer/visualizer
+              target: /app/visualizer
         ports:
             - 5001:8000        
         restart: unless-stopped
@@ -97,6 +102,11 @@ services:
           additional_contexts:
             util: ./src/shared/code
             models: ./src/shared/models
+        develop:
+            watch:
+            - action: sync
+              path: ./src/neural-net-visualizer/visualizer
+              target: /app/visualizer
         ports:
             - 5002:8000        
         restart: unless-stopped
