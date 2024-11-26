@@ -17,6 +17,7 @@ class GamePlay {
    * @param {Object} changes - The changed state values.
    */
   onStateChange(changes) {
+    console.log('state change: ', changes);
     if ('game_countdown' in changes) {
       const countdown = changes['game_countdown'];
       this.sceneContext.setCountdown(countdown);
@@ -39,6 +40,13 @@ class GamePlay {
       const bottomPaddlePosition = changes['game_bottom_paddle_position'];
       this.sceneContext.setBottomPaddlePosition(bottomPaddlePosition);
     }
+
+    if ('game_ball_position' in changes) {
+      const ballPosition = changes['game_ball_position'];
+      console.log("ballPositon: ", ballPosition);
+      this.sceneContext.setBallPosition({x: ballPosition.x, y: ballPosition.y});
+    }
+
   }
 
 }

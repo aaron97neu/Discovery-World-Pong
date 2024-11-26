@@ -8,6 +8,8 @@ import mqtt from 'mqtt';
 // class MQTTClient {
 export default class MQTTClient {
     constructor(broker_url, client_id, baseState) {
+        // this.last_in_timestamp = Date.now();
+        // this.last_out_timestamp = Date.now();
         this.broker_url = broker_url;
         this.client_id = client_id;
         this.baseState = baseState;
@@ -62,6 +64,7 @@ export default class MQTTClient {
         console.log("MQTT onConnect")
         this.connected = true;
         for (let topic in this.subscribeMap) {
+            console.log(`subscribe: ${topic}`);
             this.client.subscribe(topic);
         }
     }
@@ -80,10 +83,22 @@ export default class MQTTClient {
      * @param {Buffer} message - The message payload.
      */
     onMessage(topic, message) {
+        // const timestamp = Date.now();
+        // console.log(`IN - Current timestamp in milliseconds: ${timestamp - this.last_in_timestamp}`);  
+        // this.last_in_timestamp = timestamp;      
         const stateKey = this.subscribeMap[topic];
         if (stateKey) {
-            this.baseState.setState(stateKey, message.toString(), this);
+            const theObject = JSON.parse(message.toString())
+            console.log(`Message topic: ${topic}, value: ${theObject}`);
+            this.baseState.setState(stateKey, theObject, this);
         }
+    }
+
+    /**
+     * .
+     */
+    isConnected() {
+        return this.connected;
     }
 
     /**
@@ -91,11 +106,16 @@ export default class MQTTClient {
      * @param {Object} changedState - The changed state values.
      */
     onStateChange(changedState) {
-        console.log("MQTT onStateChange")
+        // console.log("MQTT onStateChange")
         for (let key in changedState) {
             const topic = this.publishMap[key];
             if (topic) {
-                this.client.publish(topic, changedState[key]);
+                const jsonString = JSON.stringify(changedState[key]);
+                // const timestamp = Date.now();
+                // console.log(`OUT - Current timestamp in milliseconds: ${timestamp - this.last_out_timestamp}`);
+                // this.last_out_timestamp = timestamp;
+                console.log(`Publish topic: ${topic}, value: ${jsonString}`);
+                this.client.publish(topic, jsonString);
             }
         }
     }

@@ -17,12 +17,13 @@ function CameraController() {
   return null;
 }
 
-function MainScene({ width, height }) {
+function MainScene() {
   const {isGameboard} = useContext(SceneContext);
 
   return (
-      <Canvas mode="concurrent" args={[width, height]} shadows >
+    <Canvas mode="concurrent">
       <CameraController />
+      <ambientLight intensity={1.5} />
 
         <Suspense fallback={null} >
         {isGameboard ? (
@@ -34,17 +35,15 @@ function MainScene({ width, height }) {
           <group>
             <PlayerInstructionsHud/>
           </group>  
-         )}         
+        )}         
         </Suspense>
-
-        <ambientLight intensity={1.5} />
-        
+       
         {/* <axesHelper args={[10]} position={[0,1,0]} />
         <gridHelper  args={[80,20]}/>   
         <GizmoHelper alignment='bottom-right' margin={[80, 80]}>
           <GizmoViewcube />
-        </GizmoHelper>*/}
-      </Canvas>
+        </GizmoHelper> */}
+    </Canvas>
   );
 }
 

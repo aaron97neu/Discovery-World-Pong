@@ -144,7 +144,7 @@ services:
         - .:/app
         - /app/node_modules
         environment:
-        - CHOKIDAR_USEPOLLING=true            
+            - CHOKIDAR_USEPOLLING=true            
 
     audio-engine:
         container_name: audio-engine
@@ -162,6 +162,40 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
+
+    top-web-paddle-control:
+        container_name: top-web-paddle-control
+        image: top-web-paddle-control:latest
+        build:
+            # dockerfile: Dockerfile.zscaler
+            context: ./modules/web-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+            args:
+                REACT_APP_PADDLE_ID: top
+        ports:
+            - 5004:80                
+        restart: unless-stopped
+        networks:
+            - pong-network
+
+    bottom-web-paddle-control:
+        container_name: bottom-web-paddle-control
+        image: bottom-web-paddle-control:latest
+        build:
+            # dockerfile: Dockerfile.zscaler
+            context: ./modules/web-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+            args:
+                REACT_APP_PADDLE_ID: bottom
+        ports:
+            - 5005:80                
+        restart: unless-stopped
+        networks:
+            - pong-network  
 
     keyboard-paddle-control:
         container_name: keyboard-paddle-control

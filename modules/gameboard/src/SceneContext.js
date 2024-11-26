@@ -18,8 +18,7 @@ const SceneProvider = ({ children }) => {
   const [bottomScore, setBottomScore] = useState('0');
   const [topPaddlePosition, setTopPaddlePosition] = useState('0.5');
   const [bottomPaddlePosition, setBottomPaddlePosition] = useState('0.5');
-  // const [topPaddlePosition, setTopPaddlePosition] = useState('1.0');
-  // const [bottomPaddlePosition, setBottomPaddlePosition] = useState('0.0');
+  const [ballPosition, setBallPosition] = useState({x: 0.0, y: 0.0});
 
   return (
     <SceneContext.Provider value={{ 
@@ -31,6 +30,7 @@ const SceneProvider = ({ children }) => {
       bottomScore, setBottomScore,
       topPaddlePosition, setTopPaddlePosition,
       bottomPaddlePosition, setBottomPaddlePosition,
+      ballPosition, setBallPosition,
       }}>
       {children}
     </SceneContext.Provider>

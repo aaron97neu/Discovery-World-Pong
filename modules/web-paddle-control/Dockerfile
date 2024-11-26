@@ -1,15 +1,17 @@
-# Dockerfile
-# Stage 1: Build the React app
-FROM node:17 as build
+FROM node:17 AS builder
 WORKDIR /app
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install
+COPY --from=util ./js_packages ./js_packages
+COPY package*.json ./
 COPY . ./
+RUN npm install
+RUN npm install ./js_packages/dw/state-machine
+ARG REACT_APP_PADDLE_ID
+ENV REACT_APP_PADDLE_ID $REACT_APP_PADDLE_ID
 RUN npm run build
 
-# Stage 2: Serve the app with Nginx
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
+FROM nginx:1.25.0
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+COPY --from=builder /app/build .
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
