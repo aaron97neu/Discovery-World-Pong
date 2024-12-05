@@ -19,7 +19,7 @@ env:
 
 jobs:
   integration-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions: # Used by publish test report step
       checks: write
       id-token: write
