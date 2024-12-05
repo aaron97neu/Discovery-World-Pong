@@ -6,6 +6,7 @@ FROM base_default AS base_zscaler
 COPY --from=certs . ./certs
 RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 FROM base_${CERTS} AS builder
 WORKDIR /app

@@ -1,4 +1,6 @@
 # This dockerfile was quickly made to dockerize the application it has not been optimized.
+ARG CERTS=default
+
 FROM --platform=amd64 ubuntu:22.04 AS ssl_default
 
 FROM ssl_default AS ssl_zscaler
