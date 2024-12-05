@@ -19,6 +19,24 @@ To build all the containers, run the following:
 docker compose build
 ```
 
+The docker container file provides the following profiles:
+- **dev:** Build additional development containers including a mqtt gui and a 
+           single screen containing all exhibit screens
+- **prod:** Build only the containers used on the exhibit
+These can be run with the following commands:
+```
+docker compose --profile dev up
+docker compose --profile prod up
+```
+
+Rockwell Automation requires all machines (incl containers) to have a ZScaler
+SSL certificate installed in order to connect to the internet. These containers
+support this and will install the certs with the build argument `CERTS=zscaler`
+as shown below. Without this arguemnt, the certificates will not be installed.
+```
+docker compose up --build-arg CERTS=zscaler
+```
+
 ### Tags
 The latest `reslease/x.y.z` tag is the most recent stable version. 
 The `latest` tag is not used.
@@ -35,7 +53,6 @@ just pulling from the compose instead of pulling the source in rebuilding, and r
 issues with local build system.
 Finally, in an emergency, the exhibit itself can use proposed code from any published commit while a
 hotfix is deployed to the main codebase.
-
 
 ### Start/stop the exhibit using docker-compose
 To start the containers using docker-compose run the following:
