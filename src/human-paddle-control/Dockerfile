@@ -14,7 +14,7 @@ ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 # other platforms can emulate this if needed
 FROM ssl_${CERTS} AS builder
 ENV PYTHONDONTWRITEBYTECODE=1
-RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get update --fix-missing && apt-get upgrade -y
 RUN apt-get install curl sudo lsb-base lsb-release -y
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -33,7 +33,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
 
 FROM ssl_${CERTS} AS final
-RUN apt-get update && apt-get upgrade -y
+
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
+
+RUN apt-get update --fix-missing && apt-get upgrade -y
+
 RUN apt-get install curl sudo lsb-base lsb-release -y
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections

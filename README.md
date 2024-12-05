@@ -37,6 +37,23 @@ as shown below. Without this arguemnt, the certificates will not be installed.
 docker compose up --build-arg CERTS=zscaler
 ```
 
+### Tags
+The latest `reslease/x.y.z` tag is the most recent stable version. 
+The `latest` tag is not used.
+Maintainers should always be specifying a version when pulling, and if a maintainer truely needs
+"the latest version", `next` better communicates that it is the bleeding edge.
+
+The CI/CD system will automatically build and push containers for all `main` and PR commits.
+All proposed code should be built in the same way that the final code is built so that any 
+discrepancies in the build environment between developer machines and the release built system are 
+accounted for.
+In addition, this facilitates easier testing by pulling from the registry instead of building. 
+This allows developers to test proposed code an exhibit twin (or any other suitable test system) by
+just pulling from the compose instead of pulling the source in rebuilding, and removes any potential
+issues with local build system.
+Finally, in an emergency, the exhibit itself can use proposed code from any published commit while a
+hotfix is deployed to the main codebase.
+
 ### Start/stop the exhibit using docker-compose
 To start the containers using docker-compose run the following:
 ```

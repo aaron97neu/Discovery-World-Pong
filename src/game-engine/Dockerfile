@@ -23,6 +23,10 @@ FROM python:3.8-slim-bookworm AS base
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 libgtk2.0-dev pkg-config -y
 
 FROM base AS final
+
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
+
 WORKDIR /app
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv

@@ -1,0 +1,100 @@
+# Modified from: https://github.com/oats-center/isoblue/blob/master/.github/workflows/build-and-push-services.yml
+name: Build and Push Pong Containers
+
+on:
+  push:
+  pull_request:
+
+env:
+  REGISTRY: ghcr.io
+  ORG: aaron97neu
+  CONTAINER_DIR: src
+
+jobs:
+  build-and-push-services:
+    strategy:
+      matrix:
+        service:
+          - ai-paddle-control
+          - audio-engine
+          - clocktower-visualizer
+          - game-engine
+          - gameboard
+          - human-paddle-control
+          - human-visualizer
+          - neural-net-visualizer
+          
+    runs-on: ubuntu-24.04
+   
+    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3.7.1
+        with:
+          version: latest
+
+      - name: Builder instance name
+        run: echo ${{ steps.buildx.outputs.name }}
+
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          flavor: |
+            latest=false
+          bake-target:
+            ${{ matrix.service }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.ORG }}/${{ matrix.service }}
+          tags: |
+            type=sha
+            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=semver,pattern={{major}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=raw,value=next,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=${{ matrix.service }}
+
+      - name: Print out bake files for debugging
+        run: |
+          echo Bake File:
+          cat ${{ steps.meta.outputs.bake-file }}
+          echo -e "\nBake File Annotations:"
+          cat ${{ steps.meta.outputs.bake-file-annotations }}
+          echo -e "\nBake File tags:"
+          cat ${{ steps.meta.outputs.bake-file-tags }}
+
+      - name: Build and push
+        uses: docker/bake-action@v5
+        with:
+          files: |
+            docker-compose.yml
+            ${{ steps.meta.outputs.bake-file }}
+          push: ${{ github.event_name != 'pull_request' }}
+          targets: ${{ matrix.service }}
+          set: |
+            ${{ matrix.service }}.cache-from=type=gha
+            ${{ matrix.service }}.cache-to=type=gha,mode=max

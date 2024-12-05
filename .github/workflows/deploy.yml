@@ -38,7 +38,7 @@ env:
 # on the provided hardware.
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     # Checkout the source code. This is the standard preamble for most workflows
     - name: Checkout

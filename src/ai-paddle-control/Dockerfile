@@ -10,6 +10,9 @@ ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 FROM ssl_${CERTS} AS runner
 
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
+
 WORKDIR /app
 
 # Install runtime system deps
