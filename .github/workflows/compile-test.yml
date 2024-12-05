@@ -1,7 +1,8 @@
-name: Compile Test
+name: Container Build Test
 
-# Testing should be run on every push, no matter the branch
-on: push
+# This workflow is never run directly, but called by each container's integration testing
+on:
+  push
 
 jobs:
   # The most basic of all tests: Does it compile?
@@ -10,7 +11,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Build Images
         run: docker compose build --parallel

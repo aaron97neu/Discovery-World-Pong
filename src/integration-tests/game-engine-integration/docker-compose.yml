@@ -47,13 +47,18 @@ services:
         image: integration-test:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/test
+            context: ./src/integration-tests
             additional_contexts:
                 util: ./src/shared/code
                 certs: ./certs
                 game_engine: ./src/game-engine
         environment:
             MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/integration-tests/test.py
+                  target: /app/test.py
         restart: no
         networks:
             - pong-network

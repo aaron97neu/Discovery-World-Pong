@@ -1,0 +1,9 @@
+# Integration Testing
+The our integration testing 
+
+TODOs:
+- Github actions is a ton of copy/paste right now. Template out a workflow just
+  like we did with deploy.yml.
+- Go through game-engine testsing and redo all logging levels
+- Actually implement human-visualizer
+- right the rest of the tests

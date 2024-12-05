@@ -1,0 +1,89 @@
+# Currently this file is just the normal `docker-compose.yml`
+# file with additional services which would be better done
+# by just having the extra services and an extends keyword. However,
+# the future plan is to replace the human paddle control mechanisms
+# with a keyboard control to facilite testing without the depth
+# camera, which would involve removing services.
+
+services:
+    game-engine-integration:
+        container_name: game-engine-integration
+        image: game-engine-integration:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/integration-tests/game-engine-integration
+            additional_contexts:
+                util: ./src/shared/code
+                certs: ./certs
+                game_engine: ./src/game-engine
+        environment:
+            MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/integration-tests/game-engine-integration/test.py
+                  target: /app/test.py
+        restart: no
+        networks:
+            - pong-network
+
+    human-visualizer-integration:
+        container_name: human-visualizer-integration
+        image: human-visualizer-integration:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/integration-tests/human-visualizer-integration
+            additional_contexts:
+                util: ./src/shared/code
+                certs: ./certs
+                game_engine: ./src/game-engine
+        environment:
+            MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/integration-tests/human-visualizer-integration/test.py
+                  target: /app/test.py
+        restart: no
+        networks:
+            - pong-network
+
+    ai-paddle-control-integration:
+        container_name: ai-paddle-control-integration
+        image: ai-paddle-control-integration:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/integration-tests/ai-paddle-control-integration
+            additional_contexts:
+                util: ./src/shared/code
+                certs: ./certs
+                game_engine: ./src/game-engine
+        environment:
+            MQTTBROKER: mqtt-broker
+        develop:
+            watch:
+                - action: sync+restart
+                  path: ./src/integration-tests/ai-paddle-control/test.py
+                  target: /app/test.py
+        restart: no
+        networks:
+            - pong-network
+
+    ai-paddle-control-no-gpu:
+        container_name: ai-paddle-control
+        image: ai-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./src/ai-paddle-control
+            additional_contexts:
+                util: ./src/shared/code
+                validation: ./src/shared/validation
+                certs: ./certs
+        restart: unless-stopped
+        networks:
+            - pong-network
+
+networks:
+    pong-network:
+        name: pong-network
+        driver: bridge
