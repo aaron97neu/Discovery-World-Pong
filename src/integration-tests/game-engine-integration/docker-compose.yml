@@ -47,7 +47,7 @@ services:
         image: integration-test:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/test
+            context: ./src/integration-tests
             additional_contexts:
                 util: ./src/shared/code
                 certs: ./certs
@@ -57,7 +57,7 @@ services:
         develop:
             watch:
                 - action: sync+restart
-                  path: ./src/test/test.py
+                  path: ./src/integration-tests/test.py
                   target: /app/test.py
         restart: no
         networks:

@@ -11,7 +11,7 @@ services:
         image: game-engine-integration:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/test/game-engine-integration
+            context: ./src/integration-tests/game-engine-integration
             additional_contexts:
                 util: ./src/shared/code
                 certs: ./certs
@@ -21,7 +21,7 @@ services:
         develop:
             watch:
                 - action: sync+restart
-                  path: ./src/test/game-engine-integration/test.py
+                  path: ./src/integration-tests/game-engine-integration/test.py
                   target: /app/test.py
         restart: no
         networks:
@@ -32,7 +32,7 @@ services:
         image: human-visualizer-integration:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/test/human-visualizer-integration
+            context: ./src/integration-tests/human-visualizer-integration
             additional_contexts:
                 util: ./src/shared/code
                 certs: ./certs
@@ -42,7 +42,7 @@ services:
         develop:
             watch:
                 - action: sync+restart
-                  path: ./src/test/human-visualizer-integration/test.py
+                  path: ./src/integration-tests/human-visualizer-integration/test.py
                   target: /app/test.py
         restart: no
         networks:
@@ -53,7 +53,7 @@ services:
         image: ai-paddle-control-integration:latest
         build:
             dockerfile: Dockerfile.zscaler
-            context: ./src/test/ai-paddle-control-integration
+            context: ./src/integration-tests/ai-paddle-control-integration
             additional_contexts:
                 util: ./src/shared/code
                 certs: ./certs
@@ -63,7 +63,7 @@ services:
         develop:
             watch:
                 - action: sync+restart
-                  path: ./src/test/ai-paddle-control/test.py
+                  path: ./src/integration-tests/ai-paddle-control/test.py
                   target: /app/test.py
         restart: no
         networks:

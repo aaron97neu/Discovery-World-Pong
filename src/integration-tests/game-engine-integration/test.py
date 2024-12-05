@@ -461,17 +461,17 @@ def poll_for_message(mqtt_data, topic, message=None, polltime=0.2, timeout=10):
     on_message callback inserting messages into mqtt client user data object
     
     Arguments:
-    * `mqtt_data`: Client User data object. Assumes that object is a dictonary with
+    * `mqtt_data`: (Required) Client User data object. Assumes that object is a dictonary with
         each key being the topic and each value being the most recent message 
         received
-    * `topic`: String representation of the topic requested
-    * `message`: json deseralized representation of the desired message. If None, 
-        will return on any message
-    * `polltime`: Time in seconds to poll
-    * `timeout`: Time in seconds to timeout if no new messages 
+    * `topic`: (Required) String representation of the topic requested
+    * `message`: (Optional) JSON deseralized representation of the desired message. If None or not
+        specified, will return on any message
+    * `polltime`: (Optional) Time in seconds to poll. Defaults to 0.2s if not specified
+    * `timeout`: (Optional) Time in seconds to timeout if no new messages. Defaults to 10s
 
     Returns:
-    * Message received in JSON deseralized via json.loads()
+    * Message received in JSON deseralized via `json.loads()`
     * `None` if timeout triggers
     """
     
