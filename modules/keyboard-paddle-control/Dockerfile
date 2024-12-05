@@ -1,5 +1,16 @@
+ARG CERTS=default
+
+FROM python:3.11-slim-bookworm AS ssl_default
+
+FROM ssl_default AS ssl_zscaler
+COPY --from=certs . ./certs
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y ca-certificates
+RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
 # base to speed up the build when only src changes
-FROM python:3.11-slim-bookworm AS base
+FROM ssl_${CERTS} AS base
 WORKDIR /app
 # Set the environment variable to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
