@@ -1,14 +1,14 @@
 ARG CERTS=default
 
-FROM node:18-slim AS base_default
+FROM node:18-slim AS ssl_default
 
-FROM base_default AS base_zscaler
+FROM ssl_default AS ssl_zscaler
 COPY --from=certs . ./certs
 RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
-FROM base_${CERTS} AS builder
+FROM ssl_${CERTS} AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=optional
