@@ -8,7 +8,7 @@ function HudImage({image, position = [0, 0, 0], scale = 1.0}) {
 
   useEffect(() => {
     setAspectRatio(texture.image.width / texture.image.height);
-  }, []);
+  }, [texture]);
 
   return (
     <mesh position={position}>

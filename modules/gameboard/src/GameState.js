@@ -5,7 +5,7 @@ import { BaseState } from 'dw-state-machine';
  * Inherits from BaseState.
  */
 class GameState extends BaseState {
-  // Additional methods or overrides can be added here
+    // Additional methods or overrides can be added here
 
 }
 
