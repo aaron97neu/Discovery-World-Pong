@@ -2,6 +2,7 @@ import json
 import paho.mqtt.client as mqtt
 import numpy as np
 import time
+import uuid
 from shared.config import Config
 
 class GameSubscriber:
@@ -86,7 +87,8 @@ class GameSubscriber:
 
     def __init__(self):
         print("init GameSubscriber")
-        self.client = mqtt.Client(client_id="game-engine")
+        client_id = "game-engine-" + str(uuid.uuid1())
+        self.client = mqtt.Client(client_id=client_id)
         # self.client.connect_async("localhost", port=1883, keepalive=60)
         # self.client.connect_async("192.168.2.214", port=1883, keepalive=60)
         self.client.connect_async("mqtt-broker", port=1883, keepalive=60)

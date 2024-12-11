@@ -9,6 +9,8 @@ from shared.config import Config
 # import cv2
 import math
 
+import uuid
+
 class AISubscriber:
     """
     MQTT compliant game state subscriber.
@@ -131,7 +133,8 @@ class AISubscriber:
         """
         self.config = config
         self.trigger_event = trigger_event
-        self.client = mqtt.Client(client_id="ai-paddle-control")
+        client_id = "ai-paddle-control-" + str(uuid.uuid1())
+        self.client = mqtt.Client(client_id=client_id)
         self.client.on_connect = lambda client, userdata, flags, rc : self.on_connect(client, userdata, flags, rc)
         self.client.on_message = lambda client, userdata, msg : self.on_message(client, userdata, msg)
         print("Initializing subscriber")

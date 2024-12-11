@@ -7,10 +7,14 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { arg_heapsort, is_significant } from "../Utils/heap";
 import { getMaxListeners } from "process";
 
+// Import UUID to generate unique but identifiable MQTT client id
+import { v1 as uuidv1 } from 'uuid';
+
 //process.setMaxListeners(13);
 
 const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'clocktower-visualizer-neural-net-viz'})
+const cid = 'clocktower-visualizer-neural-net-viz-' + uuidv1()
+const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: cid})
 client.on('connect', function () {
   client.subscribe('ai/activation', function (err) {
     if (!err) {

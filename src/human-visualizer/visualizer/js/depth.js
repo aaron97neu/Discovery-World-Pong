@@ -31,7 +31,8 @@ const broker = "localhost";
 const options = {
     clean: true,
     connectTimeout: 4000,
-    port: 9001
+    port: 9001,
+    clientId: "human-visualizer-" + Math.random().toString(16).slice(2)
 };
 const client = mqtt.connect("mqtt://" + broker, options);
 

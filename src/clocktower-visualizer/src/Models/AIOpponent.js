@@ -6,8 +6,12 @@ import React, { useRef, useEffect } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
+// Import UUID to generate unique but identifiable MQTT client id
+import { v1 as uuidv1 } from 'uuid';
+
 const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'clocktower-opponent-face'} )
+const cid = 'clocktower-opponent-face-' + uuidv1()
+const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: cid} )
 client.on('connect', function () {
   client.subscribe('player1/score', function (err) {
     if (!err) {

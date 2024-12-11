@@ -5,8 +5,12 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import React, {useRef, useEffect} from "react";
 
+// Import UUID to generate unique but identifiable MQTT client id
+import { v1 as uuidv1 } from 'uuid';
+
 const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-ponggame.js'});
+const cid = 'gameboard-ponggane.js-' + uuidv1()
+const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: cid} )
 console.log("Creating Gameplay connections");
 client.on('connect', function () {
   client.subscribe('puck/position', function (err) {

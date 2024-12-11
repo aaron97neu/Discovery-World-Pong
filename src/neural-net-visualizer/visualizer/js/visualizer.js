@@ -238,7 +238,8 @@ function init() {
     exist, and do any precomputing or sizing that aren't model dependent.
     */
     // Create a client instance
-    client = new Paho.Client("localhost", 9001, "neural-net-visualizer");
+    cid = "neural-net-visualizer-" + Math.random().toString(16).slice(2)
+    client = new Paho.Client("localhost", 9001, cid);
 
     // set callback handlers
     client.onConnectionLost = onConnectionLost;

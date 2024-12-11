@@ -18,9 +18,13 @@ import NNVisualizer from './Models/NNVisualizer'; // Visualizes the neural netwo
 // Import React hooks
 import { Suspense, useEffect } from 'react';
 
+// Import UUID to generate unique but identifiable MQTT client id
+import { v1 as uuidv1 } from 'uuid';
+
 const mqtt = require('mqtt')
 // Connects to the MQTT broker specified in environment variable
-const client = mqtt.connect(process.env.REACT_APP_URL, { clientId: 'clocktower-visualizer' })
+const cid = 'clocktower-visualizer-' + uuidv1()
+const client = mqtt.connect(process.env.REACT_APP_URL, { clientId: cid })
 client.on('connect', function () {
   client.subscribe('motion/position', function (err) {
     if (!err) {

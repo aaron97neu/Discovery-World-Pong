@@ -4,6 +4,7 @@ MQTT AudioCommandProvider implementation module.
 
 import logging
 import json
+import uuid
 from paho.mqtt import client as mqtt
 from audio_command_handler import AudioCommandHandler
 from audio_schema_validator import AudioSchemaValidator
@@ -16,7 +17,8 @@ class MQTT:
     """
 
     def __init__(self, audio_command_handler: AudioCommandHandler):
-        self.client = mqtt.Client(client_id="audio-engine")
+        client_id = "audio-engine-" + str(uuid.uuid1())
+        self.client = mqtt.Client(client_id=client_id)
         self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
         self.client.on_connect = self.__on_connect
         self.client.on_message = self.__on_message

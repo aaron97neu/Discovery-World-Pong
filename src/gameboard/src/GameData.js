@@ -7,10 +7,12 @@ import Text from './3DComponents/Text';
 import TransparentPlane from './3DComponents/TransparentPlane';
 import { Group } from 'three';
 
-
+// Import UUID to generate unique but identifiable MQTT client id
+import { v1 as uuidv1 } from 'uuid';
 
 const mqtt = require('mqtt')
-const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: 'gameboard-gamedata.js'});
+const cid = 'gameboard-gamedata.js-' + uuidv1()
+const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: cid} )
 console.log("Creating UI connections");
 client.on('connect', function () {
  
