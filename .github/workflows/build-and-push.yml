@@ -16,15 +16,15 @@ jobs:
       matrix:
         service:
           - ai-paddle-control
-          - audio-engine
-          - clocktower-visualizer
-          - game-engine
-          - gameboard
-          - human-paddle-control
-          - human-visualizer
-          - neural-net-visualizer
+#          - audio-engine
+#          - clocktower-visualizer
+#          - game-engine
+#          - gameboard
+#          - human-paddle-control
+#          - human-visualizer
+#          - neural-net-visualizer
           
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
    
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
@@ -50,12 +50,26 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
 
       - name: Login to DockerHub
-        if: github.event_name != 'pull_request'
+        if: false #github.event_name != 'pull_request'
         uses: docker/login-action@v3.3.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # This likely could have been done inline in the next step but those steps
+      # are aleady messy enough
+      - name: Validate Release Version
+        id: release-ver
+        if: startsWith(github.ref, format('refs/heads/{0}', 'release'))
+        run: |
+          VERSION=${GITHUB_REF#refs/heads/release/}
+          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+              echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo ::error ::Version does not follow semantic versioning. Stopping.
+            exit 1
+          fi
 
       - name: Setup Docker Metadata
         id: meta
@@ -69,9 +83,9 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.ORG }}/${{ matrix.service }}
           tags: |
             type=sha
-            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
-            type=semver,pattern={{major}}.{{minor}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
-            type=semver,pattern={{major}},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=semver,pattern={{version}},value=${{ steps.release-ver.outputs.VERSION }},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.release-ver.outputs.VERSION }},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
+            type=semver,pattern={{major}},value=${{ steps.release-ver.outputs.VERSION }},enable=${{ startsWith(github.ref, format('refs/heads/{0}', 'release')) }}
             type=ref,event=branch
             type=ref,event=pr
             type=raw,value=next,enable={{is_default_branch}}
