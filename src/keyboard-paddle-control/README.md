@@ -19,6 +19,13 @@ To start the container using docker run the following from the keyboard-paddle-c
 ```
 docker run -it --rm --name keyboard-paddle-control -e MQTT_BROKER=<IP ADDRESS OF THE MQTT BROKER> -e PADDLE_ID=bottom_paddle -v /dev:/dev --privileged keyboard-paddle-control:latest
 ```
+If running the other pong containers and this container with the same docker instance use the following code to get the ip address of the MQTT broker and add the --network flag.
+```
+docker exec -ti exec mqtt-broker
+ip addr
+docker run -it --rm --name keyboard-paddle-control -e MQTT_BROKER=<IP ADDRESS OF THE MQTT BROKER> --network pong-network -e PADDLE_ID=bottom_paddle -v /dev:/dev --privileged keyboard-paddle-control:latest
+```
+
 To stop the container:
 ```
 Press the 'q' key
