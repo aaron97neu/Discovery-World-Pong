@@ -21,7 +21,7 @@ docker run -it --rm --name keyboard-paddle-control -e MQTT_BROKER=<IP ADDRESS OF
 ```
 If running the other pong containers and this container with the same docker instance use the following code to get the ip address of the MQTT broker and add the --network flag.
 ```
-docker exec -ti exec mqtt-broker /bin/sh
+docker exec -ti mqtt-broker /bin/sh
 ip addr
 docker run -it --rm --name keyboard-paddle-control -e MQTT_BROKER=<IP ADDRESS OF THE MQTT BROKER> --network pong-network -e PADDLE_ID=bottom_paddle -v /dev:/dev --privileged keyboard-paddle-control:latest
 ```
