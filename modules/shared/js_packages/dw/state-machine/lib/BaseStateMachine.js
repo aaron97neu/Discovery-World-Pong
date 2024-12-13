@@ -8,8 +8,10 @@ import { BaseState } from './BaseState.js';
 
 // class BaseStateMachine {
 export default class BaseStateMachine {
-  constructor(baseState) {
-    this.baseState = baseState;
+  // constructor(baseState) {
+  constructor(pongAPI) {
+      // this.baseState = baseState;
+    this.pongAPI = pongAPI;
     this.bottomPaddleLeft = false;
     this.fsm = new StateMachine({
       init: 'stopped',
@@ -60,7 +62,8 @@ export default class BaseStateMachine {
   
   startMachine() {
     console.log('BaseStateMachine Entered startMachine'); 
-    this.baseState.addObserver(this, this.onStateChange.bind(this));
+    // this.baseState.addObserver(this, this.onStateChange.bind(this));
+    this.pongAPI.registerObserver('game/play', this.onGameState.bind(this));
     this.fsm.start();
     // this.runLoop();
   }
@@ -76,15 +79,17 @@ export default class BaseStateMachine {
   }
 
   /**
-   * Handle state changes from BaseState.
-   * @param {Object} changes - The changed state values.
+   * Callback for game/state topic.
+   * @param {object} message - The message received.
    */
-  onStateChange(changes) {
-    if ('game_state_transition' in changes) {
-      const stateTransition = changes['game_state_transition'];
-      switch (stateTransition) {
+  onGameState(message) {
+    console.log('Game State Message:', message);
+    // if ('game_state_transition' in changes) {
+    //   const stateTransition = changes['game_state_transition'];
+    const stateTransition = message.transition;
+    switch (stateTransition) {
           case 'start':
-              this.fsm.start();
+            this.fsm.start();
               break;
           case 'player_ready':
             this.fsm.playerReady();
@@ -118,8 +123,54 @@ export default class BaseStateMachine {
               break;
           default:
               console.log("Unknown state transition:", stateTransition);
-      }
-    }
+      // }    
+  }
+
+  // /**
+  //  * Handle state changes from BaseState.
+  //  * @param {Object} changes - The changed state values.
+  //  */
+  // onStateChange(changes) {
+  //   if ('game_state_transition' in changes) {
+  //     const stateTransition = changes['game_state_transition'];
+  //     switch (stateTransition) {
+  //         case 'start':
+  //             this.fsm.start();
+  //             break;
+  //         case 'player_ready':
+  //           this.fsm.playerReady();
+  //           break;
+  //         case 'player_exit':
+  //           this.fsm.playerExit();
+  //           break;
+  //         case 'intro_complete':
+  //           this.fsm.introComplete();
+  //           break;
+  //         case 'move_left_intro_complete':
+  //           this.fsm.moveLeftIntroComplete();
+  //           break;
+  //         case 'start_game':
+  //           this.fsm.startGame();
+  //           break;
+  //         case 'level1_complete':
+  //           this.fsm.level1Complete();
+  //           break;
+  //         case 'level2_complete':
+  //             this.fsm.level2Complete();
+  //             break;
+  //         case 'level3_complete':
+  //             this.fsm.level3Complete();
+  //             break;
+  //         case 'game_complete':
+  //             this.fsm.gameComplete();
+  //             break;
+  //         case 'stop':
+  //             this.fsm.stop();
+  //             break;
+  //         default:
+  //             console.log("Unknown state transition:", stateTransition);
+  //     }
+  //   }
 
     // if ('bottom_paddle_position' in changes) {
     //   if (this.fsm.is('intro')) {

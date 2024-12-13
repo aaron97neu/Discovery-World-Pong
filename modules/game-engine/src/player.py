@@ -5,8 +5,8 @@ This module contains the various player types.
 """
 
 from random import randint
-from .pong import Pong
-from shared.config import Config
+from pong import Pong
+from dw.config import Config
 
 """
 NOTE: the classes defined in this file are intended to implement a common interface:
@@ -139,7 +139,6 @@ class BotPlayer:
         else:
             self.last_move = abs(self.last_move - 1)
             return self.last_move
-
 
 class AIPlayer:
     """

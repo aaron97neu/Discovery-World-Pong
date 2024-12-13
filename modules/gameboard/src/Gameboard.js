@@ -3,8 +3,8 @@ import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import {SceneContext} from './SceneContext';
 import * as IMAGES from './loadImages';
-import { Circle } from '@react-three/drei';
-import Ball from './Ball.js';
+// import { Circle } from '@react-three/drei';
+// import Ball from './Ball.js';
 
 function Gameboard() {
   const {topPaddlePosition, bottomPaddlePosition, ballPosition} = useContext(SceneContext);

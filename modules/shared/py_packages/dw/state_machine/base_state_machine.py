@@ -7,12 +7,14 @@ This module contains the BaseStateMachine class which implements a state machine
 
 import logging
 import time
-from abc import ABC
+# from abc import ABC
 from transitions import Machine
 from transitions.extensions import GraphMachine
-from .base_state import BaseState
+# from .base_state import BaseState
+from .pong_api import PongAPI
 
-class BaseStateMachine(ABC):
+# class BaseStateMachine(ABC):
+class BaseStateMachine():
     """
     BaseStateMachine Class
 
@@ -41,14 +43,14 @@ class BaseStateMachine(ABC):
         ]
 
     def __init__(self,
-                 base_state: BaseState):
+                 pong_api: PongAPI):
         """
         Initializes the BaseStateMachine with the given BaseState.
 
         Parameters:
-        game_state (BaseState): The BaseState instance to observe.
+        pong_api (PongAPI): The PongAPI instance to observe.
         """
-        self.base_state = base_state
+        self.pong_api = pong_api
         self.machine = Machine(model=self, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped', ignore_invalid_triggers=True)
 
     def start_machine(self):
@@ -56,49 +58,85 @@ class BaseStateMachine(ABC):
         Starts the BaseStateMachine by transitioning to the 'idle' state.
         """
         logging.info("BaseStateMachine Start")
-        self.base_state.add_observer(self, self._on_state_change)
+        self.pong_api.register_observer('game/state', self.on_game_state)
         self.start()
 
         while True:
             # logging.info("Starting BaseStateMachine loop")
             time.sleep(5)
 
-    def _on_state_change(self, changed_state):
+    def on_game_state(self, message):
         """
         Callback method for when the BaseState changes.
 
         Parameters:
         changed_state (dict): The changed state values.
         """
-        logging.info("current_state: %s", self.base_state)
-        logging.info("changed_state: %s", changed_state)
-        if 'game_state_transition' in changed_state:
-            state_transition = changed_state['game_state_transition']
-            if state_transition == 'start':
-                self.start()
-            elif state_transition == 'player_ready':
-                self.player_ready()
-            elif state_transition == 'player_exit':
-                self.player_exit()
-            elif state_transition == 'intro_complete':
-                self.intro_complete()
-            elif state_transition == 'move_left_intro_complete':
-                self.move_left_intro_complete()
-            elif state_transition == 'start_game':
-                self.start_game()
-            elif state_transition == 'level1_complete':
-                self.level1_complete()
-            elif state_transition == 'level2_complete':
-                self.level2_complete()
-            elif state_transition == 'level3_complete':
-                self.level3_complete()
-            elif state_transition == 'game_complete':
-                self.game_complete()
-            elif state_transition == 'stop':
-                self.stop()
-            else:
-                logging.info(f"Unknown state transition: {state_transition}")
-                return "Default case"
+        print(f"Game State Transition: {message['transition']}")
+
+        state_transition = message['transition']
+        if state_transition == 'start':
+            self.start()
+        elif state_transition == 'player_ready':
+            self.player_ready()
+        elif state_transition == 'player_exit':
+            self.player_exit()
+        elif state_transition == 'intro_complete':
+            self.intro_complete()
+        elif state_transition == 'move_left_intro_complete':
+            self.move_left_intro_complete()
+        elif state_transition == 'start_game':
+            self.start_game()
+        elif state_transition == 'level1_complete':
+            self.level1_complete()
+        elif state_transition == 'level2_complete':
+            self.level2_complete()
+        elif state_transition == 'level3_complete':
+            self.level3_complete()
+        elif state_transition == 'game_complete':
+            self.game_complete()
+        elif state_transition == 'stop':
+            self.stop()
+        else:
+            logging.info(f"Unknown state transition: {state_transition}")
+            return "Default case"
+
+    # def _on_state_change(self, changed_state):
+    #     """
+    #     Callback method for when the BaseState changes.
+
+    #     Parameters:
+    #     changed_state (dict): The changed state values.
+    #     """
+    #     # logging.info("current_state: %s", self.base_state)
+    #     logging.info("changed_state: %s", changed_state)
+    #     if 'game_state_transition' in changed_state:
+    #         state_transition = changed_state['game_state_transition']
+    #         if state_transition == 'start':
+    #             self.start()
+    #         elif state_transition == 'player_ready':
+    #             self.player_ready()
+    #         elif state_transition == 'player_exit':
+    #             self.player_exit()
+    #         elif state_transition == 'intro_complete':
+    #             self.intro_complete()
+    #         elif state_transition == 'move_left_intro_complete':
+    #             self.move_left_intro_complete()
+    #         elif state_transition == 'start_game':
+    #             self.start_game()
+    #         elif state_transition == 'level1_complete':
+    #             self.level1_complete()
+    #         elif state_transition == 'level2_complete':
+    #             self.level2_complete()
+    #         elif state_transition == 'level3_complete':
+    #             self.level3_complete()
+    #         elif state_transition == 'game_complete':
+    #             self.game_complete()
+    #         elif state_transition == 'stop':
+    #             self.stop()
+    #         else:
+    #             logging.info(f"Unknown state transition: {state_transition}")
+    #             return "Default case"
 
 class DiagramModel():
     pass

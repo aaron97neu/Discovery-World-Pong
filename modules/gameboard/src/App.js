@@ -1,15 +1,11 @@
 import './App.css';
-
-import React, {useEffect, useState, useContext} from 'react'
-import { v4 as uuidv4 } from 'uuid';
-
-import GameState from './GameState';
+import React, {useEffect, useState, useContext, useRef} from 'react'
 import GameStateMachine from './GameStateMachine';
 import GamePlay from './GamePlay';
-import {MQTTClient} from 'dw-state-machine';
-// import { logger } from 'dw-utils';
+import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
-import {SceneContext, SceneProvider} from './SceneContext';
+import {SceneContext} from './SceneContext';
+import { v4 as uuidv4 } from 'uuid';
 
 const logger = require('./logger');
 
@@ -20,28 +16,31 @@ function App() {
 
   const sceneContext = useContext(SceneContext);
 
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
+  const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
+  const port = process.env.REACT_APP_MQTT_PORT || 9001;
+  const brokerUrl = `ws://${broker}:${port}`;
+  const clientId = process.env.REACT_APP_MQTT_CLIENT_ID || 'gameboard';
+  const uuid = uuidv4();
+  const fullClientId = `${clientId}-${uuid}`;
 
-  useEffect(() => {
-    const gameState = new GameState();
-    const gamePlay = new GamePlay(gameState, sceneContext);
-    const gameStateMachine = new GameStateMachine(gameState, sceneContext);
-    const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
-    const port = process.env.REACT_APP_MQTT_PORT || 9001;
-    const brokerUrl = `ws://${broker}:${port}`;
-    const clientId = process.env.REACT_APP_MQTT_CLIENT_ID || 'gameboard';
-    const uuid = uuidv4();
-    const fullClientId = `${clientId}-${uuid}`;
+  console.log("broker: ", broker);
+  console.log("port: ", port);
+  console.log("clientId: ", clientId);
+  console.log("fullClientId: ", fullClientId);
 
-    console.log("broker: ", broker);
-    console.log("port: ", port);
-    console.log("clientId: ", clientId);
-    console.log("fullClientId: ", fullClientId);
+  const pongAPI = new PongAPI(fullClientId, brokerUrl);
+  const pongAPIRef = useRef(pongAPI);
+  const gameStateMachine = new GameStateMachine(pongAPI, sceneContext);
+  const gameStateMachineRef = useRef(gameStateMachine);
+  const gamePlay = new GamePlay(pongAPI, sceneContext);
+  // const gamePlayRef = useRef(gamePlay);
 
-    const mqttClient = new MQTTClient(brokerUrl, fullClientId, gameState);
-    
-    mqttClient.start();
+  useEffect(() => {   
+    const pongAPI = pongAPIRef.current;
+    const gameStateMachine = gameStateMachineRef.current;
+    // const gamePlay = gamePlayRef.current;
+
+    pongAPI.start();
     gameStateMachine.startMachine();
 
     const handleResize = () => {
@@ -52,7 +51,7 @@ function App() {
     return () => {
       // Cleanup if necessary
       window.removeEventListener('resize', handleResize);
-      mqttClient.stop();
+      pongAPI.stop();
     };
   }, []);
 

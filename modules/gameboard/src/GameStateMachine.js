@@ -1,7 +1,6 @@
 import { BaseStateMachine } from 'dw-state-machine';
 import * as IMAGES from './loadImages';
 
-
 /**
  * Class representing the game state machine.
  * Inherits from BaseStateMachine.
@@ -9,9 +8,10 @@ import * as IMAGES from './loadImages';
 class GameStateMachine extends BaseStateMachine {
   // Additional methods or overrides can be added here
 
-  constructor(gameState, sceneContext) {
+  constructor(pongAPI, sceneContext) {
     console.log('GameStateMachine Entered Constructor'); 
-    super(gameState);
+    super();
+    this.pongAPI = pongAPI;
     this.sceneContext = sceneContext;
   }
 
@@ -20,17 +20,17 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
-    // this.sceneContext.setGameboard(false);
-    this.sceneContext.setGameboard(true);
-    this.sceneContext.setPlayerInstructionProps({
-      image: IMAGES.welcomeScreen,
-      position: [0.0, 0.2, 0.0],
-      scale: 8.5
-    });
+    // // this.sceneContext.setGameboard(false);
+    // this.sceneContext.setGameboard(true);
+    // this.sceneContext.setPlayerInstructionProps({
+    //   image: IMAGES.welcomeScreen,
+    //   position: [0.0, 0.2, 0.0],
+    //   scale: 8.5
+    // });
 
-    // this.onEnterMoveLeftIntro();
+    // // this.onEnterMoveLeftIntro();
 
-    // this.onEnterMoveRightIntro();
+    // // this.onEnterMoveRightIntro();
 
   }
 

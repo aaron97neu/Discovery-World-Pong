@@ -50,18 +50,20 @@ services:
     #                     - driver: nvidia
     #                       count: 1
     #                       capabilities: [gpu]
-    # game-engine:
-    #     container_name: game-engine
-    #     image: game-engine:latest
-    #     build:
-    #         dockerfile: Dockerfile.zscaler
-    #         context: ./modules/game-engine
-    #         additional_contexts:
-    #             util: ./modules/shared/code
-    #             certs: ./certs
-    #     restart: unless-stopped
-    #     networks:
-    #         - pong-network
+
+    game-engine:
+        container_name: game-engine
+        image: game-engine:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/game-engine
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        restart: unless-stopped
+        networks:
+            - pong-network
+
     # human-paddle-control:
     #     container_name: human-paddle-control
     #     image: human-paddle-control:latest
