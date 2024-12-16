@@ -1,0 +1,13 @@
+[Unit]
+Description=Monitor Pong OpenVPN Connection and Reconnect
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/pong/openpvn-monitor.sh
+
+Restart=always
+RestartSec=10 # Wait 10 seconds before retrying
+
+[Install]
+WantedBy=multi-user.target
