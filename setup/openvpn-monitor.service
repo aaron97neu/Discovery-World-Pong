@@ -4,10 +4,10 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/opt/pong/openpvn-monitor.sh
+ExecStart=/opt/pong/setup/openvpn-monitor.sh
 
 Restart=always
-RestartSec=10 # Wait 10 seconds before retrying
+RestartSec=120 # Wait 2mins seconds before retrying
 
 [Install]
 WantedBy=multi-user.target

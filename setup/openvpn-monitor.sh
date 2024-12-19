@@ -1,17 +1,17 @@
 #!/bin/bash
-
+set -x 
 # Define the OpenVPN connection name (replace 'my_vpn' with your actual name)
 CONNECTION_NAME="mgmt-OVPN"
 
 # Function to check OpenVPN status
 check_vpn_status() {
-    vpn_status=$(nmcli con status "$CONNECTION_NAME" | grep "State:" | awk '{print $2}')
-   if [[ "$vpn_status" == "connected" ]]; then
+   vpn_status=$(nmcli con show --active "$CONNECTION_NAME" | wc -l)
+   if [[ "$vpn_status" -gt 0 ]]; then
       echo "OpenVPN connected."
-      exit 0 # Success
+      return 0 # Success
    else
       echo "OpenVPN not connected!"
-      exit 1 # Failure - indicating disconnection
+      return 1 # Failure - indicating disconnection
    fi
 }
 
