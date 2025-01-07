@@ -1,5 +1,7 @@
 #!/bin/bash
-set -x 
+
+# set -x # Debugging output
+
 # Define the OpenVPN connection name (replace 'my_vpn' with your actual name)
 CONNECTION_NAME="mgmt-OVPN"
 
