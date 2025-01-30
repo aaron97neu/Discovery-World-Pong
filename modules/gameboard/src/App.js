@@ -6,11 +6,11 @@ import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
 import {SceneContext} from './SceneContext';
 import { v4 as uuidv4 } from 'uuid';
-
-const logger = require('./logger');
+import { Canvas } from "@react-three/fiber";
+// const logger = require('./logger');
 
 function App() {
-  logger.info('This is a winston info message');
+  // logger.info('This is a winston info message');
 
   const [size, setSize] = useState({ width: 800, height: 600 });
 
@@ -23,24 +23,23 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
-  console.log("broker: ", broker);
-  console.log("port: ", port);
-  console.log("clientId: ", clientId);
-  console.log("fullClientId: ", fullClientId);
+  // const pongAPI2 = new PongAPI(fullClientId, brokerUrl);
+  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
 
-  const pongAPI = new PongAPI(fullClientId, brokerUrl);
-  const pongAPIRef = useRef(pongAPI);
-  const gameStateMachine = new GameStateMachine(pongAPI, sceneContext);
-  const gameStateMachineRef = useRef(gameStateMachine);
-  const gamePlay = new GamePlay(pongAPI, sceneContext);
-  // const gamePlayRef = useRef(gamePlay);
+  useEffect(() => {
+    console.log(`broker: ${broker}`);
+    console.log(`port: ${[port]}`);
+    console.log(`clientId: ${clientId}`);
+    console.log(`fullClientId: ${fullClientId}`);
 
-  useEffect(() => {   
-    const pongAPI = pongAPIRef.current;
-    const gameStateMachine = gameStateMachineRef.current;
-    // const gamePlay = gamePlayRef.current;
+    // const pongAPI = new PongAPI(fullClientId, brokerUrl);
+    const gameStateMachine = new GameStateMachine(pongAPIRef.current, sceneContext);
+    // const gamePlay = new GamePlay(pongAPI, sceneContext);
 
-    pongAPI.start();
+    if (pongAPIRef.current) {
+      pongAPIRef.current.start();
+      console.log(`######## pongAPI id: ${pongAPIRef.current.getInstanceId()}`);
+    }
     gameStateMachine.startMachine();
 
     const handleResize = () => {
@@ -51,12 +50,25 @@ function App() {
     return () => {
       // Cleanup if necessary
       window.removeEventListener('resize', handleResize);
-      pongAPI.stop();
+      if (pongAPIRef.current) {
+        pongAPIRef.current.stop();
+      }
     };
   }, []);
 
   return (
     <div className="App" >
+      {/* <GamePlay pongAPIRef={pongAPIRef} />
+      <Canvas>
+        <ambientLight />
+        <pointLight position={[10, 10, 10]} />
+        <mesh position={[0,0,0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial />
+        </mesh>        
+      </Canvas> */}
+
+      <GamePlay pongAPIRef={pongAPIRef} />
       {/* <MainScene width={screenWidth} height={screenHeight} /> */}
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>

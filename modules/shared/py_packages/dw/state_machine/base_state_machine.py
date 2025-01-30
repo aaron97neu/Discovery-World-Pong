@@ -7,11 +7,9 @@ This module contains the BaseStateMachine class which implements a state machine
 
 import logging
 import time
-# from abc import ABC
 from transitions import Machine
 from transitions.extensions import GraphMachine
-# from .base_state import BaseState
-from .pong_api import PongAPI
+from .pong_api import PongAPI, Topics
 
 # class BaseStateMachine(ABC):
 class BaseStateMachine():
@@ -53,12 +51,13 @@ class BaseStateMachine():
         self.pong_api = pong_api
         self.machine = Machine(model=self, states=BaseStateMachine.states, transitions=BaseStateMachine.transitions, initial='stopped', ignore_invalid_triggers=True)
 
-    def start_machine(self):
+    def start_machine(self, register=True):
         """
         Starts the BaseStateMachine by transitioning to the 'idle' state.
         """
         logging.info("BaseStateMachine Start")
-        self.pong_api.register_observer('game/state', self.on_game_state)
+        if register:
+            self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         self.start()
 
         while True:

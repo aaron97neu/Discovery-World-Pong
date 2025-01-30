@@ -51,7 +51,7 @@ class GameEngine:
             time.sleep(0.1)
 
         logging.info("game_state_machine.start_machine before.")
-        self.game_state_machine.start_machine()
+        self.game_state_machine.start_machine(register=False)
         logging.info("game_state_machine.start_machine after.")
 
 if __name__ == "__main__":

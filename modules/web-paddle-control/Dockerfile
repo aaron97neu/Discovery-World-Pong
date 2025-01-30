@@ -2,11 +2,15 @@ FROM node:17 AS builder
 WORKDIR /app
 COPY --from=util ./js_packages ./js_packages
 COPY package*.json ./
-COPY . ./
 RUN npm install
 RUN npm install ./js_packages/dw/state-machine
+COPY . ./
 ARG REACT_APP_PADDLE_ID
+ARG REACT_APP_INCREMENT
+ARG REACT_APP_INTERVAL
 ENV REACT_APP_PADDLE_ID $REACT_APP_PADDLE_ID
+ENV REACT_APP_INCREMENT $REACT_APP_INCREMENT
+ENV REACT_APP_INTERVAL $REACT_APP_INTERVAL
 RUN npm run build
 
 FROM nginx:1.25.0

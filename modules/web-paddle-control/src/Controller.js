@@ -1,17 +1,27 @@
 import React, { useEffect } from 'react';
+import {PongAPI} from 'dw-state-machine';
 
-const Controller = ({gameState}) => {
+const Controller = ({pongAPI}) => {
   let position = 0.5;
   let lIntervalId = null;
   let rIntervalId = null;
+  let paddleTopic = PongAPI.Topics.PADDLE_BOTTOM
   // const interval = process.env.REACT_APP_INTERVAL || 70;
   const interval = process.env.REACT_APP_INTERVAL || 70;
-  const increment = process.env.REACT_APP_INCREMENT || 0.05;
+  const increment = parseFloat(process.env.REACT_APP_INCREMENT) || 0.05;
   const max = process.env.REACT_APP_MAX || 1.0;
   const min = process.env.REACT_APP_MIN || 0.0;
   const paddleId = process.env.REACT_APP_PADDLE_ID || 'bottom';
   // const paddleId = process.env.REACT_APP_PADDLE_ID || 'top';
 
+  if (paddleId === 'top') {
+    paddleTopic = PongAPI.Topics.PADDLE_TOP;
+  } else {
+    paddleTopic = PongAPI.Topics.PADDLE_BOTTOM
+  }
+
+  console.log(`paddleId: ${paddleId}`);
+  console.log(`paddleTopic: ${paddleTopic}`);
   console.log(`interval: ${interval}`);
   console.log(`increment: ${increment}`);
   console.log(`max: ${max}`);
@@ -22,7 +32,11 @@ const Controller = ({gameState}) => {
     //   mqttClient.publish('bottom_paddle/position', position.toFixed(2));
     // });
 
-    gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
+    // gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
+
+    if (pongAPI.isConnected()) {
+      pongAPI.update(paddleTopic, { position: { x: position.toFixed(2) } });
+    }
 
     // disable the pinch zoom on mobile
     const disablePinchZoom = (e) => {
@@ -43,12 +57,21 @@ const Controller = ({gameState}) => {
 
     let newPosition = position;
     if (direction === 'L') {
+      console.log(`min: ${min}`);
+      console.log(`position - increment: ${position - increment}`);
+      console.log(`Math.max(min, position - increment): ${Math.max(min, position - increment)}`);
       newPosition = Math.max(min, position - increment);
     } else if (direction === 'R') {
+      console.log(`max: ${max}`);
+      console.log(`position + increment: ${position + increment}`);
+      console.log(`Math.min(max, position + increment): ${Math.min(max, position + increment)}`);
       newPosition = Math.min(max, position + increment);
     }
     position = newPosition;
-    gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
+    // gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
+    console.log(`position: ${position}`);
+    pongAPI.update(paddleTopic, { position: { x: parseFloat(position.toFixed(2)) } });
+
   };
 
   const handleMouseDown = (direction) => {

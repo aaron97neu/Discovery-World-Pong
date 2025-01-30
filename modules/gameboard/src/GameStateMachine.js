@@ -60,7 +60,7 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
-    this.sceneContext.setGameboard(true);
+    this.sceneContext.setIsGame(true);
     this.sceneContext.setLevel('1');
   }
 

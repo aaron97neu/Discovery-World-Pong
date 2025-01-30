@@ -4,13 +4,10 @@
  * @description Implements a state machine using 'javascript-state-machine'.
  */
 import StateMachine from 'javascript-state-machine';
-import { BaseState } from './BaseState.js';
 
 // class BaseStateMachine {
 export default class BaseStateMachine {
-  // constructor(baseState) {
   constructor(pongAPI) {
-      // this.baseState = baseState;
     this.pongAPI = pongAPI;
     this.bottomPaddleLeft = false;
     this.fsm = new StateMachine({

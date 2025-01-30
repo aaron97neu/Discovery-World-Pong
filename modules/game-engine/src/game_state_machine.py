@@ -34,6 +34,8 @@ class GameStateMachine(BaseStateMachine):
         Method called when entering the 'idle' state.
         """
         logging.info("Entering idle state")
+        state_message = {"transition": "start"}
+        self.pong_api.update('game/state', state_message)
             
     def on_exit_idle(self):
         """

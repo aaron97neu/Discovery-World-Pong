@@ -30,26 +30,27 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
-    # ai-paddle-control:
-    #     container_name: ai-paddle-control
-    #     image: ai-paddle-control:latest
-    #     build:
-    #         dockerfile: Dockerfile.zscaler
-    #         context: ./modules/ai-paddle-control
-    #         additional_contexts:
-    #             util: ./modules/shared/code
-    #             validation: ./modules/shared/validation
-    #             certs: ./certs
-    #     restart: unless-stopped
-    #     networks:
-    #         - pong-network
-    #     deploy:
-    #         resources:
-    #             reservations:
-    #                 devices:
-    #                     - driver: nvidia
-    #                       count: 1
-    #                       capabilities: [gpu]
+
+    ai-paddle-control:
+        container_name: ai-paddle-control
+        image: ai-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/ai-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                validation: ./modules/shared/validation
+                certs: ./certs
+        restart: unless-stopped
+        networks:
+            - pong-network
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: 1
+                          capabilities: [gpu]
 
     game-engine:
         container_name: game-engine
@@ -176,6 +177,8 @@ services:
                 certs: ./certs
             args:
                 REACT_APP_PADDLE_ID: top
+                REACT_APP_INCREMENT: 0.02
+                REACT_APP_INTERVAL: 70
         ports:
             - 5004:80                
         restart: unless-stopped
@@ -193,6 +196,8 @@ services:
                 certs: ./certs
             args:
                 REACT_APP_PADDLE_ID: bottom
+                REACT_APP_INCREMENT: 0.02
+                REACT_APP_INTERVAL: 70
         ports:
             - 5005:80                
         restart: unless-stopped

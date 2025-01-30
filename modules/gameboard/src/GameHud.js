@@ -5,7 +5,7 @@ import {SceneContext} from './SceneContext';
 import mainFont from './fonts/Roboto-Bold.ttf';
 import * as IMAGES from './loadImages';
 
-function GameboardHud() {
+function GameHud() {
   const {countdown, level, topScore, bottomScore} = useContext(SceneContext);
 
   return (
@@ -24,7 +24,7 @@ function GameboardHud() {
           <Text position={[1.6, 0.0, 0.0]} font={mainFont} fontSize={0.8} color="white" text={level}/>
         </group> 
       
-        <Text position={[0.0, 0, 0]} font={mainFont} fontSize={1.7} color="white" text={countdown} />
+        <Text position={[0.0, 1.0, 0.0]} font={mainFont} fontSize={1.7} color="white" text={countdown} />
       </group>
 
 
@@ -38,4 +38,4 @@ function GameboardHud() {
   );
 }
 
-export default GameboardHud;
+export default GameHud;

@@ -1,135 +1,148 @@
 import mqtt from 'mqtt';
 import Ajv from 'ajv';
-import { pongSchema } from './PongAPISchema.js';
+import pongAPISchema from './PongAPISchema.js';
+import { v4 as uuidv4 } from 'uuid';
 
-/**
- * PongAPI class to handle MQTT communication for a Pong game.
- */
 export default class PongAPI {
-    static topics = ['game/play', 'game/stats', 'game/state', 'paddle/top', 'paddle/bottom'];
+  /**
+   * Enum for PongAPI topics.
+   * @readonly
+   * @enum {string}
+   */
+  static Topics = {
+    GAME_PLAY: 'game/play',
+    GAME_STATS: 'game/stats',
+    GAME_STATE: 'game/state',
+    PADDLE_TOP: 'paddle/top',
+    PADDLE_BOTTOM: 'paddle/bottom'
+  };
 
-    /**
-     * Constructor for PongAPI.
-     * @param {string} clientId - The client ID for the MQTT connection.
-     * @param {string} brokerUrl - The URL of the MQTT broker.
-     */
-    constructor(clientId, brokerUrl) {
-        this.clientId = clientId;
-        this.brokerUrl = brokerUrl;
-        this.client = null;
-        this.ajv = new Ajv();
-        this.observers = {};
-        PongAPI.topics.forEach(topic => this.observers[topic] = []);
-    }
+  /**
+   * Creates an instance of PongAPI.
+   * @param {string} clientId - The client ID for the MQTT connection.
+   * @param {string} brokerUrl - The URL of the MQTT broker.
+   */
+  constructor(clientId, brokerUrl) {
+    this.clientId = clientId;
+    this.brokerUrl = brokerUrl;
+    this.client = null;
+    this.observers = {};
+    this.ajv = new Ajv();
+    this.pongAPISchema = pongAPISchema;
+    this.validate = this.ajv.compile(pongAPISchema);
+    this.connected = false;
+    this.instanceId = uuidv4();
+  }
 
-    /**
-     * Start the MQTT connection.
-     */
-    start() {
-        this.client = mqtt.connect(this.brokerUrl, { clientId: this.clientId });
-        this.client.on('connect', () => {
-            PongAPI.topics.forEach(topic => this.client.subscribe(topic));
-        });
-        this.client.on('message', (topic, message) => this.notifyObservers(topic, message));
-    }
+  getInstanceId() {
+    return this.instanceId;
+  }
 
-    /**
-     * Stop the MQTT connection and cleanup.
-     */
-    stop() {
-        if (this.client) {
-            this.client.end();
-            this.client = null;
-        }
-    }
+  /**
+   * Starts the MQTT connection.
+   */
+  start() {
+    this.client = mqtt.connect(this.brokerUrl, { clientId: this.clientId });
+    this.client.on('connect', () => {
+      console.log('Connected to MQTT broker');
+      console.log(`PongAPI instanceId: ${this.instanceId}`);
+      Object.keys(this.observers).forEach(topic => {
+        this.client.subscribe(topic);
+      });
+      this.connected = true;
+    });
 
-    /**
-     * Check if the client is connected.
-     * @returns {boolean} - True if connected, false otherwise.
-     */
-    isConnected() {
-        return this.client && this.client.connected;
-    }
+    this.client.on('disconnect', () => {
+      console.log('Disconnected from MQTT broker');
+      this.connected = false;
+    });
 
-    /**
-     * Notify observers of a received message.
-     * @param {string} topic - The topic of the message.
-     * @param {Buffer} message - The message received.
-     */
-    notifyObservers(topic, message) {
-        const jsonMessage = JSON.parse(message.toString());
-        const validate = this.ajv.compile(pongSchema[topic]);
-        if (validate(jsonMessage)) {
-            this.observers[topic].forEach(callback => callback(jsonMessage));
-        } else {
-            console.log(`Validation error for topic ${topic}:`, validate.errors);
-        }
-    }
+    this.client.on('error', (err) => {
+      console.log('MQTT Broker Connection error:', err);
+    });
 
-    /**
-     * Register an observer for a specific topic.
-     * @param {string} topic - The topic to observe.
-     * @param {function} callback - The callback function to call when a message is received.
-     */
-    registerObserver(topic, callback) {
-        if (PongAPI.topics.includes(topic)) {
-            this.observers[topic].push(callback);
-        } else {
-            console.log(`Invalid topic: ${topic}`);
-        }
-    }
+    this.client.on('message', (topic, message) => {
+      console.log(`Publish -- topic: ${topic}, message: ${message}`)
+      const parsedMessage = JSON.parse(message.toString());
+      if (this.validateMessage(topic, parsedMessage)) {
+        this.notifyObservers(topic, parsedMessage);
+      }
+    });
+  }
 
-    /**
-     * Update the game/play topic.
-     * @param {object} message - The message to publish.
-     */
-    updateGamePlay(message) {
-        this.publishMessage('game/play', message);
+  /**
+   * Stops the MQTT connection and cleans up.
+   */
+  stop() {
+    if (this.client) {
+      this.client.end();
+      this.client = null;
+      console.log('Disconnected from broker');
     }
+  }
 
-    /**
-     * Update the game/stats topic.
-     * @param {object} message - The message to publish.
-     */
-    updateGameStats(message) {
-        this.publishMessage('game/stats', message);
-    }
+  /**
+   * Checks if the client is connected.
+   * @returns {boolean} - True if connected, false otherwise.
+   */
+  isConnected() {
+    // return this.client && this.client.connected;
+    return this.connected;
+  }
 
-    /**
-     * Update the game/state topic.
-     * @param {object} message - The message to publish.
-     */
-    updateGameState(message) {
-        this.publishMessage('game/state', message);
+  /**
+   * Registers an observer for a specific topic.
+   * @param {string} topic - The topic to subscribe to.
+   * @param {function} callback - The callback function to notify.
+   */
+  registerObserver(topic, callback) {
+    if (!this.observers[topic]) {
+      this.observers[topic] = [];
+      if (this.isConnected()) {
+        this.client.subscribe(topic);
+      }
     }
+    this.observers[topic].push(callback);
+  }
 
-    /**
-     * Update the paddle/top topic.
-     * @param {object} message - The message to publish.
-     */
-    updatePaddleTop(message) {
-        this.publishMessage('paddle/top', message);
+  /**
+   * Notifies observers of a new message.
+   * @param {string} topic - The topic of the message.
+   * @param {object} message - The message to notify observers with.
+   */
+  notifyObservers(topic, message) {
+    if (this.observers[topic]) {
+      this.observers[topic].forEach(callback => callback(message));
     }
+  }
 
-    /**
-     * Update the paddle/bottom topic.
-     * @param {object} message - The message to publish.
-     */
-    updatePaddleBottom(message) {
-        this.publishMessage('paddle/bottom', message);
+  /**
+   * Validates a message against the schema.
+   * @param {string} topic - The topic of the message.
+   * @param {object} message - The message to validate.
+   * @returns {boolean} - True if valid, false otherwise.
+   */
+  validateMessage(topic, message) {
+    // const valid = this.validate({ topic, message });
+    const valid = this.validate({ topic: message });
+    if (!valid) {
+      console.error('Invalid message:', this.validate.errors);
     }
+    return valid;
+  }
 
-    /**
-     * Publish a message to a specific topic.
-     * @param {string} topic - The topic to publish to.
-     * @param {object} message - The message to publish.
-     */
-    publishMessage(topic, message) {
-        const validate = this.ajv.compile(pongSchema[topic]);
-        if (validate(message)) {
-            this.client.publish(topic, JSON.stringify(message));
-        } else {
-            console.log(`Validation error for topic ${topic}:`, validate.errors);
-        }
+  /**
+   * Publishes a message to a topic.
+   * @param {string} topic - The topic to publish to.
+   * @param {object} message - The message to publish.
+   */
+  update(topic, message) {
+    if (this.isConnected()) {
+      if (this.validateMessage(topic, message)) {
+        const payload = JSON.stringify(message);
+        console.log(`Publish -- topic: ${topic}, message: ${payload}`)
+        this.client.publish(topic, payload);
+      }
     }
+  }
 }

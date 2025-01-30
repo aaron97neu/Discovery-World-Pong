@@ -1,6 +1,5 @@
 import sys
 from model import PGAgent
-from shared.config import Config
 # from model import PGAgent
 # from shared.config import Config
 import time
@@ -8,7 +7,11 @@ from ai_subscriber import AISubscriber
 import numpy as np
 # import cv2
 import threading
-from shared.utils import Timer
+# from shared.config import Config
+# from shared.utils import Timer
+from dw.state_machine import PongAPI, Topics
+from dw import Config
+from dw.utils import utils
 
 # from queue import Queue
 
@@ -74,15 +77,20 @@ class AIDriver:
         x = diff_state.ravel()
         action, _, probs = self.agent.act(x, greedy=True)
         # Publish prediction
-        if self.paddle1:
-            self.state.publish("paddle1/action", {"action": str(action)})
-            self.state.publish("paddle1/frame", {"frame": current_frame_id})
-        elif self.paddle2:
-            self.state.publish("paddle2/action", {"action": str(action)})
-            self.state.publish("paddle2/frame", {"frame": current_frame_id})
+        # if self.paddle1:
+        #     self.state.publish("paddle1/action", {"action": str(action)})
+        #     self.state.publish("paddle1/frame", {"frame": current_frame_id})
+        # elif self.paddle2:
+        #     self.state.publish("paddle2/action", {"action": str(action)})
+        #     self.state.publish("paddle2/frame", {"frame": current_frame_id})
 
-        model_activation = self.agent.get_activation_packet()
-        self.state.publish("ai/activation", model_activation)
+        # model_activation = self.agent.get_activation_packet()
+        # self.state.publish("ai/activation", model_activation)
+
+        if self.paddle1:
+            self.state.publish(Topics.PADDLE_TOP, {"position": {"x": str(x)}})
+        elif self.paddle2:
+            self.state.publish(Topics.PADDLE_BOTTOM, {"position": {"x": str(x)}})
 
         #if len(self.frame_diffs) > 10:
         #    print(
@@ -91,14 +99,14 @@ class AIDriver:
         #    self.frame_diffs = []
         #Timer.stop('inf')
 
-    def inference_loop(self):
-        while True:
-            current_frame_id = self.state.frame
-            if self.last_acted_frame == current_frame_id:
-                time.sleep(0.001)
-            else:
-                self.publish_inference()
-                self.last_acted_frame = current_frame_id
+    # def inference_loop(self):
+    #     while True:
+    #         current_frame_id = self.state.frame
+    #         if self.last_acted_frame == current_frame_id:
+    #             time.sleep(0.001)
+    #         else:
+    #             self.publish_inference()
+    #             self.last_acted_frame = current_frame_id
 
     # def __init__(self, config=Config.instance(), paddle1=True, in_q = Queue()):
     def __init__(self, config=Config.instance(), paddle1=True):
@@ -121,8 +129,8 @@ class AIDriver:
         self.last_tick = time.time()
         self.frame_diffs = []
         self.last_acted_frame = 0
-        self.inference_thread = threading.Thread(target=self.inference_loop)
-        self.inference_thread.start()
+        # self.inference_thread = threading.Thread(target=self.inference_loop)
+        # self.inference_thread.start()
         self.state.start()
 
 # def main(in_q):
