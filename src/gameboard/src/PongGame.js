@@ -9,7 +9,7 @@ import React, {useRef, useEffect} from "react";
 import { v1 as uuidv1 } from 'uuid';
 
 const mqtt = require('mqtt')
-const cid = 'gameboard-ponggane.js-' + uuidv1()
+const cid = 'gameboard-ponggame.js-' + uuidv1()
 const client = mqtt.connect(process.env.REACT_APP_URL, {clientId: cid} )
 console.log("Creating Gameplay connections");
 client.on('connect', function () {
