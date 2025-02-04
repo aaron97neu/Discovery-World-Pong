@@ -4,6 +4,7 @@ import time
 import paho.mqtt.client as mqtt
 import numpy as np
 import json
+import uuid
 
 """
 This class was removed from the driver to follow previous development patterns
