@@ -13,8 +13,12 @@ export default class PongAPI {
     GAME_PLAY: 'game/play',
     GAME_STATS: 'game/stats',
     GAME_STATE: 'game/state',
-    PADDLE_TOP: 'paddle/top',
-    PADDLE_BOTTOM: 'paddle/bottom'
+    PADDLE_TOP_POSITION: 'paddle/top/position',
+    PADDLE_TOP_STATE: 'paddle/top/state',
+    PADDLE_TOP_STATE_TRANSITION: 'paddle/top/state_transition',
+    PADDLE_BOTTOM_POSITION: 'paddle/bottom/position',
+    PADDLE_BOTTOM_STATE: 'paddle/bottom/state',
+    PADDLE_BOTTOM_STATE_TRANSITION: 'paddle/bottom/state_transition',
   };
 
   /**
@@ -62,7 +66,7 @@ export default class PongAPI {
     });
 
     this.client.on('message', (topic, message) => {
-      console.log(`Publish -- topic: ${topic}, message: ${message}`)
+      // console.log(`Publish -- topic: ${topic}, message: ${message}`)
       const parsedMessage = JSON.parse(message.toString());
       if (this.validateMessage(topic, parsedMessage)) {
         this.notifyObservers(topic, parsedMessage);
@@ -140,7 +144,7 @@ export default class PongAPI {
     if (this.isConnected()) {
       if (this.validateMessage(topic, message)) {
         const payload = JSON.stringify(message);
-        console.log(`Publish -- topic: ${topic}, message: ${payload}`)
+        // console.log(`Publish -- topic: ${topic}, message: ${payload}`)
         this.client.publish(topic, payload);
       }
     }

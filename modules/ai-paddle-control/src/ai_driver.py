@@ -1,19 +1,22 @@
 import sys
+import time
+import logging
 from model import PGAgent
 # from model import PGAgent
 # from shared.config import Config
-import time
 from ai_subscriber import AISubscriber
 import numpy as np
-# import cv2
-import threading
+import cv2
+# import threading
 # from shared.config import Config
 # from shared.utils import Timer
-from dw.state_machine import PongAPI, Topics
+from dw.state_machine import Topics
 from dw import Config
-from dw.utils import utils
+# from dw.utils import utils
 
 # from queue import Queue
+
+logging.basicConfig(level=logging.INFO)
 
 class AIDriver:
     # #MODEL = 'validation/canstop_randomstart_6850.h5'#'../../validation/newhit_10k.h5'
@@ -44,7 +47,7 @@ class AIDriver:
 
             temp = AIDriver.level
             AIDriver.level = self.state.game_level
-            print(f'level changed to {AIDriver.level}')
+            # print(f'level changed to {AIDriver.level}')
             if self.state.game_level == 0:
                 self.agent = self.agent1
                 #self.agent1.load(AIDriver.MODEL_1)
@@ -60,11 +63,21 @@ class AIDriver:
             else:
                 self.agent = self.agent1
                 #self.agent1.load(AIDriver.MODEL_2)
-        
+   
         # Get latest state diff
-        diff_state = self.state.render_latest_diff()
+        diff_state = self.state.render_latest_diff()   
         
-        current_frame_id = self.state.frame
+        # np.savetxt(f"files/diff{self.state.step}.txt", diff_state, fmt='%d')
+
+        # with open("diff.txt", "a") as file:
+        #     file.write(f"{diff_state}\n\n")
+
+        # grayscale_image = utils.convert_to_grayscale_image(diff_state)
+
+        # # Save or display the image using OpenCV
+        # cv2.imwrite(f"screens/diff_frame{self.state.step}.png", grayscale_image)
+
+        # current_frame_id = self.state.frame    
 
         # Compute the number of frames that have passed since the last frame
         #frame_diff = self.state.frame - self.last_acted_frame
@@ -74,8 +87,11 @@ class AIDriver:
         #    self.frame_diffs.append(frame_diff)
 
         # Infer on flattened state vector
-        x = diff_state.ravel()
+        x = diff_state.ravel()     
+
         action, _, probs = self.agent.act(x, greedy=True)
+        logging.info('****************************************** step: %s action: %s', self.state.step, action)        
+
         # Publish prediction
         # if self.paddle1:
         #     self.state.publish("paddle1/action", {"action": str(action)})
@@ -85,12 +101,30 @@ class AIDriver:
         #     self.state.publish("paddle2/frame", {"frame": current_frame_id})
 
         # model_activation = self.agent.get_activation_packet()
-        # self.state.publish("ai/activation", model_activation)
+        # self.state.publish("ai/activation", model_activation)      
 
+        paddle_adjustment_x = 192
         if self.paddle1:
-            self.state.publish(Topics.PADDLE_TOP, {"position": {"x": str(x)}})
+            # data = {"position": {"x": 0.0}}
+            new_paddle_x = self.state.top_paddle_x
+
+            if action == 0:
+                new_paddle_x -= self.config.PADDLE_WIDTH
+            else:
+                if action == 1:
+                    new_paddle_x += self.config.PADDLE_WIDTH
+
+            # if action == 1:
+            #     new_paddle_x -= 1
+            # else:
+            #     if action == 0:
+            #         new_paddle_x += 1 
+
+            data = {"position": {"x": new_paddle_x / paddle_adjustment_x}}    
+            self.state.publish(Topics.PADDLE_TOP_POSITION, data)      
         elif self.paddle2:
-            self.state.publish(Topics.PADDLE_BOTTOM, {"position": {"x": str(x)}})
+            data = {"position": {"x": new_paddle_x / paddle_adjustment_x}}    
+            self.state.publish(Topics.PADDLE_BOTTOM_POSITION, data)    
 
         #if len(self.frame_diffs) > 10:
         #    print(
@@ -110,7 +144,7 @@ class AIDriver:
 
     # def __init__(self, config=Config.instance(), paddle1=True, in_q = Queue()):
     def __init__(self, config=Config.instance(), paddle1=True):
-        
+       
         # self.q = in_q
         self.config = config
         self.paddle1 = paddle1
@@ -132,6 +166,9 @@ class AIDriver:
         # self.inference_thread = threading.Thread(target=self.inference_loop)
         # self.inference_thread.start()
         self.state.start()
+        data = {"state": "start"}    
+        self.state.publish(Topics.PADDLE_TOP_STATE, data)      
+
 
 # def main(in_q):
 def main():
@@ -139,6 +176,11 @@ def main():
     config = Config.instance()
     # instance = AIDriver(config = config, in_q = in_q)
     instance = AIDriver(config = config)
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        print("Closing")
 
 if __name__ == "__main__":
     # main("")

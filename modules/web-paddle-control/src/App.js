@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid';
 // import {MQTTClient, BaseState} from 'dw-state-machine';
 // import {BaseState} from 'dw-state-machine';
@@ -32,7 +32,8 @@ function App() {
   console.log("clientId: ", clientId);
   console.log("fullClientId: ", fullClientId);
 
-  const pongAPI = new PongAPI(fullClientId, brokerUrl);
+  // const pongAPI = new PongAPI(fullClientId, brokerUrl);
+  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
 
   useEffect(() => {
 
@@ -56,7 +57,10 @@ function App() {
 
     document.title = title;
 
-    pongAPI.start();
+    // pongAPI.start();
+    if (pongAPIRef.current) {
+      pongAPIRef.current.start();
+    }
 
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });
@@ -68,14 +72,17 @@ function App() {
       window.removeEventListener('resize', handleResize);
       // mqttClient.stop();
 
-      pongAPI.stop();
+      // pongAPI.stop();
+      if (pongAPIRef.current) {
+        pongAPIRef.current.stop();
+      }
     };
   }, []);
 
   return (
     <div className="App" >
       {/* <MainScene width={screenWidth} height={screenHeight} /> */}
-      <Controller pongAPI={pongAPI} style={{ width: size.width, height: size.height }} />
+      <Controller pongAPIRef={pongAPIRef} style={{ width: size.width, height: size.height }} />
     </div>
   );
 }

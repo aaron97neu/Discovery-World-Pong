@@ -1,0 +1,43 @@
+/* .App {
+  background-image: url('imgs/AutoEverywhere_Background.svg');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+} */
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.App {
+  /* height: 100%;
+  width: 100%; */
+  /* border: 2px solid red; */
+  height: 100vh;
+  /* width: 100vw; */
+
+  background-image: url('imgs/AutoEverywhere_Background_portrait.svg');
+  /* background-size: cover; */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+/* .App {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-size: contain;
+  background-size: cover;
+  border: 2px solid red;
+
+  background-image: url('imgs/AutoEverywhere_Background.svg');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+} */

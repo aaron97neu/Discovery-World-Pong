@@ -1,6 +1,6 @@
 import time
-
-import paho.mqtt.client as mqtt
+import logging
+# import paho.mqtt.client as mqtt
 import numpy as np
 import json
 
@@ -8,9 +8,9 @@ import json
 # from shared.config import Config
 from dw.state_machine import PongAPI, Topics
 from dw import Config
-from dw.utils import utils
+# from dw.utils import utils
 
-# import cv2
+import cv2
 import math
 
 class AISubscriber:
@@ -48,6 +48,64 @@ class AISubscriber:
     #         self.trailing_frame = self.latest_frame
     #         self.latest_frame = self.render_latest_preprocessed()
 
+    def on_game_play(self, message):
+        """
+        Callback method for when the BaseState changes.
+
+        Parameters:
+        changed_state (dict): The changed state values.
+        """
+
+        paddle_adjustment_top = 192
+        paddle_adjustment_bottom = 192
+        ball_adjustment_x = 96
+        ball_adjustment_y = 80
+        self.puck_x = message["ball"]["position"]["x"] + ball_adjustment_x
+        self.puck_y = ball_adjustment_y - message["ball"]["position"]["y"]
+        self.bottom_paddle_x = message["paddle_bottom"]["position"]["x"] * paddle_adjustment_bottom
+        self.top_paddle_x = message["paddle_top"]["position"]["x"] * paddle_adjustment_top
+        self.game_level = 3
+
+        # print(f"self.puck_x: ", self.puck_x )
+        # print(f"self.puck_y: ", self.puck_y )
+        # print(f"self.top_paddle_x", self.top_paddle_x)
+
+        # self.game_level = message["level"]
+        # self.frame = message["frame"]
+
+        # self.trailing_frame = self.latest_frame
+        # self.latest_frame = self.render_latest_preprocessed()
+
+        # if self.frame == self.config.AI_FRAME_INTERVAL:
+        #     self.trailing_frame_ball = self.latest_frame_ball
+        #     self.latest_frame_ball = self.render_latest_preprocessed_ball()
+        #     self.latest_frame_paddle = self.render_latest_preprocessed_paddle()
+        #     # if self.trailing_frame_ball is not None:
+        #     #     np.savetxt(f"files/trailing_frame_ball{self.frame}.txt", self.trailing_frame_ball, fmt='%d')
+        #     # np.savetxt(f"files/latest_frame_ball{self.frame}.txt", self.latest_frame_ball, fmt='%d')
+        #     # np.savetxt(f"files/latest_frame_paddle{self.frame}.txt", self.latest_frame_paddle, fmt='%d')      
+
+        #     if self.trigger_event is not None:
+        #         self.trigger_event()
+        #     self.frame = 1
+        # else:
+        #     self.frame += 1  
+
+        if self.frame == self.config.AI_FRAME_INTERVAL:
+            self.trailing_frame = self.latest_frame
+            self.latest_frame = self.render_latest_preprocessed()
+            # if self.trailing_frame is not None:
+            #     np.savetxt(f"files/trailing_frame{self.step}.txt", self.trailing_frame, fmt='%d')
+            # np.savetxt(f"files/latest_frame{self.step}.txt", self.latest_frame, fmt='%d')
+
+            if self.trigger_event is not None:
+                self.trigger_event()
+            self.frame = 1
+        else:
+            self.frame += 1  
+
+        self.step += 1
+
     def draw_rect(self, screen, x, y, w, h, color):
         """
         Utility to draw a rectangle on the screen state ndarray
@@ -73,11 +131,84 @@ class AISubscriber:
         :return:
         """
         self.pong_api.update(topic, message)
+
         # if topic == 'paddle1/frame' and Config.instance().NETWORK_TIMESTAMPS:
         #     print(f'{time.time_ns() // 1_000_000} F{message["frame"]} SEND AI->GM')
         # p = json.dumps(message)
         # self.client.publish(topic, payload=p, qos=qos)
 
+# *********************************************************************************
+    # def render_latest_ball(self, bottom=False):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     screen = np.zeros((self.config.HEIGHT, self.config.WIDTH, 3), dtype=np.float32)
+    #     screen[:, :] = (140, 60, 0)  # BGR for a deep blue
+
+    #     self.draw_rect(screen, self.puck_x - self.config.BALL_DIAMETER / 2, self.puck_y - (self.config.BALL_DIAMETER / 2),
+    #               self.config.BALL_DIAMETER, self.config.BALL_DIAMETER, 255)
+
+    #     if bottom:  # Flip screen vertically because the model is trained as the top paddle
+    #         screen = np.flip(screen, axis=0)
+
+    #     appendix = "_flip" if bottom else ""
+    #     # cv2.imwrite(f"screens/frame_ball{self.step}{appendix}.png", screen)
+
+    #     return screen
+    
+    # def render_latest_paddle(self, bottom=False):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     screen = np.zeros((self.config.HEIGHT, self.config.WIDTH, 3), dtype=np.float32)
+    #     screen[:, :] = (140, 60, 0)  # BGR for a deep blue
+    #     if bottom:
+    #         self.draw_rect(screen, self.bottom_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.BOTTOM_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #               self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+    #     else:
+    #         # self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.TOP_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #         #          self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+    #         self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, (self.config.PADDLE_HEIGHT / 2),
+    #                  self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+
+    #     if bottom:  # Flip screen vertically because the model is trained as the top paddle
+    #         screen = np.flip(screen, axis=0)
+
+    #     appendix = "_flip" if bottom else ""
+    #     # cv2.imwrite(f"screens/frame_paddle{self.step}{appendix}.png", screen)
+
+    #     return screen
+
+    # def render_latest_preprocessed_ball(self):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     Scaled down for AI consumption
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     latest = self.render_latest_ball()
+    #     return utils.preprocess(latest)
+
+    # def render_latest_preprocessed_paddle(self):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     Scaled down for AI consumption
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     latest = self.render_latest_paddle()
+    #     return utils.preprocess(latest)
+    
+    # def render_latest_diff(self):
+    #     """
+    #     Render the current game pixel state, subtracted from the previous
+    #     Guarantees that adjacent frames are used for the diff
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     if self.trailing_frame_ball is None:
+    #         return self.latest_frame_ball + self.latest_frame_paddle
+    #     return (self.latest_frame_ball - self.trailing_frame_ball) + self.latest_frame_paddle
+    
     def render_latest(self, bottom=False):
         """
         Render the current game pixel state by hand in an ndarray
@@ -89,17 +220,30 @@ class AISubscriber:
             self.draw_rect(screen, self.bottom_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.BOTTOM_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
                   self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
         else:
-            self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.TOP_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #        self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.TOP_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #                 self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+            self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, (self.config.PADDLE_HEIGHT / 2),
                      self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
         self.draw_rect(screen, self.puck_x - self.config.BALL_DIAMETER / 2, self.puck_y - (self.config.BALL_DIAMETER / 2),
                   self.config.BALL_DIAMETER, self.config.BALL_DIAMETER, 255)
 
         if bottom:  # Flip screen vertically because the model is trained as the top paddle
             screen = np.flip(screen, axis=0)
-        #appendix = "_flip" if bottom else ""
-        #cv2.imwrite(f"frame{self.frame}{appendix}.png", screen)
+
+        appendix = "_flip" if bottom else ""
+        # cv2.imwrite(f"screens/frame{self.step}{appendix}.png", screen)
+
         return screen
 
+    def preprocess(self, I):
+        state = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+        h, w = state.shape
+        state = cv2.resize(state, (w // 2, h // 2))
+        state[state < 250] = 0
+        state[state == 255] = 1
+        # return state.astype(np.float)
+        return state.astype(float)
+    
     def render_latest_preprocessed(self):
         """
         Render the current game pixel state by hand in an ndarray
@@ -107,7 +251,13 @@ class AISubscriber:
         :return: ndarray of RGB screen pixels
         """
         latest = self.render_latest()
-        return utils.preprocess(latest)
+        # return utils.preprocess(latest)
+        # logging.info(f"latest: {latest}")
+        p = self.preprocess(latest)
+        # p = utils.preprocess(latest)
+        return p
+    
+        # return self.preprocess(latest)
 
     def render_latest_diff(self):
         """
@@ -119,38 +269,64 @@ class AISubscriber:
             return self.latest_frame
         return self.latest_frame - self.trailing_frame
 
-    def ready(self):
-        """
-        Determine if all state attributes have been received since initialization
-        :return: Boolean indicating that all state values are populated.
-        """
-        return self.puck_x is not None \
-               and self.puck_y is not None \
-               and self.bottom_paddle_x is not None \
-               and self.top_paddle_x is not None \
-               and self.game_level is not None
 
-    def on_game_play(self, message):
-        """
-        Callback method for when the BaseState changes.
+# *********************************************************************************
 
-        Parameters:
-        changed_state (dict): The changed state values.
-        """
-        self.puck_x = message["x"]
-        self.puck_y = message["y"]
-        self.bottom_paddle_x = message["position"]
-        self.top_paddle_x = message["position"]
-        self.level = 1
-        self.frame = self.frame + 1
-        # self.game_level = message["level"]
-        # self.frame = message["frame"]
+    # def render_latest(self, bottom=False):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     logging.info('top_paddle_x : %s', self.top_paddle_x)
+    #     logging.info('puck_x : %s', self.puck_x)
+    #     logging.info('puck_y : %s', self.puck_y)
 
-        self.trailing_frame = self.latest_frame
-        self.latest_frame = self.render_latest_preprocessed()
+    #     screen = np.zeros((self.config.HEIGHT, self.config.WIDTH, 3), dtype=np.float32)
+    #     screen[:, :] = (140, 60, 0)  # BGR for a deep blue
+    #     if bottom:
+    #         self.draw_rect(screen, self.bottom_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.BOTTOM_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #               self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+    #     else:
+    #         self.draw_rect(screen, self.top_paddle_x - self.config.PADDLE_WIDTH / 2, self.config.TOP_PADDLE_Y - (self.config.PADDLE_HEIGHT / 2),
+    #                  self.config.PADDLE_WIDTH, self.config.PADDLE_HEIGHT, 255)
+    #     self.draw_rect(screen, self.puck_x - self.config.BALL_DIAMETER / 2, self.puck_y - (self.config.BALL_DIAMETER / 2),
+    #               self.config.BALL_DIAMETER, self.config.BALL_DIAMETER, 255)
 
-        if self.trigger_event is not None:
-            self.trigger_event()
+    #     if bottom:  # Flip screen vertically because the model is trained as the top paddle
+    #         screen = np.flip(screen, axis=0)
+    #     #appendix = "_flip" if bottom else ""
+    #     #cv2.imwrite(f"frame{self.frame}{appendix}.png", screen)
+    #     return screen
+
+    # def render_latest_preprocessed(self):
+    #     """
+    #     Render the current game pixel state by hand in an ndarray
+    #     Scaled down for AI consumption
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     latest = self.render_latest()
+    #     return utils.preprocess(latest)
+
+    # def render_latest_diff(self):
+    #     """
+    #     Render the current game pixel state, subtracted from the previous
+    #     Guarantees that adjacent frames are used for the diff
+    #     :return: ndarray of RGB screen pixels
+    #     """
+    #     if self.trailing_frame is None:
+    #         return self.latest_frame
+    #     return self.latest_frame - self.trailing_frame
+
+    # def ready(self):
+    #     """
+    #     Determine if all state attributes have been received since initialization
+    #     :return: Boolean indicating that all state values are populated.
+    #     """
+    #     return self.puck_x is not None \
+    #            and self.puck_y is not None \
+    #            and self.bottom_paddle_x is not None \
+    #            and self.top_paddle_x is not None \
+    #            and self.game_level is not None
 
     def __init__(self, config, trigger_event=None):
         """
@@ -167,17 +343,27 @@ class AISubscriber:
         # self.client.connect_async("localhost", port=1883, keepalive=60)
         # self.client.connect_async("192.168.2.214", port=1883, keepalive=60)
         # self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
+
+        self.my_paddle_x = 0.0
         self.puck_x = None
         self.puck_y = None
         self.bottom_paddle_x = None
         self.top_paddle_x = None
         self.game_level = None
-        self.frame = 0
+        # self.frame = 0
         self.latest_frame = None
         self.trailing_frame = None
+        self.trailing_frame = None
+        self.latest_frame_paddle = None
+        self.latest_frame_ball = None
+        self.trailing_frame_ball = None
+        self.step = 1
+        self.frame = self.config.AI_FRAME_INTERVAL
 
     def start(self):
         # self.client.loop_forever()
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_PLAY, self.on_game_play)
+        data = {"state": "ready"}    
+        self.publish(Topics.PADDLE_TOP_STATE, data)      
 

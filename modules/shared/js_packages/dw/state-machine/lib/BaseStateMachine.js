@@ -17,15 +17,17 @@ export default class BaseStateMachine {
         { name: 'playerReady', from: 'idle', to: 'intro' },
         { name: 'startGame', from: 'intro', to: 'level1' },
         { name: 'playerExit', from: 'intro', to: 'idle' },
-        { name: 'introComplete', from: 'intro', to: 'moveLeftIntro' },
-        { name: 'playerExit', from: 'moveLeftIntro', to: 'idle' },
-        { name: 'moveLeftIntroComplete', from: 'moveLeftIntro', to: 'moveRightIntro' },
-        { name: 'playerExit', from: 'moveRightIntro', to: 'idle' },
-        { name: 'startGame', from: 'moveRightIntro', to: 'level1' },
+        // { name: 'introComplete', from: 'intro', to: 'moveLeftIntro' },
+        // { name: 'playerExit', from: 'moveLeftIntro', to: 'idle' },
+        // { name: 'moveLeftIntroComplete', from: 'moveLeftIntro', to: 'moveRightIntro' },
+        // { name: 'playerExit', from: 'moveRightIntro', to: 'idle' },
+        // { name: 'startGame', from: 'moveRightIntro', to: 'level1' },
         { name: 'playerExit', from: 'level1', to: 'idle' },
-        { name: 'level1Complete', from: 'level1', to: 'level2' },
+        { name: 'level1Complete', from: 'level1', to: 'level2Intro' },
+        { name: 'level2IntroComplete', from: 'level2Intro', to: 'level2' },
         { name: 'playerExit', from: 'level2', to: 'idle' },
-        { name: 'level2Complete', from: 'level2', to: 'level3' },
+        { name: 'level2Complete', from: 'level2', to: 'level3Intro' },
+        { name: 'level3IntroComplete', from: 'level3Intro', to: 'level3' },
         { name: 'playerExit', from: 'level3', to: 'idle' },
         { name: 'level3Complete', from: 'level3', to: 'outro' },
         { name: 'gameComplete', from: 'outro', to: 'idle' },
@@ -33,23 +35,27 @@ export default class BaseStateMachine {
       ],
       methods: {
         onEnterStopped: this.onEnterStopped.bind(this),
-        onExitStopped: this.onExitStopped.bind(this),
+        onLeaveStopped: this.onLeaveStopped.bind(this),
         onEnterIdle: this.onEnterIdle.bind(this),
-        onExitIdle: this.onExitIdle.bind(this),
+        onLeaveIdle: this.onLeaveIdle.bind(this),
         onEnterIntro: this.onEnterIntro.bind(this),
-        onExitIntro: this.onExitIntro.bind(this),
-        onEnterMoveLeftIntro: this.onEnterMoveLeftIntro.bind(this),
-        onExitMoveLeftIntro: this.onExitMoveLeftIntro.bind(this),
-        onEnterMoveRightIntro: this.onEnterMoveRightIntro.bind(this),
-        onExitMoveRightIntro: this.onExitMoveRightIntro.bind(this),
+        onLeaveIntro: this.onLeaveIntro.bind(this),
+        // onEnterMoveLeftIntro: this.onEnterMoveLeftIntro.bind(this),
+        // onLeaveMoveLeftIntro: this.onLeaveMoveLeftIntro.bind(this),
+        // onEnterMoveRightIntro: this.onEnterMoveRightIntro.bind(this),
+        // onLeaveMoveRightIntro: this.onLeaveMoveRightIntro.bind(this),
+        onEnterLevel2Intro: this.onEnterLevel2Intro.bind(this),
+        onLeaveLevel2Intro: this.onLeaveLevel2Intro.bind(this),
+        onEnterLevel3Intro: this.onEnterLevel3Intro.bind(this),
+        onLeaveLevel3Intro: this.onLeaveLevel3Intro.bind(this),
         onEnterLevel1: this.onEnterLevel1.bind(this),
-        onExitLevel1: this.onExitLevel1.bind(this),
+        onLeaveLevel1: this.onLeaveLevel1.bind(this),
         onEnterLevel2: this.onEnterLevel2.bind(this),
-        onExitLevel2: this.onExitLevel2.bind(this),
+        onLeaveLevel2: this.onLeaveLevel2.bind(this),
         onEnterLevel3: this.onEnterLevel3.bind(this),
-        onExitLevel3: this.onExitLevel3.bind(this),
+        onLeaveLevel3: this.onLeaveLevel3.bind(this),
         onEnterOutro: this.onEnterOutro.bind(this),
-        onExitOutro: this.onExitOutro.bind(this),
+        onLeaveOutro: this.onLeaveOutro.bind(this),
         onInvalidTransition: function(transition, from, to) {
           console.log("transition '%s' not allowed from state '%s'", transition, from);
         }
@@ -60,7 +66,7 @@ export default class BaseStateMachine {
   startMachine() {
     console.log('BaseStateMachine Entered startMachine'); 
     // this.baseState.addObserver(this, this.onStateChange.bind(this));
-    this.pongAPI.registerObserver('game/play', this.onGameState.bind(this));
+    this.pongAPI.registerObserver('game/state', this.onGameState.bind(this));
     this.fsm.start();
     // this.runLoop();
   }
@@ -94,11 +100,17 @@ export default class BaseStateMachine {
           case 'player_exit':
             this.fsm.playerExit();
             break;
-          case 'intro_complete':
-            this.fsm.introComplete();
+          // case 'intro_complete':
+          //   this.fsm.introComplete();
+          //   break;
+          // case 'move_left_intro_complete':
+          //   this.fsm.moveLeftIntroComplete();
+          //   break;
+          case 'level2_intro_complete':
+            this.fsm.level2IntroComplete();
             break;
-          case 'move_left_intro_complete':
-            this.fsm.moveLeftIntroComplete();
+          case 'level3_intro_complete':
+            this.fsm.level3IntroComplete();
             break;
           case 'start_game':
             this.fsm.startGame();
@@ -182,27 +194,31 @@ export default class BaseStateMachine {
     // }
   }
   
-  // Define onEnter<state> and onExit<state> methods for each state
+  // Define onEnter<state> and onLeave<state> methods for each state
   onEnterStopped() { console.log('Entered Stopped state'); }
-  onExitStopped() { console.log('Exited Stopped state'); }
+  onLeaveStopped() { console.log('Exited Stopped state'); }
   onEnterIdle() { 
     console.log('Entered Idle state');
     this.bottomPaddleLeft = false; 
   }
-  onExitIdle() { console.log('Exited Idle state'); }
+  onLeaveIdle() { console.log('Exited Idle state'); }
   onEnterIntro() { console.log('Entered Intro state'); }
-  onExitIntro() { console.log('Exited Intro state'); }
-  onEnterMoveLeftIntro() { console.log('Entered MoveLeftIntro state'); }
-  onExitMoveLeftIntro() { console.log('Exited MoveLeftIntro state'); }
-  onEnterMoveRightIntro() { console.log('Entered MoveRightIntro state'); }
-  onExitMoveRightIntro() { console.log('Exited MoveRightIntro state'); }
+  onLeaveIntro() { console.log('Exited Intro state'); }
+  // onEnterMoveLeftIntro() { console.log('Entered MoveLeftIntro state'); }
+  // onLeaveMoveLeftIntro() { console.log('Exited MoveLeftIntro state'); }
+  // onEnterMoveRightIntro() { console.log('Entered MoveRightIntro state'); }
+  // onLeaveMoveRightIntro() { console.log('Exited MoveRightIntro state'); }
+  onEnterLevel2Intro() { console.log('Entered Level1Intro state'); }
+  onLeaveLevel2Intro() { console.log('Exited Level1Intro state'); }
+  onEnterLevel3Intro() { console.log('Entered Level2Intro state'); }
+  onLeaveLevel3Intro() { console.log('Exited Level2Intro state'); }
   onEnterLevel1() { console.log('Entered Level1 state'); }
-  onExitLevel1() { console.log('Exited Level1 state'); }
+  onLeaveLevel1() { console.log('Exited Level1 state'); }
   onEnterLevel2() { console.log('Entered Level2 state'); }
-  onExitLevel2() { console.log('Exited Level2 state'); }
+  onLeaveLevel2() { console.log('Exited Level2 state'); }
   onEnterLevel3() { console.log('Entered Level3 state'); }
-  onExitLevel3() { console.log('Exited Level3 state'); }
+  onLeaveLevel3() { console.log('Exited Level3 state'); }
   onEnterOutro() { console.log('Entered Outro state'); }
-  onExitOutro() { console.log('Exited Outro state'); }
+  onLeaveOutro() { console.log('Exited Outro state'); }
  
 }

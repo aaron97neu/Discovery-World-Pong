@@ -4,10 +4,13 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
 
-from shared.config import Config
-from shared.utils import write
+# from shared.config import Config
+# from shared.utils import write
 import numpy as np
 
+from dw.state_machine import PongAPI, Topics
+from dw import Config
+# from dw.utils import utils
 
 class PGAgent:
     """
@@ -28,12 +31,12 @@ class PGAgent:
         self.name = name
         self.state_size = state_size
         self.action_size = action_size
-        self.gamma = 0.99
+        # self.gamma = 0.99
         self.learning_rate = learning_rate
-        self.states = []
-        self.gradients = []
-        self.rewards = []
-        self.probs = []
+        # self.states = []
+        # self.gradients = []
+        # self.rewards = []
+        # self.probs = []
         self.structure = structure
         self.train_model, self.infer_model = self._build_model()
         if self.verbose: self.infer_model.summary()
@@ -85,24 +88,24 @@ class PGAgent:
 
         return action, None, self.last_output
 
-    def get_structure_packet(self):
-        """
-        Returns the state of the model suitable for realtime visualization
-        :return: Model weights (list of 2d lists), biases (list of 1d lists),
-        """
-        layers = []
-        i = 0
-        for w in self.infer_model.weights:
-            l = None
-            if i == 0: # Rotate first weight matrix as temporary solution for rotated
-                l = w.numpy().reshape(*Config.instance().CUSTOM_STATE_SHAPE, -1)
-                l = l.reshape(Config.instance().CUSTOM_STATE_SIZE, 200).tolist()
-            else:
-                l = w.numpy().tolist()
+    # def get_structure_packet(self):
+    #     """
+    #     Returns the state of the model suitable for realtime visualization
+    #     :return: Model weights (list of 2d lists), biases (list of 1d lists),
+    #     """
+    #     layers = []
+    #     i = 0
+    #     for w in self.infer_model.weights:
+    #         l = None
+    #         if i == 0: # Rotate first weight matrix as temporary solution for rotated
+    #             l = w.numpy().reshape(*Config.instance().CUSTOM_STATE_SHAPE, -1)
+    #             l = l.reshape(Config.instance().CUSTOM_STATE_SIZE, 200).tolist()
+    #         else:
+    #             l = w.numpy().tolist()
 
-            layers.append(l)
-            i += 1
-        return layers
+    #         layers.append(l)
+    #         i += 1
+    #     return layers
 
     def get_activation_packet(self):
         """
@@ -123,49 +126,49 @@ class PGAgent:
         return [input_activation, hidden_activations, output_activations]
 
 
-    def discount_rewards(self, rewards):
-        """
-        "Smears" the reward values back through time so frames leading up to a reward are associated to that reward
-        :param rewards: vector representing reward at each frame
-        :return: discounted reward vector
-        """
-        discounted_rewards = np.zeros_like(rewards)
-        running_add = 0
-        for t in reversed(range(0, rewards.size)):
-            if rewards[t] != 0:
-                running_add = 0
-            running_add = running_add * self.gamma + rewards[t]
-            discounted_rewards[t] = running_add
-        return discounted_rewards.astype(np.float32)
+    # def discount_rewards(self, rewards):
+    #     """
+    #     "Smears" the reward values back through time so frames leading up to a reward are associated to that reward
+    #     :param rewards: vector representing reward at each frame
+    #     :return: discounted reward vector
+    #     """
+    #     discounted_rewards = np.zeros_like(rewards)
+    #     running_add = 0
+    #     for t in reversed(range(0, rewards.size)):
+    #         if rewards[t] != 0:
+    #             running_add = 0
+    #         running_add = running_add * self.gamma + rewards[t]
+    #         discounted_rewards[t] = running_add
+    #     return discounted_rewards.astype(np.float32)
 
-    def train(self, states, actions, probs, rewards):
-        """
-        Train the model on a batch of game data. Imlements the "REINFORCE" algorithm.
-        :param states: states from each frame
-        :param actions: inferred actions from each frame
-        :param probs: confidence probabilities from each frame
-        :param rewards: rewards from each frame
-        :return:
-        """
-        gradients = []
-        for i in range(len(actions)):
-            action = actions[i]
-            prob = probs[i]
-            y = np.zeros([self.action_size])
-            y[action] = 1
-            gradients.append(np.array(y).astype('float32') - prob)
+    # def train(self, states, actions, probs, rewards):
+    #     """
+    #     Train the model on a batch of game data. Imlements the "REINFORCE" algorithm.
+    #     :param states: states from each frame
+    #     :param actions: inferred actions from each frame
+    #     :param probs: confidence probabilities from each frame
+    #     :param rewards: rewards from each frame
+    #     :return:
+    #     """
+    #     gradients = []
+    #     for i in range(len(actions)):
+    #         action = actions[i]
+    #         prob = probs[i]
+    #         y = np.zeros([self.action_size])
+    #         y[action] = 1
+    #         gradients.append(np.array(y).astype('float32') - prob)
 
-        gradients = np.vstack(gradients)
-        rewards = np.vstack(rewards)
-        rewards = self.discount_rewards(rewards)
-        gradients *= rewards
-        X = np.squeeze(np.vstack([states]))
-        Y = probs + self.learning_rate * np.squeeze(np.vstack([gradients]))
+    #     gradients = np.vstack(gradients)
+    #     rewards = np.vstack(rewards)
+    #     rewards = self.discount_rewards(rewards)
+    #     gradients *= rewards
+    #     X = np.squeeze(np.vstack([states]))
+    #     Y = probs + self.learning_rate * np.squeeze(np.vstack([gradients]))
 
-        # It shouldn't be necessary to update the inference model explicitly,
-        # since it shares weights with the train model
-        result = self.train_model.train_on_batch(X, Y)
-        write(str(result), f'analytics/{self.name}.csv')
+    #     # It shouldn't be necessary to update the inference model explicitly,
+    #     # since it shares weights with the train model
+    #     result = self.train_model.train_on_batch(X, Y)
+    #     write(str(result), f'analytics/{self.name}.csv')
 
     def load(self, name):
         """

@@ -6,7 +6,6 @@ import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
 import {SceneContext} from './SceneContext';
 import { v4 as uuidv4 } from 'uuid';
-import { Canvas } from "@react-three/fiber";
 // const logger = require('./logger');
 
 function App() {
@@ -23,7 +22,6 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
-  // const pongAPI2 = new PongAPI(fullClientId, brokerUrl);
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
 
   useEffect(() => {
@@ -32,13 +30,10 @@ function App() {
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
 
-    // const pongAPI = new PongAPI(fullClientId, brokerUrl);
     const gameStateMachine = new GameStateMachine(pongAPIRef.current, sceneContext);
-    // const gamePlay = new GamePlay(pongAPI, sceneContext);
 
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
-      console.log(`######## pongAPI id: ${pongAPIRef.current.getInstanceId()}`);
     }
     gameStateMachine.startMachine();
 
@@ -58,18 +53,7 @@ function App() {
 
   return (
     <div className="App" >
-      {/* <GamePlay pongAPIRef={pongAPIRef} />
-      <Canvas>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <mesh position={[0,0,0]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial />
-        </mesh>        
-      </Canvas> */}
-
       <GamePlay pongAPIRef={pongAPIRef} />
-      {/* <MainScene width={screenWidth} height={screenHeight} /> */}
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );

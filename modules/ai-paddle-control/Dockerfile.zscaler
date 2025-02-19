@@ -1,6 +1,7 @@
-FROM tensorflow/tensorflow:2.13.0-gpu AS base
+# FROM tensorflow/tensorflow:2.13.0-gpu AS base
+FROM tensorflow/tensorflow:2.13.0 AS base
 WORKDIR /app
-RUN apt update -y && apt install -y ffmpeg libsm6 libxext6 libgtk2.0-dev pkg-config && apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN apt update -y && apt install -y ffmpeg libsm6 libxext6 libgtk2.0-dev pkg-config && apt clean && rm -rf /var/lib/apt/lists/*
 ENV PATH="/opt/venv/bin:$PATH"
 
 FROM base AS builder
@@ -11,6 +12,8 @@ COPY --from=certs . ./certs
 RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+# Install runtime system deps
+# RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 COPY requirements.txt .
 RUN python -m venv /opt/venv
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
@@ -28,6 +31,7 @@ RUN python -m pip install ./py_packages/dist/dw-0.2.0-py3-none-any.whl
 
 FROM base AS final
 WORKDIR /app
+COPY --from=util ./validation ./validation
 COPY ./src .
 # COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv

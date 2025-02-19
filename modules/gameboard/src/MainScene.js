@@ -6,7 +6,6 @@ import Game from './Game';
 import GameHud from './GameHud';
 import PlayerInstructionsHud from './PlayerInstructionHud';
 import { SceneContext } from './SceneContext';
-import GamePlay from './GamePlay';
 
 function CameraController() {
   const { camera } = useThree();
@@ -47,7 +46,7 @@ function MainScene() {
         {isGame ? (
           <group> 
             <Game/>
-            {/* <GameHud/> */}
+            <GameHud/>
           </group>
         ) : (
           <group>

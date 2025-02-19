@@ -1,245 +1,197 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { useLoader, useFrame } from '@react-three/fiber';
+import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
+import { useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
-import { RigidBody } from '@react-three/rapier';
 import {SceneContext} from './SceneContext';
 import * as IMAGES from './loadImages';
-
-function Ball({ position, args, ballRef, speed }) {
-
-  useEffect(() => {
-    if (ballRef.current) {
-      console.log(`############## Ball useEffect`); 
-
-      const currentPosition = ballRef.current.translation();
-      console.log(`currentPosition: ${JSON.stringify(currentPosition, null, 2)}`);
-    }
-  }, [speed, ballRef]);
-
-  useFrame(() => {
-    if (ballRef.current) {
-      const linvel = ballRef.current.linvel();
-      const currentSpeed = Math.sqrt(linvel.x ** 2 + linvel.y ** 2 + linvel.z ** 2);
-      if (currentSpeed > 0) {
-        const scalingFactor = speed / currentSpeed;
-        ballRef.current.setLinvel({
-          x: linvel.x * scalingFactor,
-          y: linvel.y * scalingFactor,
-          z: linvel.z * scalingFactor,
-        });
-      }
-    }
-  });
-
-  return (
-    <RigidBody ref={ballRef} position={position} colliders="ball" userData={{ isBall: true }}>
-      <mesh >
-        <sphereGeometry args={args}  />
-        {/* <circleGeometry args={[3.0, 64]} /> */}
-        <meshStandardMaterial color="white" />
-      </mesh>
-    </RigidBody>
-  );
-}
-
-function Paddle({ position, args, gameboardWidth, paddleWidth, isTop, positionX, color, speed }) {
-  const paddleRef = useRef();
-  const angles = [-60, -45, -30, 0, 0, 30, 45, 60]; // Bounce angles
-  const regionSize = paddleWidth / 8;
-
-  useEffect(() => {
-    console.log(`x: ${positionX}`);
-    if (paddleRef.current) {
-      const max = (gameboardWidth - paddleWidth) / 2;
-      const min = -max;
-      const xfactor = ((positionX - 0.5) * (gameboardWidth - paddleWidth));
-
-      const newPositionX = Math.max(min, Math.min(max, xfactor));
-      const currentPosition = paddleRef.current.translation();
-      paddleRef.current.setTranslation({ x: newPositionX, y: currentPosition.y, z: currentPosition.z });
-    }
-  }, [gameboardWidth, paddleWidth, positionX]);
-
-  const handleCollision = (event) => {
-    const otherObject = event.rigidBody;
-    if (otherObject.userData && otherObject.userData.isBall) {
-      const collisionPoint = Math.round(event.manifold.localContactPoint1().x);
-      const regionIndex = Math.round(collisionPoint / regionSize + 4);
-
-      if (regionIndex >= 0 && regionIndex < angles.length) {
-
-        const angle = (angles[regionIndex] * (Math.PI / 180)); // Convert angle to radians
-        const newVelocity = {
-          x: speed * Math.sin(angle),
-          y: speed * Math.cos(angle) * (isTop ? -1 : 1), // Adjust y based on whether it's the top or bottom paddle
-          z: 0,
-        };
-        otherObject.setLinvel(newVelocity);
-      }
-    }
-  };
-
-  return (
-    <RigidBody ref={paddleRef} position={position} type="fixed" colliders="cuboid" onCollisionEnter={handleCollision} userData={{ isPaddle: true }} >
-      <mesh>
-        <boxGeometry args={args} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </RigidBody>
-  );
-}
-
-function Wall({ position, args }) {
-  return (
-    <RigidBody type="fixed" position={position} colliders="cuboid" restitution={1}>
-      <mesh>
-        <boxGeometry args={args} />
-        <meshStandardMaterial color="red" transparent opacity={0.0} />
-      </mesh>
-    </RigidBody>
-  );
-}
-
-function Goal({ position, args, onGoal }) {
-  const handleGoal = (event) => {
-    const otherObject = event.rigidBody;
-    if (otherObject.userData && otherObject.userData.isBall) {
-      console.log('Goal scored!');
-      // Reset ball position or handle goal logic here
-    }
-  };
-
-  return (
-    <RigidBody position={position} type="fixed" colliders="cuboid" onIntersectionEnter={handleGoal} sensor userData={{ isGoal: true }}>
-      <mesh>
-        <boxGeometry args={args} />
-        <meshStandardMaterial color="green" transparent opacity={0.0} />
-      </mesh>
-    </RigidBody>
-  );
-}
-
-function Gameboard( {position, args, map} ) {
-
-  return (
-     <mesh position={position}>
-       <planeGeometry attach="geometry" args={args} />
-       <meshBasicMaterial attach="material" map={map} transparent opacity={1.0} />
-     </mesh>
-  );
-}
+import * as TEXT from './loadText';
+import Gameboard from './Gameboard';
+import Ball from './Ball';
+import Paddle from './Paddle';
+import Goal from './Goal';
+import Wall from './Wall';
 
 function Game() {
-  const {topPaddlePosition, bottomPaddlePosition, setBallPosition} = useContext(SceneContext);
+  const {
+    setTopPaddlePosition,
+    topPaddlePosition, 
+    bottomPaddlePosition,
+    setBottomPaddlePosition, 
+    setBallPosition, 
+    isPlaying, 
+    setIsPlaying,
+    topScore, 
+    setTopScore,
+    bottomScore, 
+    setBottomScore, 
+    level,
+    setLevelComplete,
+    setCountdown
+  } = useContext(SceneContext);
+
   const groupRef = useRef();
   const ballRef = useRef();
-  const [oldBall, setOldBall] = useState({x: 0.0, y: 0.0, z: 0.0});
+  const topPaddleRef = useRef();
+  const bottomPaddleRef = useRef();
+  const [oldBall, setOldBallPosition] = useState({x: 0.0, y: 0.0, z: 0.0});
+  const [isReset, setIsReset] = useState(false);
 
-  const speed = 40;
+  const speed = 200;
   const texture = useLoader(THREE.TextureLoader, IMAGES.gameboard);
-  // const aspectRatio = texture.image.width / texture.image.height;
-  // const scale = 24.0;
-  // const scale = 18.0;
-  // const gameboardHeight = scale;
-  // const gameboardWidth = aspectRatio * scale;
-  // const paddleWidth = 2;
   const gameboardY = 160; // height used in AI 
   const gameboardX = 192; // width used in AI
   const gameboardZ = -3.0;
-  const paddleX = 30;
+  const paddleX = 20;
   const paddleY = 3.0;
-  const paddleZ = 0.0;
-  const ballRadius = 3.0;
+  const paddlePadding = 3.0
+  const ballRadius = 4.0;
   const wallX = 1.0;
-  const wallZ = 2.5;
-  const goalY = 1.0;
-  const goalZ = 2.5;
-
-  // console.log(`texture.image.width: ${texture.image.width}`);
-  // console.log(`texture.image.height: ${texture.image.height}`);
-  // console.log(`aspectRatio: ${aspectRatio}`);
-
-  // console.log(`gameboardHeight: ${gameboardY}`);
-  // console.log(`gameboardWidth: ${gameboardX}`);
+  const goalY = 0.1;
+  const ballStartPositionY = -(gameboardY / 2) + 10;
+  const ballStartTranslation = {x: 0, y: -(gameboardY / 2) + 10, z: 0};
 
   useEffect(() => {
-    if (ballRef.current) {
-      ballRef.current.setLinvel({ x: 0, y: speed, z: 0 });
-    }
-
-    if (groupRef.current) {
-      // groupRef.current.rotation.x = -Math.PI / 4;
-    }
-  }, [ballRef]);
-  
-  useFrame(() => {
-    if (ballRef.current) {
-      const currentPosition = ballRef.current.translation();
-      const currentX = Math.round(currentPosition.x);
-      const currentY = Math.round(currentPosition.y);
-      const currentZ = Math.round(currentPosition.z);
-
-      if (currentX != oldBall.x || currentY != oldBall.y) {
-        const newPosition = { x: currentX, y: currentY, z: currentZ };
-        console.log(`currentPosition: ${JSON.stringify(currentPosition, null, 2)}`);
-        console.log(`newPosition: ${JSON.stringify(newPosition, null, 2)}`);
-        setBallPosition(newPosition);
-        setOldBall({ x: currentX, y: currentY, z: currentZ });
+      if (ballRef && ballRef.current) {
+      if (isReset) {
+        console.log("reset2222");
+        // const currentPosition1 = ballRef.current.translation();
+        // console.log(`translation: ${JSON.stringify(currentPosition1, null, 2)}`);
+        ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        ballRef.current.setTranslation(ballStartTranslation, true);
+        // const currentPosition2 = ballRef.current.translation();
+        // console.log(`translation: ${JSON.stringify(currentPosition2, null, 2)}`);
       }
+      // if(isPlaying && !isReset) {
+      if(!isReset && isPlaying) {
+        console.log("isPlaying2");
+        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
+      }
+
+      if(!isPlaying) {
+        console.log("!isPlaying");
+
+        ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        ballRef.current.setTranslation(ballStartTranslation, true);
+        setTopPaddlePosition(0.5);
+        setBottomPaddlePosition(0.5);
+      }
+    } 
+  }, [ballRef, isReset, isPlaying]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // console.log('This message prints every half second');
+      if (ballRef && ballRef.current) {
+        try {
+          const currentPosition = ballRef.current.translation();
+          currentPosition.x = Math.round(currentPosition.x);
+          currentPosition.y = Math.round(currentPosition.y);
+          currentPosition.z = Math.round(currentPosition.z);
+
+          if (currentPosition.x != oldBall.x || currentPosition.y != oldBall.y) {
+            // const newPosition = { x: currentX, y: currentY, z: currentZ };
+            // console.log(`currentPosition: ${JSON.stringify(currentPosition, null, 2)}`);
+            // console.log(`newPosition: ${JSON.stringify(newPosition, null, 2)}`);
+            setBallPosition(currentPosition);
+            setOldBallPosition(currentPosition);
+          }
+        } catch (error) {
+          console.log(`Error: ${error.message}`);
+        }
+      }      
+    }, 100);
+
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
+  }, [ballRef]);
+
+  const handleTopGoalScored = useCallback(() => {
+    setBottomScore(bottomScore + 1);
+  }, [bottomScore]);
+
+  const handleBottomGoalScored = useCallback(() => {
+    setTopScore(topScore + 1);  
+    if (level == 3) {
+      console.log(`level3: ${level}`);
+      setIsPlaying(false);
+      setLevelComplete(3); 
+
+      if (bottomScore > topScore) {
+      setCountdown(TEXT.human_wins);
+      }
+
+      if (bottomScore < topScore) {
+        setCountdown(TEXT.tyler_wins);
+      }
+
+      if (bottomScore == topScore) {
+        setCountdown(TEXT.draw);
+      }      
+
     }
-  });
+  }, [topScore, bottomScore, level]);
+  
+  const reset = useCallback(() => {
+    setIsReset(true);
+    setTopPaddlePosition(0.5);
+    setBottomPaddlePosition(0.5);
+    setTimeout(() => setIsReset(false), 1000); 
+  }, []);
 
   return (
     <group position={[0, 0, 0]} ref={groupRef}>
-     {/* <Gameboard position={[0.0, 0.0, -0.2]} args={[aspectRatio * scale, scale]} map={texture} /> */}
      <Gameboard position={[0.0, 0.0, gameboardZ]} args={[gameboardX, gameboardY]} map={texture} />
-     <Goal position={[0, gameboardY / 2, 0]} 
-           args={[gameboardX, goalY, goalZ]} />
-     <Goal position={[0, -gameboardY / 2, 0]} 
-           args={[gameboardX, goalY, goalZ]} />
+
+     <Goal 
+        position={[0, gameboardY / 2 + ballRadius * 2, 0]} 
+        args={[gameboardX, goalY, ballRadius * 2]} 
+        onGoal={handleTopGoalScored} 
+        onProcess={reset} 
+        isReset={isReset}
+      />
+
+      <Goal 
+        position={[0, -gameboardY / 2 - ballRadius * 2, 0]} 
+        args={[gameboardX, goalY, ballRadius * 2]}
+        onGoal={handleBottomGoalScored} 
+        onProcess={reset} 
+        isReset={isReset}
+      />
+
       <Wall position={[gameboardX / 2, 0, 0]} 
-            args={[wallX, gameboardY, wallZ]} />
+            args={[wallX, gameboardY]} />
+
       <Wall position={[-gameboardX / 2, 0, 0]} 
-            args={[wallX, gameboardY, wallZ]} />
-      <Paddle color="rgb(187,30,50)" 
-              position={[gameboardX / 2, gameboardY / 2, 0.0]} 
+            args={[wallX, gameboardY]} />
+
+      <Paddle paddleRef={topPaddleRef}
+              color="rgb(187,30,50)" 
+              position={[gameboardX / 2, gameboardY / 2 - paddlePadding, 0.0]} 
               gameboardWidth={gameboardX} 
               paddleWidth={paddleX} 
-              args={[paddleX, paddleY, paddleZ]} 
+              args={[paddleX, paddleY]} 
               isTop={true} 
-              positionX={topPaddlePosition} 
-              speed={speed} />
-      <Paddle color="rgb(20,192,243)" 
-              position={[-gameboardX / 2, -gameboardY / 2, 0.0]} 
+              paddlePosition={topPaddlePosition} 
+              speed={speed} 
+              isReset={isReset}
+              />
+
+      <Paddle paddleRef={bottomPaddleRef}
+              color="rgb(20,192,243)" 
+              position={[-gameboardX / 2, -gameboardY / 2 + paddlePadding, 0.0]} 
               gameboardWidth={gameboardX} 
               paddleWidth={paddleX} 
-              args={[paddleX, paddleY, paddleZ]} 
+              args={[paddleX, paddleY]} 
               isTop={false} 
-              positionX={bottomPaddlePosition} 
-              speed={speed} />
-      <Ball color="rgb(255,255,255)" 
-            position={[0, 0, 0]} 
-            args={[ballRadius, 64, 64]} 
-            ballRef={ballRef} 
-            speed={speed} />
+              paddlePosition={bottomPaddlePosition} 
+              speed={speed}
+              isReset={isReset}
+              />
+
+            <Ball ballRef={ballRef}  
+              color="rgb(255,255,255)" 
+              position={[0, ballStartPositionY, 0]} 
+              args={[ballRadius, 64, 64]}  />
     </group>
   );
-
-  // return (
-  //   <group position={[0, 0, 0]} ref={groupRef}>
-  //     <mesh position={[0, 0, 0]}>
-  //       <planeGeometry args={[5, 5]} />
-  //       <meshStandardMaterial color="yellow" />
-  //     </mesh>
-  //     <Goal position={[0, 2.5, 0]} />
-  //     <Goal position={[0, -2.5, 0]} />
-  //     <Wall position={[-2.5, 0, 0]} />
-  //     <Wall position={[2.5, 0, 0]} />
-  //     <Paddle color="red" initialPosition={[0, -2.5, 0]} isTop={false} positionX={bottomPaddlePosition} />
-  //     <Paddle color="blue" initialPosition={[0, 2.5, 0]} isTop={true} positionX={topPaddlePosition} />
-  //     <Ball ballRef={ballRef} />
-  //   </group>
-  // );
 }
 
 export default Game;

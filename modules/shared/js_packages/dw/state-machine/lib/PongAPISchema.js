@@ -62,20 +62,19 @@ const pongAPISchema = {
           "type": "object",
           "properties": {
             "score": { "type": "number" },
-            "count_down": { "type": "number" }
           },
-          "required": ["score", "count_down"]
+          "required": ["score"]
         },
         "player_bottom": {
           "type": "object",
           "properties": {
             "score": { "type": "number" },
-            "count_down": { "type": "number" }
           },
-          "required": ["score", "count_down"]
-        }
+          "required": ["score"]
+        },
+        "level": { "type": "number" }
       },
-      "required": ["player_top", "player_bottom"]
+      "required": ["player_top", "player_bottom", "level"]
     },
     "game/state": {
       "type": "object",
@@ -91,7 +90,7 @@ const pongAPISchema = {
       },
       "required": ["transition"]
     },
-    "paddle/top": {
+    "paddle/top/position": {
       "type": "object",
       "properties": {
         "position": {
@@ -108,7 +107,29 @@ const pongAPISchema = {
       },
       "required": ["position"]
     },
-    "paddle/bottom": {
+    "paddle/top/state": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["not_ready", "ready", "start", "stop"]
+        }
+      },
+      "required": ["state"]
+    },
+    "paddle/top/state_transition": {
+      "type": "object",
+      "properties": {
+        "transition": {
+          "type": "string",
+          "enum": [
+            "reset"
+          ]
+        }
+      },
+      "required": ["transition"]
+    },
+    "paddle/bottom/postion": {
       "type": "object",
       "properties": {
         "position": {
@@ -126,5 +147,35 @@ const pongAPISchema = {
       "required": ["position"]
     }
   },
-  "required": ["game/play", "game/stats", "game/state", "paddle/top", "paddle/bottom"]
+  "paddle/bottom/state": {
+    "type": "object",
+    "properties": {
+      "state": {
+        "type": "string",
+        "enum": ["not_ready", "ready", "start", "stop"]
+      }
+    },
+    "required": ["state"]
+  },
+  "paddle/bottom/state_transition": {
+    "type": "object",
+    "properties": {
+      "transition": {
+        "type": "string",
+        "enum": [
+          "reset"
+        ]
+      }
+    },
+    "required": ["transition"]
+  },
+
+  "required": [
+    "game/play", 
+    "game/stats", 
+    "game/state", 
+    "paddle/top/position", 
+    "paddle/top/state", 
+    "paddle/bottom/position",
+    "paddle/bottom/state"]
 };
