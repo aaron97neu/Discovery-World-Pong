@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import {SceneContext} from './SceneContext';
 import AudioPlayer from './AudioPlayer';
 import {PongAPI} from 'dw-state-machine';
@@ -6,7 +6,6 @@ import {PongAPI} from 'dw-state-machine';
 // class GamePlay {
 const GamePlay = ({pongAPIRef}) => {
   const {
-    playersReady,
     level,
     levelComplete,
     topScore,
@@ -22,10 +21,16 @@ const GamePlay = ({pongAPIRef}) => {
     ballPosition,
     isPaddleHit,
     setIsPaddleHit,
+    setIsPaddlesReset,
+    resetPaddles, 
+    setResetPaddles,
   } = useContext(SceneContext);
 
   const [prevTopScore, setPrevTopScore] = useState(0);
   const [prevBottomScore, setPrevBottomScore] = useState(0);
+
+  const [topPaddleReset, setTopPaddleReset] = useState(false);
+  const [bottomPaddleReset, setBottomPaddleReset] = useState(false);
 
   const audioPlayerRef = useRef(null);
   const audioVolume = 0.5;
@@ -38,18 +43,7 @@ const GamePlay = ({pongAPIRef}) => {
       audioPlayerRef.current.setVolume('pointLose', audioVolume);
     }
   }, []);
-
-  useEffect(() => {
-    if (isPaddleHit && audioPlayerRef.current) {
-      console.log("####################################");
-      setIsPaddleHit(false);
-      audioPlayerRef.current.play('paddleHit').catch((error) => {
-        console.error('Error playing audio:', error);
-      });
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    }
-  }, [isPaddleHit]);
-
+  
   useEffect(() => {
     if (pongAPIRef.current) {
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_POSITION, onPaddleTopPosition);
@@ -58,7 +52,18 @@ const GamePlay = ({pongAPIRef}) => {
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_BOTTOM_STATE, onPaddleBottomState);
     }
   }, [pongAPIRef]);
-  
+
+  useEffect(() => {
+    if (isPaddleHit && audioPlayerRef.current) {
+      // console.log("####################################");
+      setIsPaddleHit(false);
+      audioPlayerRef.current.play('paddleHit').catch((error) => {
+        console.error('Error playing audio:', error);
+      });
+      // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    }
+  }, [isPaddleHit]);
+ 
   useEffect(() => {
     if (pongAPIRef.current) {     
       if ( pongAPIRef.current.isConnected()) {
@@ -85,11 +90,9 @@ const GamePlay = ({pongAPIRef}) => {
         pongAPIRef.current.update(PongAPI.Topics.GAME_PLAY, message );
       }
     }
-
     // console.log(`ballPosition: ${JSON.stringify(ballPosition, null, 2)}`);
-
-  // }, [pongAPIRef, ballPosition, topPaddlePosition, bottomPaddlePosition]);
-  }, [pongAPIRef, ballPosition]);
+  }, [ballPosition, topPaddlePosition, bottomPaddlePosition]);
+  // }, [pongAPIRef, ballPosition]);
 
   useEffect(() => {
     // console.log('GamePlay Entered useEffect2');
@@ -100,8 +103,8 @@ const GamePlay = ({pongAPIRef}) => {
       // console.log(`saved pongAPI id: ${pongAPIsaved.instanceId()}`);
 
       if ( pongAPIRef.current.isConnected()) {
-        console.log('topPaddleState:', topPaddleState);
-        console.log('bottomPaddleState:', bottomPaddleState);
+        // console.log('topPaddleState:', topPaddleState);
+        // console.log('bottomPaddleState:', bottomPaddleState);
 
         if ((topPaddleState == "ready" || topPaddleState == "start") && (bottomPaddleState == "ready" || bottomPaddleState == "start")) {
           const message = {
@@ -134,7 +137,35 @@ const GamePlay = ({pongAPIRef}) => {
 
     // console.log(`ballPosition: ${JSON.stringify(ballPosition, null, 2)}`);
 
-  }, [pongAPIRef, topPaddleState, bottomPaddleState]);
+  }, [topPaddleState, bottomPaddleState]);
+
+  useEffect(() => {
+    if (topPaddleReset && bottomPaddleReset) {
+      // console.log(`topPaddleReset: ${topPaddleReset}`);
+      // console.log(`bottomPaddleReset: ${bottomPaddleReset}`);
+      setIsPaddlesReset(true);
+    }
+  }, [topPaddleReset, bottomPaddleReset]);
+
+  useEffect(() => {
+    // console.log(`transition to reset5`);
+    if (resetPaddles) {
+      if (pongAPIRef.current) {
+        if ( pongAPIRef.current.isConnected()) {     
+          const message =  { "transition": "reset" };
+          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+
+          // console.log(`transition to reset`);
+          setTopPaddleReset(false);
+          setBottomPaddleReset(false);
+          pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
+          pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
+          // setIsPaddlesReset(false);
+          setResetPaddles(false);
+        }
+      }
+    }
+  }, [resetPaddles]);
 
   useEffect(() => {
     if (pongAPIRef.current) {
@@ -165,16 +196,9 @@ const GamePlay = ({pongAPIRef}) => {
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }
-
-        const stateMessage =  { "transition": "reset" };
-        // console.log(`message: ${JSON.stringify(message, null, 2)}`);
-
-        pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,stateMessage );
-        pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, stateMessage );    
-
       }
     }
-  }, [pongAPIRef, levelComplete]);
+  }, [levelComplete]);
 
   useEffect(() => {
     if (topScore > prevTopScore) {
@@ -210,34 +234,41 @@ const GamePlay = ({pongAPIRef}) => {
         // console.log(`message: ${JSON.stringify(message, null, 2)}`);
         // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-        pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION, stateMessage );
-        pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, stateMessage );
+        // console.log(`transition to reset1`);
+        // pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION, stateMessage );
+        // pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, stateMessage );
       }
     }
   }, [topScore, bottomScore, level]);
 
   const onPaddleTopPosition = (message) => {
-      const paddleTopPositionX = message.position.x;
-      // console.log('paddleTopPositionX:', paddleTopPositionX);
-      setTopPaddlePosition(paddleTopPositionX);   
+      const paddlePosition = message.position.x;
+      // console.log('top  paddlePosition:', paddlePosition);
+      setTopPaddlePosition(paddlePosition);   
   }
 
   const onPaddleTopState = (message) => {
-      const newPaddleTopState = message.state;
-      // console.log('newPaddleTopState:', newPaddleTopState);
-      setTopPaddleState(newPaddleTopState);      
+      const paddleState = message.state;
+      // console.log('top paddleState:', paddleState);
+      if (paddleState == "reset") {
+        setTopPaddleReset(true);
+      }
+      setTopPaddleState(paddleState);      
   }
 
   const onPaddleBottomPosition = (message) => {
-      const paddleBottomPositionX = message.position.x;
-      // console.log('paddleBottomPositionX:', paddleBottomPositionX);
-      setBottomPaddlePosition(paddleBottomPositionX);   
+      const paddlePosition = message.position.x;
+      // console.log('bottom paddlePosition:', paddlePosition);
+      setBottomPaddlePosition(paddlePosition);   
   }  
 
   const onPaddleBottomState = (message) => {
-      const newPaddleBottomState = message.state;
-      // console.log('newPaddleBottomState:', newPaddleBottomState);
-      setBottomPaddleState(newPaddleBottomState);      
+      const paddleState = message.state;
+      // console.log('bottom paddleState:', paddleState);
+      if (paddleState == "reset") {
+        setBottomPaddleReset(true);
+      }
+      setBottomPaddleState(paddleState);      
   }  
 
   return null;

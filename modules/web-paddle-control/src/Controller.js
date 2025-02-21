@@ -1,54 +1,43 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {PongAPI} from 'dw-state-machine';
 
+const INTERVAL = process.env.REACT_APP_INTERVAL || 70;
+const INCREMENT = parseFloat(process.env.REACT_APP_INCREMENT) || 0.05;
+const MAX = process.env.REACT_APP_MAX || 1.0;
+const MIN = process.env.REACT_APP_MIN || 0.0;
+const PADDLEID = process.env.REACT_APP_PADDLE_ID || 'bottom';
+
+let paddlePositionTopic = PongAPI.Topics.PADDLE_BOTTOM_POSITION;
+let paddleStateTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE;
+let paddleStateTransitionTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION;
+
+if (PADDLEID === 'top') {
+  paddleStateTopic = PongAPI.Topics.PADDLE_TOP_STATE;
+  paddlePositionTopic = PongAPI.Topics.PADDLE_TOP_POSITION;
+  paddleStateTransitionTopic = PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION;
+}
+
+console.log(`#############################`);
+console.log(`paddleId: ${PADDLEID}`);
+console.log(`paddleTopic: ${paddleStateTopic}`);
+console.log(`paddleStateTransitionTopic: ${paddleStateTransitionTopic}`);
+console.log(`interval: ${INTERVAL}`);
+console.log(`increment: ${INCREMENT}`);
+console.log(`max: ${MAX}`);
+console.log(`min: ${MIN}`);
+console.log(`******************************`); 
+
 const Controller = ({pongAPIRef}) => {
-  let position = 0.5;
-  let lIntervalId = null;
-  let rIntervalId = null;
-  let paddlePositionTopic = PongAPI.Topics.PADDLE_BOTTOM_POSITION;
-  let paddleStateTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE;
-  let paddleStateTransitionTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION;
-  // const interval = process.env.REACT_APP_INTERVAL || 70;
-  const interval = process.env.REACT_APP_INTERVAL || 70;
-  const increment = parseFloat(process.env.REACT_APP_INCREMENT) || 0.05;
-  const max = process.env.REACT_APP_MAX || 1.0;
-  const min = process.env.REACT_APP_MIN || 0.0;
-  const paddleId = process.env.REACT_APP_PADDLE_ID || 'bottom';
-  // const paddleId = process.env.REACT_APP_PADDLE_ID || 'top';
+  const [position, setPosition] = useState(0.5);
 
-  if (paddleId === 'top') {
-    paddleStateTopic = PongAPI.Topics.PADDLE_TOP_STATE;
-    paddlePositionTopic = PongAPI.Topics.PADDLE_TOP_POSITION;
-    paddleStateTransitionTopic = PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION;
-  } else {
-    paddleStateTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE;
-    paddlePositionTopic = PongAPI.Topics.PADDLE_BOTTOM_POSITION;
-    paddleStateTransitionTopic = PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION;
-  }
-
-  console.log(`paddleId: ${paddleId}`);
-  console.log(`paddleTopic: ${paddleStateTopic}`);
-  console.log(`paddleStateTransitionTopic: ${paddleStateTransitionTopic}`);
-  console.log(`interval: ${interval}`);
-  console.log(`increment: ${increment}`);
-  console.log(`max: ${max}`);
-  console.log(`min: ${min}`);
+  const lIntervalId = useRef(null);
+  const rIntervalId = useRef(null);
 
   useEffect(() => {
-    // mqttClient.connect(() => {
-    //   mqttClient.publish('bottom_paddle/position', position.toFixed(2));
-    // });
-
-    // gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
-
     if (pongAPIRef.current) {
-        // pongAPIRef.current.update(paddleTopic, { position: { x: position.toFixed(2) } });
-
         pongAPIRef.current.registerObserver(paddleStateTransitionTopic, onPaddleStateTransition);
-
         pongAPIRef.current.update(paddleStateTopic, { state: "ready" });
     }
-
   
     // disable the pinch zoom on mobile
     const disablePinchZoom = (e) => {
@@ -65,85 +54,100 @@ const Controller = ({pongAPIRef}) => {
     };
   }, [pongAPIRef]);
 
+  useEffect(() => {
+    if (pongAPIRef.current) {
+      console.log(`position: ${position}`);
+      pongAPIRef.current.update(paddlePositionTopic, { position: { x: parseFloat(position.toFixed(2)) } });  
+    }
+  }, [position]);
+
   const onPaddleStateTransition = (message) => {
-      console.log('Paddle Message:', message);
       const paddleStateTransition = message.transition;
       if (paddleStateTransition == 'reset') {
-        console.log('######################################');
         console.log('Paddle Message:', message);
-        position = 0.5;
+
+        setPosition(0.5);
+        pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
+        // pongAPIRef.current.update(paddleStateTopic, { state: "start" });
       }
   }
 
   const move = useCallback((direction) => {
     console.log('move: ', direction);
 
-    let newPosition = position;
-    if (direction === 'L') {
-      console.log(`min: ${min}`);
-      console.log(`position - increment: ${position - increment}`);
-      console.log(`Math.max(min, position - increment): ${Math.max(min, position - increment)}`);
-      newPosition = Math.max(min, position - increment);
-    } else if (direction === 'R') {
-      console.log(`max: ${max}`);
-      console.log(`position + increment: ${position + increment}`);
-      console.log(`Math.min(max, position + increment): ${Math.min(max, position + increment)}`);
-      newPosition = Math.min(max, position + increment);
-    }
-    position = newPosition;
-    // gameState.setState(`game_${paddleId}_paddle_position`, position.toFixed(2));
-    console.log(`position: ${position}`);
-    pongAPIRef.current.update(paddlePositionTopic, { position: { x: parseFloat(position.toFixed(2)) } });
+    setPosition((prevPosition) => {
+      let newPosition = prevPosition;
+      if (direction === 'L') {
+        newPosition = Math.max(MIN, newPosition - INCREMENT);
+      } else if (direction === 'R') {
+        newPosition = Math.min(MAX, newPosition + INCREMENT);
+      }
+      console.log(`newPosition: ${newPosition}`);
+      return newPosition;
+    });
+  },[]);
 
-  }, [pongAPIRef]);
-
-  const handleMouseDown = (direction) => {
+  const handleMouseDown =  useCallback((direction) => {
+    console.log('handleMouseDown: ', direction);
+    // clearInterval(lIntervalId.current);
+    // clearInterval(rIntervalId.current);
     if (direction === 'L') {
       move(direction);
-      lIntervalId = setInterval(move, interval, direction);
+      lIntervalId.current = setInterval(() => move('L'), INTERVAL);
+      console.log(`lIntervalId.current: ${lIntervalId.current}`);
     } else if (direction === 'R') {
       move(direction);
-      rIntervalId = setInterval(move, interval, direction);
+      rIntervalId.current = setInterval(() => move('R'), INTERVAL);
+      console.log(`rIntervalId.current: ${rIntervalId.current}`);
     }
-  };
+  },[move]);
 
-  const handleMouseUp = (direction) => {
+  const handleMouseUp =  useCallback((direction) => {
+    console.log('handleMouseUp: ', direction);
+    console.log(`lIntervalId.current: ${lIntervalId.current}`);
+    console.log(`rIntervalId.current: ${rIntervalId.current}`);
+
     if (direction === 'L') {
-      clearInterval(lIntervalId);
-      lIntervalId = null;
+      clearInterval(lIntervalId.current);
+      console.log(`lIntervalId.current: ${lIntervalId.current}`);
+      lIntervalId.current = null;
     } else if (direction === 'R') {
-      clearInterval(rIntervalId);
-      rIntervalId = null;
+      clearInterval(rIntervalId.current);
+      console.log(`rIntervalId.current: ${rIntervalId.current}`);
+      rIntervalId.current = null;
     }
-  };
+  },[]);
 
-  const handleMouseLeave = (direction) => {
-    if (direction === 'L' && lIntervalId) {
-      clearInterval(lIntervalId);
-      lIntervalId = null;
-    } else if (direction === 'R' && rIntervalId) {
-      clearInterval(rIntervalId);
-      rIntervalId = null;
+  const handleMouseLeave =  useCallback((direction) => {
+    console.log('handleMouseLeave: ', direction);
+    if (direction === 'L' && lIntervalId.current) {
+      clearInterval(lIntervalId.current);
+      console.log(`lIntervalId.current: ${lIntervalId.current}`);
+      lIntervalId.current = null;
+    } else if (direction === 'R' && rIntervalId.current) {
+      clearInterval(rIntervalId.current);
+      console.log(`rIntervalId.current: ${rIntervalId.current}`);
+      rIntervalId.current = null;
     }
-  };
+  },[]);
 
   const startButton = useCallback(() => {
     console.log("Start button clicked");
     // Add code to handle the start button click here
     pongAPIRef.current.update(paddleStateTopic, { state: "start" });
-  }, [pongAPIRef]);
+  }, []);
 
   const stopButton = useCallback(() => {
     console.log("Stop button clicked");
     pongAPIRef.current.update(paddleStateTopic, { state: "stop" });
-  }, [pongAPIRef]);
+  }, []);
 
 
   const readyButton = useCallback(() => {
     console.log("Ready button clicked");
     pongAPIRef.current.update(paddleStateTopic, { state: "ready" });
-  }, [pongAPIRef]);
-  
+  }, []);
+
   return (
     <div className="Controller">
       <button className="split-button"
@@ -178,7 +182,34 @@ const Controller = ({pongAPIRef}) => {
       </button>
       </div>
     </div>
-  );
+  );  
+
+  // return (
+  //   <div className="Controller">
+  //     <button className="split-button"
+  //       onMouseDown={() => handleMouseDown('L')}
+  //       onMouseUp={() => handleMouseUp('L')}
+  //       onMouseLeave={() => handleMouseLeave('L')}
+  //       onTouchStart={() => handleMouseDown('L')}
+  //       onTouchEnd={() => handleMouseUp('L')}
+  //       onTouchCancel={() => handleMouseLeave('L')}
+  //     >
+  //       L
+  //     </button>
+  //     <button className="split-button"
+  //       onMouseDown={() => handleMouseDown('R')}
+  //       onMouseUp={() => handleMouseUp('R')}
+  //       onMouseLeave={() => handleMouseLeave('R')}
+  //       onTouchStart={() => handleMouseDown('R')}
+  //       onTouchEnd={() => handleMouseUp('R')}
+  //       onTouchCancel={() => handleMouseLeave('R')}
+  //     >
+  //       R
+  //     </button>
+
+      
+  //   </div>
+  // );
 };
 
 export default Controller;

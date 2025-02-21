@@ -6,7 +6,6 @@ const SceneContext = createContext();
 
 const SceneProvider = ({ children }) => {
   const [isGame, setIsGame] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [playerInstructionProps, setPlayerInstructionProps] = useState({
     image: IMAGES.noImage,
     // image: IMAGES.welcomeScreen,
@@ -14,7 +13,7 @@ const SceneProvider = ({ children }) => {
     scale: 1.0
   });
 
-  const [playersReady, setPlayersReady] = useState(false);
+  // const [playersReady, setPlayersReady] = useState(false);
   const [countdown, setCountdown] = useState(TEXT.countdown_get_ready);
   const [level, setLevel] = useState('1');
   const [levelComplete, setLevelComplete] = useState('0');
@@ -26,13 +25,17 @@ const SceneProvider = ({ children }) => {
   const [bottomPaddleState, setBottomPaddleState] = useState("not_ready");
   const [ballPosition, setBallPosition] = useState({x: 0.0, y: 0.0});
   const [isPaddleHit, setIsPaddleHit] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isReset, setIsReset] = useState(false);
+  const [isPaddlesReset, setIsPaddlesReset] = useState(false);
+  const [resetPaddles, setResetPaddles] = useState(false);
 
   return (
     <SceneContext.Provider value={{ 
       isGame, setIsGame, 
-      isPlaying, setIsPlaying,
       playerInstructionProps, setPlayerInstructionProps,
-      playersReady, setPlayersReady,
+      // playersReady, setPlayersReady,
       countdown, setCountdown,
       level, setLevel,
       levelComplete, setLevelComplete,
@@ -44,6 +47,11 @@ const SceneProvider = ({ children }) => {
       bottomPaddleState, setBottomPaddleState,
       ballPosition, setBallPosition,
       isPaddleHit, setIsPaddleHit,
+      playing, setPlaying,
+      isPlaying, setIsPlaying,
+      // isReset, setIsReset,
+      isPaddlesReset, setIsPaddlesReset,
+      resetPaddles, setResetPaddles,
       }}>
       {children}
     </SceneContext.Provider>

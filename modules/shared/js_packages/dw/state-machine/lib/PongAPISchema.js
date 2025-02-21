@@ -112,7 +112,7 @@ const pongAPISchema = {
       "properties": {
         "state": {
           "type": "string",
-          "enum": ["not_ready", "ready", "start", "stop"]
+          "enum": ["not_ready", "ready", "start", "reset", "stop"]
         }
       },
       "required": ["state"]
@@ -152,7 +152,7 @@ const pongAPISchema = {
     "properties": {
       "state": {
         "type": "string",
-        "enum": ["not_ready", "ready", "start", "stop"]
+        "enum": ["not_ready", "ready", "start", "reset", "stop"]
       }
     },
     "required": ["state"]

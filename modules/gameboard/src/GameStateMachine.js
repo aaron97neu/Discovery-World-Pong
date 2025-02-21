@@ -24,7 +24,7 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
-    this.sceneContext.setPlayersReady(false);
+    // this.sceneContext.setPlayersReady(false);
     this.sceneContext.setIsGame(false);
 
     this.audioPlayer.stop('musicBackground');
@@ -51,7 +51,7 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIntro();
 
-    this.sceneContext.setPlayersReady(true);
+    // this.sceneContext.setPlayersReady(true);
     this.audioPlayer.setVolume('musicBackground', this.volume);
     this.audioPlayer.play('musicBackground');
   }  
@@ -68,13 +68,13 @@ class GameStateMachine extends BaseStateMachine {
     super.onEnterLevel1();
 
     this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevel('1');
+    this.sceneContext.setLevelComplete(0);
     this.sceneContext.setTopScore(0);
     this.sceneContext.setBottomScore(0);
-    this.sceneContext.setTopPaddlePosition(0.5);
-    this.sceneContext.setBottomPaddlePosition(0.5);
-    this.sceneContext.setBallPosition({x: 0.0, y: 0.0});
-    this.sceneContext.setLevelComplete(0);
+    // this.sceneContext.setTopPaddlePosition(0.5);
+    // this.sceneContext.setBottomPaddlePosition(0.5);
+    // this.sceneContext.setBallPosition({x: 0.0, y: 0.0});
+    this.sceneContext.setLevel('1');
 
     this.sceneContext.setCountdown(TEXT.countdown_three);
     setTimeout(() => {
@@ -85,10 +85,13 @@ class GameStateMachine extends BaseStateMachine {
           this.sceneContext.setCountdown(TEXT.countdown_go);
           setTimeout(() => {
             this.sceneContext.setCountdown(TEXT.blank);
-            console.log("setIsPlaying true");
-            this.sceneContext.setIsPlaying(true);
+            // this.sceneContext.setIsPaddlesReset(false);
+            // console.log("whaaaaaaaaaaaat1");
+            // this.sceneContext.setIsReset(true);
+            // console.log("whaaaaaaaaaaaat2");
+            this.sceneContext.setPlaying(true);
             setTimeout(() => {
-              this.sceneContext.setIsPlaying(false);
+              this.sceneContext.setPlaying(false);
               this.sceneContext.setLevelComplete(1);
               this.sceneContext.setCountdown(TEXT.countdown_get_ready);
             }, this.playTime);            
@@ -98,60 +101,60 @@ class GameStateMachine extends BaseStateMachine {
     }, this.delay);
   }
 
-  onEnterLevel2() { 
-    console.log('GameStateMachine Entered Level2 state'); 
-    super.onEnterLevel2();
+  // onEnterLevel2() { 
+  //   console.log('GameStateMachine Entered Level2 state'); 
+  //   super.onEnterLevel2();
 
-    this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevel('2');
+  //   this.sceneContext.setIsGame(true);
+  //   this.sceneContext.setLevel('2');
     
-    this.sceneContext.setCountdown(TEXT.countdown_three);
-    setTimeout(() => {
-      this.sceneContext.setCountdown(TEXT.countdown_two);
-      setTimeout(() => {
-        this.sceneContext.setCountdown(TEXT.countdown_one);
-        setTimeout(() => {
-          this.sceneContext.setCountdown(TEXT.countdown_go);
-          setTimeout(() => {
-            this.sceneContext.setCountdown(TEXT.blank);
-            this.sceneContext.setIsPlaying(true);
-            setTimeout(() => {
-              this.sceneContext.setIsPlaying(false);
-              this.sceneContext.setLevelComplete(2);
-              this.sceneContext.setCountdown(TEXT.countdown_get_ready);
-            }, this.playTime);            
-          }, this.delay); 
-        }, this.delay); 
-      }, this.delay);
-    }, this.delay);  
-  }
+  //   this.sceneContext.setCountdown(TEXT.countdown_three);
+  //   setTimeout(() => {
+  //     this.sceneContext.setCountdown(TEXT.countdown_two);
+  //     setTimeout(() => {
+  //       this.sceneContext.setCountdown(TEXT.countdown_one);
+  //       setTimeout(() => {
+  //         this.sceneContext.setCountdown(TEXT.countdown_go);
+  //         setTimeout(() => {
+  //           this.sceneContext.setCountdown(TEXT.blank);
+  //           this.sceneContext.setIsPlaying(true);
+  //           setTimeout(() => {
+  //             this.sceneContext.setIsPlaying(false);
+  //             this.sceneContext.setLevelComplete(2);
+  //             this.sceneContext.setCountdown(TEXT.countdown_get_ready);
+  //           }, this.playTime);            
+  //         }, this.delay); 
+  //       }, this.delay); 
+  //     }, this.delay);
+  //   }, this.delay);  
+  // }
 
-  onEnterLevel3() { 
-    console.log('GameStateMachine Entered Level3 state'); 
-    super.onEnterLevel3();
+  // onEnterLevel3() { 
+  //   console.log('GameStateMachine Entered Level3 state'); 
+  //   super.onEnterLevel3();
 
-    this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevel('3');
+  //   this.sceneContext.setIsGame(true);
+  //   this.sceneContext.setLevel('3');
     
-    this.sceneContext.setCountdown(TEXT.countdown_three);
-    setTimeout(() => {
-      this.sceneContext.setCountdown(TEXT.countdown_two);
-      setTimeout(() => {
-        this.sceneContext.setCountdown(TEXT.countdown_one);
-        setTimeout(() => {
-          this.sceneContext.setCountdown(TEXT.countdown_go);
-          setTimeout(() => {
-            this.sceneContext.setCountdown(TEXT.blank);
-            this.sceneContext.setIsPlaying(true);
-            // setTimeout(() => {
-            //   this.sceneContext.setIsPlaying(false);
-            //   this.sceneContext.setLevelComplete(3); 
-            // }, this.playTime);            
-          }, this.delay); 
-        }, this.delay); 
-      }, this.delay);
-    }, this.delay);
-  }
+  //   this.sceneContext.setCountdown(TEXT.countdown_three);
+  //   setTimeout(() => {
+  //     this.sceneContext.setCountdown(TEXT.countdown_two);
+  //     setTimeout(() => {
+  //       this.sceneContext.setCountdown(TEXT.countdown_one);
+  //       setTimeout(() => {
+  //         this.sceneContext.setCountdown(TEXT.countdown_go);
+  //         setTimeout(() => {
+  //           this.sceneContext.setCountdown(TEXT.blank);
+  //           this.sceneContext.setIsPlaying(true);
+  //           // setTimeout(() => {
+  //           //   this.sceneContext.setIsPlaying(false);
+  //           //   this.sceneContext.setLevelComplete(3); 
+  //           // }, this.playTime);            
+  //         }, this.delay); 
+  //       }, this.delay); 
+  //     }, this.delay);
+  //   }, this.delay);
+  // }
 
   // onLeaveLevel3() { 
   //   console.log('GameStateMachine Exit Level3 state'); 

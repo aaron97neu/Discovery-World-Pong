@@ -17,11 +17,6 @@ export default class BaseStateMachine {
         { name: 'playerReady', from: 'idle', to: 'intro' },
         { name: 'startGame', from: 'intro', to: 'level1' },
         { name: 'playerExit', from: 'intro', to: 'idle' },
-        // { name: 'introComplete', from: 'intro', to: 'moveLeftIntro' },
-        // { name: 'playerExit', from: 'moveLeftIntro', to: 'idle' },
-        // { name: 'moveLeftIntroComplete', from: 'moveLeftIntro', to: 'moveRightIntro' },
-        // { name: 'playerExit', from: 'moveRightIntro', to: 'idle' },
-        // { name: 'startGame', from: 'moveRightIntro', to: 'level1' },
         { name: 'playerExit', from: 'level1', to: 'idle' },
         { name: 'level1Complete', from: 'level1', to: 'level2Intro' },
         { name: 'level2IntroComplete', from: 'level2Intro', to: 'level2' },
@@ -40,10 +35,6 @@ export default class BaseStateMachine {
         onLeaveIdle: this.onLeaveIdle.bind(this),
         onEnterIntro: this.onEnterIntro.bind(this),
         onLeaveIntro: this.onLeaveIntro.bind(this),
-        // onEnterMoveLeftIntro: this.onEnterMoveLeftIntro.bind(this),
-        // onLeaveMoveLeftIntro: this.onLeaveMoveLeftIntro.bind(this),
-        // onEnterMoveRightIntro: this.onEnterMoveRightIntro.bind(this),
-        // onLeaveMoveRightIntro: this.onLeaveMoveRightIntro.bind(this),
         onEnterLevel2Intro: this.onEnterLevel2Intro.bind(this),
         onLeaveLevel2Intro: this.onLeaveLevel2Intro.bind(this),
         onEnterLevel3Intro: this.onEnterLevel3Intro.bind(this),
@@ -71,24 +62,21 @@ export default class BaseStateMachine {
     // this.runLoop();
   }
 
-  /**
-   * Continuous loop with a sleep time of 5 seconds.
-   */
-  async runLoop() {
-    while (true) {
-      await new Promise(resolve => setTimeout(resolve, 5000));
-      // Add any periodic tasks here
-    }
-  }
+  // /**
+  //  * Continuous loop with a sleep time of 5 seconds.
+  //  */
+  // async runLoop() {
+  //   while (true) {
+  //     await new Promise(resolve => setTimeout(resolve, 5000));
+  //   }
+  // }
 
   /**
    * Callback for game/state topic.
    * @param {object} message - The message received.
    */
   onGameState(message) {
-    console.log('Game State Message:', message);
-    // if ('game_state_transition' in changes) {
-    //   const stateTransition = changes['game_state_transition'];
+    // console.log('Game State Message:', message);
     const stateTransition = message.transition;
     switch (stateTransition) {
           case 'start':
@@ -100,12 +88,6 @@ export default class BaseStateMachine {
           case 'player_exit':
             this.fsm.playerExit();
             break;
-          // case 'intro_complete':
-          //   this.fsm.introComplete();
-          //   break;
-          // case 'move_left_intro_complete':
-          //   this.fsm.moveLeftIntroComplete();
-          //   break;
           case 'level2_intro_complete':
             this.fsm.level2IntroComplete();
             break;
@@ -134,91 +116,28 @@ export default class BaseStateMachine {
               console.log("Unknown state transition:", stateTransition);
       // }    
   }
-
-  // /**
-  //  * Handle state changes from BaseState.
-  //  * @param {Object} changes - The changed state values.
-  //  */
-  // onStateChange(changes) {
-  //   if ('game_state_transition' in changes) {
-  //     const stateTransition = changes['game_state_transition'];
-  //     switch (stateTransition) {
-  //         case 'start':
-  //             this.fsm.start();
-  //             break;
-  //         case 'player_ready':
-  //           this.fsm.playerReady();
-  //           break;
-  //         case 'player_exit':
-  //           this.fsm.playerExit();
-  //           break;
-  //         case 'intro_complete':
-  //           this.fsm.introComplete();
-  //           break;
-  //         case 'move_left_intro_complete':
-  //           this.fsm.moveLeftIntroComplete();
-  //           break;
-  //         case 'start_game':
-  //           this.fsm.startGame();
-  //           break;
-  //         case 'level1_complete':
-  //           this.fsm.level1Complete();
-  //           break;
-  //         case 'level2_complete':
-  //             this.fsm.level2Complete();
-  //             break;
-  //         case 'level3_complete':
-  //             this.fsm.level3Complete();
-  //             break;
-  //         case 'game_complete':
-  //             this.fsm.gameComplete();
-  //             break;
-  //         case 'stop':
-  //             this.fsm.stop();
-  //             break;
-  //         default:
-  //             console.log("Unknown state transition:", stateTransition);
-  //     }
-  //   }
-
-    // if ('bottom_paddle_position' in changes) {
-    //   if (this.fsm.is('intro')) {
-    //     const bottomPaddlePosition = changes['bottom_paddle_position'];
-    //     if (bottomPaddlePosition < -20) {
-    //       this.bottomPaddleLeft = true;
-    //     }
-    //     if (this.bottomPaddleLeft && bottomPaddlePosition > 20) {
-    //       this.fsm.startGame();
-    //     }
-    //   }
-    // }
   }
   
   // Define onEnter<state> and onLeave<state> methods for each state
-  onEnterStopped() { console.log('Entered Stopped state'); }
-  onLeaveStopped() { console.log('Exited Stopped state'); }
+  onEnterStopped() { }
+  onLeaveStopped() { }
   onEnterIdle() { 
-    console.log('Entered Idle state');
     this.bottomPaddleLeft = false; 
   }
-  onLeaveIdle() { console.log('Exited Idle state'); }
-  onEnterIntro() { console.log('Entered Intro state'); }
-  onLeaveIntro() { console.log('Exited Intro state'); }
-  // onEnterMoveLeftIntro() { console.log('Entered MoveLeftIntro state'); }
-  // onLeaveMoveLeftIntro() { console.log('Exited MoveLeftIntro state'); }
-  // onEnterMoveRightIntro() { console.log('Entered MoveRightIntro state'); }
-  // onLeaveMoveRightIntro() { console.log('Exited MoveRightIntro state'); }
-  onEnterLevel2Intro() { console.log('Entered Level1Intro state'); }
-  onLeaveLevel2Intro() { console.log('Exited Level1Intro state'); }
-  onEnterLevel3Intro() { console.log('Entered Level2Intro state'); }
-  onLeaveLevel3Intro() { console.log('Exited Level2Intro state'); }
-  onEnterLevel1() { console.log('Entered Level1 state'); }
-  onLeaveLevel1() { console.log('Exited Level1 state'); }
-  onEnterLevel2() { console.log('Entered Level2 state'); }
-  onLeaveLevel2() { console.log('Exited Level2 state'); }
-  onEnterLevel3() { console.log('Entered Level3 state'); }
-  onLeaveLevel3() { console.log('Exited Level3 state'); }
-  onEnterOutro() { console.log('Entered Outro state'); }
-  onLeaveOutro() { console.log('Exited Outro state'); }
+  onLeaveIdle() { }
+  onEnterIntro() { }
+  onLeaveIntro() { }
+  onEnterLevel2Intro() { }
+  onLeaveLevel2Intro() { }
+  onEnterLevel3Intro() { }
+  onLeaveLevel3Intro() { }
+  onEnterLevel1() { }
+  onLeaveLevel1() { }
+  onEnterLevel2() { }
+  onLeaveLevel2() { }
+  onEnterLevel3() { }
+  onLeaveLevel3() { }
+  onEnterOutro() { }
+  onLeaveOutro() { }
  
 }
