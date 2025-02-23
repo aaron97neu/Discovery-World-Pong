@@ -12,7 +12,7 @@ import {PongAPI} from 'dw-state-machine';
 const logger = require('./logger');
 
 function App() {
-  logger.info('This is a winston info message');
+  // logger.info('This is a winston info message');
   const [size, setSize] = useState({ width: 800, height: 600 });
   // const screenWidth = window.innerWidth;
   // const screenHeight = window.innerHeight;
@@ -27,10 +27,10 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
-  console.log("broker: ", broker);
-  console.log("port: ", port);
-  console.log("clientId: ", clientId);
-  console.log("fullClientId: ", fullClientId);
+  // console.log("broker: ", broker);
+  // console.log("port: ", port);
+  // console.log("clientId: ", clientId);
+  // console.log("fullClientId: ", fullClientId);
 
   // const pongAPI = new PongAPI(fullClientId, brokerUrl);
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));

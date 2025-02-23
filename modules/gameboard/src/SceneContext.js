@@ -2,6 +2,15 @@ import { createContext, useState } from "react";
 import * as IMAGES from './loadImages';
 import * as TEXT from './loadText';
 
+// Define the PlayState enum
+const PlayState = {
+  IDLE: 'idle',
+  PLAY: 'play',
+  RESET: 'reset',
+  TOP_GOAL: 'top_goal',
+  BOTOM_GOAL: 'bttom_goal',
+};
+
 const SceneContext = createContext();
 
 const SceneProvider = ({ children }) => {
@@ -25,11 +34,12 @@ const SceneProvider = ({ children }) => {
   const [bottomPaddleState, setBottomPaddleState] = useState("not_ready");
   const [ballPosition, setBallPosition] = useState({x: 0.0, y: 0.0});
   const [isPaddleHit, setIsPaddleHit] = useState(false);
-  const [playing, setPlaying] = useState(false);
+  const [isLevelPlaying, setIsLevelPlaying] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   // const [isReset, setIsReset] = useState(false);
   const [isPaddlesReset, setIsPaddlesReset] = useState(false);
   const [resetPaddles, setResetPaddles] = useState(false);
+  const [playState, setPlayState] = useState(PlayState.IDLE);
 
   return (
     <SceneContext.Provider value={{ 
@@ -47,15 +57,16 @@ const SceneProvider = ({ children }) => {
       bottomPaddleState, setBottomPaddleState,
       ballPosition, setBallPosition,
       isPaddleHit, setIsPaddleHit,
-      playing, setPlaying,
+      isLevelPlaying, setIsLevelPlaying,
       isPlaying, setIsPlaying,
       // isReset, setIsReset,
       isPaddlesReset, setIsPaddlesReset,
       resetPaddles, setResetPaddles,
+      playState, setPlayState,
       }}>
       {children}
     </SceneContext.Provider>
   );
 };
 
-export { SceneContext, SceneProvider};
+export { SceneContext, SceneProvider, PlayState};

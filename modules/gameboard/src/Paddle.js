@@ -15,14 +15,16 @@ const Paddle = forwardRef(({
     const min = -max;
 
     useEffect(() => {
-      // console.log(`isTop: ${isTop}`);
-      // console.log(`paddlePosition: ${paddlePosition}`);
+      console.log(`isTop: ${isTop}`);
+      console.log(`paddlePosition: ${paddlePosition}`);
       if (ref.current) {
         const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
   
         const newPositionX = Math.max(min, Math.min(max, xfactor));
         const currentPosition = ref.current.translation();
         ref.current.setTranslation({ x: newPositionX, y: currentPosition.y, z: currentPosition.z }, true);
+        // const currentPositionout = ref.current.translation();
+        // console.log(`paddle new position: ${currentPositionout.x}`);
       }
     }, [paddlePosition]);
 

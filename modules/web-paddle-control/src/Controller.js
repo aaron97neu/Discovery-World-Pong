@@ -18,17 +18,18 @@ if (PADDLEID === 'top') {
 }
 
 console.log(`#############################`);
-console.log(`paddleId: ${PADDLEID}`);
-console.log(`paddleTopic: ${paddleStateTopic}`);
-console.log(`paddleStateTransitionTopic: ${paddleStateTransitionTopic}`);
-console.log(`interval: ${INTERVAL}`);
-console.log(`increment: ${INCREMENT}`);
-console.log(`max: ${MAX}`);
-console.log(`min: ${MIN}`);
-console.log(`******************************`); 
+// console.log(`paddleId: ${PADDLEID}`);
+// console.log(`paddleTopic: ${paddleStateTopic}`);
+// console.log(`paddleStateTransitionTopic: ${paddleStateTransitionTopic}`);
+// console.log(`interval: ${INTERVAL}`);
+// console.log(`increment: ${INCREMENT}`);
+// console.log(`max: ${MAX}`);
+// console.log(`min: ${MIN}`);
+// console.log(`******************************`); 
 
 const Controller = ({pongAPIRef}) => {
   const [position, setPosition] = useState(0.5);
+  const [isReset, setIsReset] = useState(false);
 
   const lIntervalId = useRef(null);
   const rIntervalId = useRef(null);
@@ -59,7 +60,15 @@ const Controller = ({pongAPIRef}) => {
       console.log(`position: ${position}`);
       pongAPIRef.current.update(paddlePositionTopic, { position: { x: parseFloat(position.toFixed(2)) } });  
     }
-  }, [position]);
+  }, [position]);  
+  
+  useEffect(() => {
+    if (pongAPIRef.current && isReset) {
+      console.log(`isReset: ${isReset}`);
+      pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
+      setIsReset(false);
+    }
+  }, [isReset]);
 
   const onPaddleStateTransition = (message) => {
       const paddleStateTransition = message.transition;
@@ -67,13 +76,15 @@ const Controller = ({pongAPIRef}) => {
         console.log('Paddle Message:', message);
 
         setPosition(0.5);
-        pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
+        setIsReset(true);
+
+        // pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
         // pongAPIRef.current.update(paddleStateTopic, { state: "start" });
       }
   }
 
   const move = useCallback((direction) => {
-    console.log('move: ', direction);
+    // console.log('move: ', direction);
 
     setPosition((prevPosition) => {
       let newPosition = prevPosition;
@@ -88,63 +99,63 @@ const Controller = ({pongAPIRef}) => {
   },[]);
 
   const handleMouseDown =  useCallback((direction) => {
-    console.log('handleMouseDown: ', direction);
+    // console.log('handleMouseDown: ', direction);
     // clearInterval(lIntervalId.current);
     // clearInterval(rIntervalId.current);
     if (direction === 'L') {
       move(direction);
       lIntervalId.current = setInterval(() => move('L'), INTERVAL);
-      console.log(`lIntervalId.current: ${lIntervalId.current}`);
+      // console.log(`lIntervalId.current: ${lIntervalId.current}`);
     } else if (direction === 'R') {
       move(direction);
       rIntervalId.current = setInterval(() => move('R'), INTERVAL);
-      console.log(`rIntervalId.current: ${rIntervalId.current}`);
+      // console.log(`rIntervalId.current: ${rIntervalId.current}`);
     }
   },[move]);
 
   const handleMouseUp =  useCallback((direction) => {
-    console.log('handleMouseUp: ', direction);
-    console.log(`lIntervalId.current: ${lIntervalId.current}`);
-    console.log(`rIntervalId.current: ${rIntervalId.current}`);
+    // console.log('handleMouseUp: ', direction);
+    // console.log(`lIntervalId.current: ${lIntervalId.current}`);
+    // console.log(`rIntervalId.current: ${rIntervalId.current}`);
 
     if (direction === 'L') {
       clearInterval(lIntervalId.current);
-      console.log(`lIntervalId.current: ${lIntervalId.current}`);
+      // console.log(`lIntervalId.current: ${lIntervalId.current}`);
       lIntervalId.current = null;
     } else if (direction === 'R') {
       clearInterval(rIntervalId.current);
-      console.log(`rIntervalId.current: ${rIntervalId.current}`);
+      // console.log(`rIntervalId.current: ${rIntervalId.current}`);
       rIntervalId.current = null;
     }
   },[]);
 
   const handleMouseLeave =  useCallback((direction) => {
-    console.log('handleMouseLeave: ', direction);
+    // console.log('handleMouseLeave: ', direction);
     if (direction === 'L' && lIntervalId.current) {
       clearInterval(lIntervalId.current);
-      console.log(`lIntervalId.current: ${lIntervalId.current}`);
+      // console.log(`lIntervalId.current: ${lIntervalId.current}`);
       lIntervalId.current = null;
     } else if (direction === 'R' && rIntervalId.current) {
       clearInterval(rIntervalId.current);
-      console.log(`rIntervalId.current: ${rIntervalId.current}`);
+      // console.log(`rIntervalId.current: ${rIntervalId.current}`);
       rIntervalId.current = null;
     }
   },[]);
 
   const startButton = useCallback(() => {
-    console.log("Start button clicked");
+    // console.log("Start button clicked");
     // Add code to handle the start button click here
     pongAPIRef.current.update(paddleStateTopic, { state: "start" });
   }, []);
 
   const stopButton = useCallback(() => {
-    console.log("Stop button clicked");
+    // console.log("Stop button clicked");
     pongAPIRef.current.update(paddleStateTopic, { state: "stop" });
   }, []);
 
 
   const readyButton = useCallback(() => {
-    console.log("Ready button clicked");
+    // console.log("Ready button clicked");
     pongAPIRef.current.update(paddleStateTopic, { state: "ready" });
   }, []);
 

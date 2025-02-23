@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
-import { useLoader } from '@react-three/fiber';
+import { useLoader, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import {SceneContext} from './SceneContext';
+import {SceneContext, PlayState} from './SceneContext';
 import * as IMAGES from './loadImages';
 import Gameboard from './Gameboard';
 import Ball from './Ball';
 import Paddle from './Paddle';
 import Goal from './Goal';
 import Wall from './Wall';
+import AudioPlayer from './AudioPlayer';
 
 const speed = 200;
 const gameboardHeight = 160; // height used in AI 
@@ -26,21 +27,18 @@ const angles = [-60, -45, -30, 0, 0, 30, 45, 60]; // Bounce angles
 
 function Game() {
   const {
+    level,
+    setLevelComplete,
     topPaddlePosition,
     bottomPaddlePosition,
     setBallPosition, 
-    playing, 
-    setPlaying,
-    isPlaying, 
-    setIsPlaying,
-    setTopScore,
-    setBottomScore, 
-    // setIsReset,
-    // isReset,
-    isPaddlesReset, 
-    setIsPaddlesReset,
-    resetPaddles, 
+    isLevelPlaying,
+    isPaddlesReset,
     setResetPaddles,
+    setTopScore,
+    setBottomScore,
+    playState, 
+    setPlayState,
   } = useContext(SceneContext);
 
   const ballRef = useRef();
@@ -49,9 +47,109 @@ function Game() {
   const texture = useLoader(THREE.TextureLoader, IMAGES.gameboard);
 
   const [oldBall, setOldBallPosition] = useState({x: 0.0, y: 0.0, z: 0.0});
-  const [resetBall, setResetBall] = useState(false);
   const [isBallReset, setIsBallReset] = useState(false);
-  const [dont, setDont] = useState(false);
+
+  const audioPlayerRef = useRef(null);
+  const audioVolume = 0.5;
+
+  useEffect(() => {
+    setPlayState(PlayState.IDLE);
+    if (!audioPlayerRef.current) {
+      audioPlayerRef.current = new AudioPlayer();
+      audioPlayerRef.current.setVolume('paddleHit', audioVolume);
+      audioPlayerRef.current.setVolume('pointScore', audioVolume);
+      audioPlayerRef.current.setVolume('pointLose', audioVolume);
+    }
+  }, []);
+
+  useEffect(() => {
+    switch (playState) {
+      case PlayState.IDLE:
+        console.log('State: IDLE');
+        break;
+      case PlayState.PLAY:
+        console.log('State: PLAY');
+        setIsBallReset(false);
+        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
+        break;
+      case PlayState.RESET:
+        console.log('State: RESET ###############');
+        console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
+        setResetPaddles(true);
+        setIsBallReset(false);
+        if (ballRef.current) {
+          ballRef.current.setTranslation(ballStartTranslation, true);
+          // ballRef.current.setTranslation( {x: 0, y:-50, z: 0}, true); 
+          ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+          ballRef.current.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);
+          setTimeout(() => {
+            setIsBallReset(true);
+          }, 2000); 
+        }
+        break;
+      case PlayState.TOP_GOAL:
+        console.log('State: TOP_GOAL');
+        if (audioPlayerRef.current) {
+          audioPlayerRef.current.play('pointScore').catch((error) => {
+            console.error('Error playing audio:', error);
+          });
+        }
+        setBottomScore((prev) => prev + 1);
+        setPlayState(PlayState.RESET);
+        break;      
+      case PlayState.BOTOM_GOAL:
+        console.log('State: BOTOM_GOAL'); 
+        if (audioPlayerRef.current) {
+          audioPlayerRef.current.play('pointLose').catch((error) => {
+            console.error('Error playing audio:', error);
+          });
+        }
+        setTopScore((prev) => prev + 1);
+        setPlayState(PlayState.RESET);
+        if (level == 3) {
+          setLevelComplete(3); 
+        }
+        break;
+      default:
+        break;
+    }
+  }, [playState]);
+
+  useFrame(() => {
+
+    if (isLevelPlaying && playState == PlayState.IDLE) {
+      setPlayState(PlayState.RESET);
+    }   
+    
+    // console.log(`isBallReset: ${isBallReset}`);
+    // console.log(`isPaddlesReset: ${isPaddlesReset}`);
+    if(isBallReset && isPaddlesReset && playState == PlayState.RESET) {
+      console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
+      console.log(`isBallReset: ${isBallReset}`);
+      console.log(`isPaddlesReset: ${isPaddlesReset}`);
+
+      setPlayState(PlayState.PLAY);
+    }
+
+    if (ballRef && ballRef.current) {
+      if (playState == PlayState.PLAY) {
+        try {
+          const currentPosition = ballRef.current.translation();
+
+          if (currentPosition.y > 90) {
+            setPlayState(PlayState.TOP_GOAL);
+          }
+
+          if (currentPosition.y < -90) {
+            setPlayState(PlayState.BOTOM_GOAL);
+          }
+
+        } catch (error) {
+          console.log(`Error: ${error.message}`);
+        }
+      }
+    }
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,82 +171,8 @@ function Game() {
       }      
     }, 100);
 
-    return () => clearInterval(interval); // Cleanup the interval on component unmount
-  }, []);
-
-  useEffect(() => {
-    if (resetBall) {
-      console.log('stop ball');  
-      ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      console.log('reset ball');
-      ballRef.current.setTranslation(ballStartTranslation, true);
-      setIsBallReset(true);
-      setResetBall(false);
-    }
-  }, [resetBall]);
-
-  useEffect(() => {
-    if(isBallReset && isPaddlesReset) {
-      console.log('paddles reset');  
-      console.log('start ball');  
-      if(!dont) {
-        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
-      }
-      setIsPlaying(true);
-      setIsPaddlesReset(false);
-      setIsBallReset(false);
-    }
-  }, [isBallReset, isPaddlesReset]);
-
-  useEffect(() => {
-    if(playing) {
-      console.log("playing true");
-      console.log(`resetPaddles: ${resetPaddles}`);
-      console.log(`resetBall: ${resetBall}`);
-      console.log(`playing: ${playing}`);
-      setResetPaddles(true);
-      setResetBall(true);
-      setPlaying(false);
-    } else {
-      setIsPlaying(false);
-    }
-  }, [playing]);
-
-  const handleTopGoalScored = useCallback(() => {
-    console.log('handleTopGoalScored begin');  
-    setBottomScore((prevScore) => prevScore + 1);
-    setDont(true);
-    setPlaying(true);
-    console.log('handleTopGoalScored end');  
-  }, []);
-
-  const handleBottomGoalScored = useCallback(() => {
-    console.log('handleBottomGoalScored begin');  
-    setTopScore((prevScore) => prevScore + 1);
-    setDont(true);
-    setPlaying(true);
-    console.log('handleBottomGoalScored end');  
-    // checkLevel();
-  }, []);
-
-  // const checkLevel = () => {
-  //   if (level == 3) {
-  //     setLevelComplete(3); 
-
-  //     if (bottomScore > topScore) {
-  //       setCountdown(TEXT.human_wins);
-  //     }
-
-  //     if (bottomScore < topScore) {
-  //       setCountdown(TEXT.tyler_wins);
-  //     }
-
-  //     if (bottomScore == topScore) {
-  //       setCountdown(TEXT.draw);
-  //     }      
-
-  //   }
-  // };
+    return () => clearInterval(interval); // Cleanup the interval on component unmount   
+  },);  
   
   const handleCollision = useCallback((event) => {
     const otherObject = event.rigidBody;
@@ -156,6 +180,10 @@ function Game() {
 
     if (otherObject.userData && otherObject.userData.isBall && 
       targetObject.userData && targetObject.userData.isPaddle) {
+
+      audioPlayerRef.current.play('paddleHit').catch((error) => {
+        console.error('Error playing audio:', error);
+      });
 
       const collisionPoint = event.manifold.localContactPoint1().x;
       const d = (collisionPoint + (paddleWidth / 2));
@@ -168,11 +196,12 @@ function Game() {
           y: speed * Math.cos(radians) * (targetObject.isTop ? -1 : 1), // Adjust y based on whether it's the top or bottom paddle
           z: 0,
         };   
+        // console.log(handleCollision);
         otherObject.setLinvel(newVelocity, true);
       }
     }
   }, []);
-
+  
   return (
     <group position={[0, 0, 0]} >
       <Gameboard 
@@ -181,21 +210,17 @@ function Game() {
         map={texture} 
       />
 
-      <Goal 
+      {/* <Goal 
         position={[0, gameboardHeight / 2 + ballRadius * 2, 0]} 
         args={[gameboardWidth, goalWidth, ballRadius * 5]} 
         onGoal={handleTopGoalScored} 
-        // onProcess={reset} 
-        // isReset={isReset}
       />
 
       <Goal 
         position={[0, -gameboardHeight / 2 - ballRadius * 2, 0]} 
         args={[gameboardWidth, goalWidth, ballRadius * 5]}
         onGoal={handleBottomGoalScored} 
-        // onProcess={reset} 
-        // isReset={isReset}
-      />
+      /> */}
 
       <Wall 
         position={[gameboardWidth / 2, 0, 0]} 
@@ -217,7 +242,6 @@ function Game() {
         paddleWidth={paddleWidth} 
         paddlePosition={topPaddlePosition}
         handleCollision={handleCollision}
-        // isReset={isReset}
       />
 
       <Paddle 
@@ -230,7 +254,6 @@ function Game() {
         paddleWidth={paddleWidth} 
         paddlePosition={bottomPaddlePosition} 
         handleCollision={handleCollision}
-        // isReset={isReset}
       />
 
       <Ball 

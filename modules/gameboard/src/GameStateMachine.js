@@ -89,9 +89,9 @@ class GameStateMachine extends BaseStateMachine {
             // console.log("whaaaaaaaaaaaat1");
             // this.sceneContext.setIsReset(true);
             // console.log("whaaaaaaaaaaaat2");
-            this.sceneContext.setPlaying(true);
+            this.sceneContext.setIsLevelPlaying(true);
             setTimeout(() => {
-              this.sceneContext.setPlaying(false);
+              this.sceneContext.setIsLevelPlaying(false);
               this.sceneContext.setLevelComplete(1);
               this.sceneContext.setCountdown(TEXT.countdown_get_ready);
             }, this.playTime);            
@@ -101,79 +101,79 @@ class GameStateMachine extends BaseStateMachine {
     }, this.delay);
   }
 
-  // onEnterLevel2() { 
-  //   console.log('GameStateMachine Entered Level2 state'); 
-  //   super.onEnterLevel2();
+  onEnterLevel2() { 
+    console.log('GameStateMachine Entered Level2 state'); 
+    super.onEnterLevel2();
 
-  //   this.sceneContext.setIsGame(true);
-  //   this.sceneContext.setLevel('2');
+    // this.sceneContext.setIsGame(true);
+    this.sceneContext.setLevel('2');
     
-  //   this.sceneContext.setCountdown(TEXT.countdown_three);
-  //   setTimeout(() => {
-  //     this.sceneContext.setCountdown(TEXT.countdown_two);
-  //     setTimeout(() => {
-  //       this.sceneContext.setCountdown(TEXT.countdown_one);
-  //       setTimeout(() => {
-  //         this.sceneContext.setCountdown(TEXT.countdown_go);
-  //         setTimeout(() => {
-  //           this.sceneContext.setCountdown(TEXT.blank);
-  //           this.sceneContext.setIsPlaying(true);
-  //           setTimeout(() => {
-  //             this.sceneContext.setIsPlaying(false);
-  //             this.sceneContext.setLevelComplete(2);
-  //             this.sceneContext.setCountdown(TEXT.countdown_get_ready);
-  //           }, this.playTime);            
-  //         }, this.delay); 
-  //       }, this.delay); 
-  //     }, this.delay);
-  //   }, this.delay);  
-  // }
+    this.sceneContext.setCountdown(TEXT.countdown_three);
+    setTimeout(() => {
+      this.sceneContext.setCountdown(TEXT.countdown_two);
+      setTimeout(() => {
+        this.sceneContext.setCountdown(TEXT.countdown_one);
+        setTimeout(() => {
+          this.sceneContext.setCountdown(TEXT.countdown_go);
+          setTimeout(() => {
+            this.sceneContext.setCountdown(TEXT.blank);
+            this.sceneContext.setIsLevelPlaying(true);
+            setTimeout(() => {
+              this.sceneContext.setIsLevelPlaying(false);
+              this.sceneContext.setLevelComplete(2);
+              this.sceneContext.setCountdown(TEXT.countdown_get_ready);
+            }, this.playTime);            
+          }, this.delay); 
+        }, this.delay); 
+      }, this.delay);
+    }, this.delay);  
+  }
 
-  // onEnterLevel3() { 
-  //   console.log('GameStateMachine Entered Level3 state'); 
-  //   super.onEnterLevel3();
+  onEnterLevel3() { 
+    console.log('GameStateMachine Entered Level3 state'); 
+    super.onEnterLevel3();
 
-  //   this.sceneContext.setIsGame(true);
-  //   this.sceneContext.setLevel('3');
+    // this.sceneContext.setIsGame(true);
+    this.sceneContext.setLevel('3');
     
-  //   this.sceneContext.setCountdown(TEXT.countdown_three);
-  //   setTimeout(() => {
-  //     this.sceneContext.setCountdown(TEXT.countdown_two);
-  //     setTimeout(() => {
-  //       this.sceneContext.setCountdown(TEXT.countdown_one);
-  //       setTimeout(() => {
-  //         this.sceneContext.setCountdown(TEXT.countdown_go);
-  //         setTimeout(() => {
-  //           this.sceneContext.setCountdown(TEXT.blank);
-  //           this.sceneContext.setIsPlaying(true);
-  //           // setTimeout(() => {
-  //           //   this.sceneContext.setIsPlaying(false);
-  //           //   this.sceneContext.setLevelComplete(3); 
-  //           // }, this.playTime);            
-  //         }, this.delay); 
-  //       }, this.delay); 
-  //     }, this.delay);
-  //   }, this.delay);
-  // }
+    this.sceneContext.setCountdown(TEXT.countdown_three);
+    setTimeout(() => {
+      this.sceneContext.setCountdown(TEXT.countdown_two);
+      setTimeout(() => {
+        this.sceneContext.setCountdown(TEXT.countdown_one);
+        setTimeout(() => {
+          this.sceneContext.setCountdown(TEXT.countdown_go);
+          setTimeout(() => {
+            this.sceneContext.setCountdown(TEXT.blank);
+            this.sceneContext.setIsLevelPlaying(true);
+            // setTimeout(() => {
+            //   this.sceneContext.setIsPlaying(false);
+            //   this.sceneContext.setLevelComplete(3); 
+            // }, this.playTime);            
+          }, this.delay); 
+        }, this.delay); 
+      }, this.delay);
+    }, this.delay);
+  }
 
-  // onLeaveLevel3() { 
-  //   console.log('GameStateMachine Exit Level3 state'); 
-  //   super.onLeaveLevel3();
+  onLeaveLevel3() { 
+    console.log('GameStateMachine Exit Level3 state'); 
+    super.onLeaveLevel3();
 
-  //   console.log(`topScore: ${this.sceneContext.topScore}`);
-  //   console.log(`bottomScore: ${this.sceneContext.bottomScore}`);
-  //   if (this.sceneContext.bottomScore > this.sceneContext.topScore) {
-  //     this.sceneContext.setCountdown(TEXT.human_wins);
-  //   }
+    // console.log(`topScore: ${this.sceneContext.topScore}`);
+    // console.log(`bottomScore: ${this.sceneContext.bottomScore}`);
+    if (this.sceneContext.bottomScore > this.sceneContext.topScore) {
+      this.sceneContext.setCountdown(TEXT.human_wins);
+    }
 
-  //   if (this.sceneContext.bottomScore < this.sceneContext.topScore) {
-  //     this.sceneContext.setCountdown(TEXT.tyler_wins);
-  //   }
+    if (this.sceneContext.bottomScore < this.sceneContext.topScore) {
+      this.sceneContext.setCountdown(TEXT.tyler_wins);
+    }
 
-  //   if (this.sceneContext.bottomScore == this.sceneContext.topScore) {
-  //     this.sceneContext.setCountdown(TEXT.draw);
-  //   }
-  // }
+    if (this.sceneContext.bottomScore == this.sceneContext.topScore) {
+      this.sceneContext.setCountdown(TEXT.draw);
+    }
+  }
 
 }
 
