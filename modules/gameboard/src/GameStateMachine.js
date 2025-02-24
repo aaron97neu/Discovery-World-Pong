@@ -1,20 +1,18 @@
 import { BaseStateMachine } from 'dw-state-machine';
 import AudioPlayer from './AudioPlayer';
 import * as IMAGES from './loadImages';
-import * as TEXT from './loadText';
 
 /**
  * Class representing the game state machine.
  * Inherits from BaseStateMachine.
  */
 class GameStateMachine extends BaseStateMachine {
-  constructor(pongAPI, sceneContext) {
+  constructor(pongAPI, gameContext) {
     console.log('GameStateMachine Entered Constructor'); 
     super(pongAPI);
-    this.delay = 600;
     this.playTime = 30000;
     this.volume = 0.5;
-    this.sceneContext = sceneContext;
+    this.gameContext = gameContext;
     this.audioPlayer = new AudioPlayer();
     this.audioPlayer.play('exhibitActivationNoise');
   }
@@ -24,16 +22,16 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
-    // this.sceneContext.setPlayersReady(false);
-    this.sceneContext.setIsGame(false);
+    // this.gameContext.setPlayersReady(false);
+    this.gameContext.setIsGame(false);
 
     this.audioPlayer.stop('musicBackground');
     this.audioPlayer.setVolume('musicIdle', this.volume);
     this.audioPlayer.play('musicIdle');
 
-    // this.sceneContext.setGameboard(false);
-    // this.sceneContext.setGameboard(true);
-    this.sceneContext.setPlayerInstructionProps({
+    // this.gameContext.setGameboard(false);
+    // this.gameContext.setGameboard(true);
+    this.gameContext.setPlayerInstructionProps({
       image: IMAGES.welcomeScreen,
       position: [0.0, 0.2, 0.0],
       scale: 8.5
@@ -51,7 +49,7 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIntro();
 
-    // this.sceneContext.setPlayersReady(true);
+    // this.gameContext.setPlayersReady(true);
     this.audioPlayer.setVolume('musicBackground', this.volume);
     this.audioPlayer.play('musicBackground');
   }  
@@ -67,113 +65,99 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
-    this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevelComplete(0);
-    this.sceneContext.setTopScore(0);
-    this.sceneContext.setBottomScore(0);
-    // this.sceneContext.setTopPaddlePosition(0.5);
-    // this.sceneContext.setBottomPaddlePosition(0.5);
-    // this.sceneContext.setBallPosition({x: 0.0, y: 0.0});
-    this.sceneContext.setLevel('1');
-
-    this.sceneContext.setCountdown(TEXT.countdown_three);
-    setTimeout(() => {
-      this.sceneContext.setCountdown(TEXT.countdown_two);
-      setTimeout(() => {
-        this.sceneContext.setCountdown(TEXT.countdown_one);
-        setTimeout(() => {
-          this.sceneContext.setCountdown(TEXT.countdown_go);
-          setTimeout(() => {
-            this.sceneContext.setCountdown(TEXT.blank);
-            // this.sceneContext.setIsPaddlesReset(false);
-            // console.log("whaaaaaaaaaaaat1");
-            // this.sceneContext.setIsReset(true);
-            // console.log("whaaaaaaaaaaaat2");
-            this.sceneContext.setIsLevelPlaying(true);
-            setTimeout(() => {
-              this.sceneContext.setIsLevelPlaying(false);
-              this.sceneContext.setLevelComplete(1);
-              this.sceneContext.setCountdown(TEXT.countdown_get_ready);
-            }, this.playTime);            
-          }, this.delay); 
-        }, this.delay); 
-      }, this.delay);
-    }, this.delay);
-  }
-
-  onEnterLevel2() { 
-    console.log('GameStateMachine Entered Level2 state'); 
-    super.onEnterLevel2();
-
-    // this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevel('2');
+    this.gameContext.setIsGame(true);
+    this.gameContext.setLevelComplete(0);
+    // this.gameContext.setTopScore(0);
+    // this.gameContext.setBottomScore(0);
     
-    this.sceneContext.setCountdown(TEXT.countdown_three);
+    // this.gameContext.setTopPaddlePosition(0.5);
+    // this.gameContext.setBottomPaddlePosition(0.5);
+    // this.gameContext.setBallPosition({x: 0.0, y: 0.0});
+
+    // this.gameContext.setLevel('1');
+
+    this.gameContext.setIsLevelPlaying(true);
     setTimeout(() => {
-      this.sceneContext.setCountdown(TEXT.countdown_two);
-      setTimeout(() => {
-        this.sceneContext.setCountdown(TEXT.countdown_one);
-        setTimeout(() => {
-          this.sceneContext.setCountdown(TEXT.countdown_go);
-          setTimeout(() => {
-            this.sceneContext.setCountdown(TEXT.blank);
-            this.sceneContext.setIsLevelPlaying(true);
-            setTimeout(() => {
-              this.sceneContext.setIsLevelPlaying(false);
-              this.sceneContext.setLevelComplete(2);
-              this.sceneContext.setCountdown(TEXT.countdown_get_ready);
-            }, this.playTime);            
-          }, this.delay); 
-        }, this.delay); 
-      }, this.delay);
-    }, this.delay);  
+      this.gameContext.setIsLevelPlaying(false);
+      this.gameContext.setLevelComplete(1);
+    }, this.playTime);            
   }
 
-  onEnterLevel3() { 
-    console.log('GameStateMachine Entered Level3 state'); 
-    super.onEnterLevel3();
+  // onEnterLevel2() { 
+  //   console.log('GameStateMachine Entered Level2 state'); 
+  //   super.onEnterLevel2();
 
-    // this.sceneContext.setIsGame(true);
-    this.sceneContext.setLevel('3');
+  //   // this.gameContext.setIsGame(true);
+  //   this.gameContext.setLevel('2');
     
-    this.sceneContext.setCountdown(TEXT.countdown_three);
-    setTimeout(() => {
-      this.sceneContext.setCountdown(TEXT.countdown_two);
-      setTimeout(() => {
-        this.sceneContext.setCountdown(TEXT.countdown_one);
-        setTimeout(() => {
-          this.sceneContext.setCountdown(TEXT.countdown_go);
-          setTimeout(() => {
-            this.sceneContext.setCountdown(TEXT.blank);
-            this.sceneContext.setIsLevelPlaying(true);
-            // setTimeout(() => {
-            //   this.sceneContext.setIsPlaying(false);
-            //   this.sceneContext.setLevelComplete(3); 
-            // }, this.playTime);            
-          }, this.delay); 
-        }, this.delay); 
-      }, this.delay);
-    }, this.delay);
-  }
+  //   this.gameContext.setCountdown(TEXT.countdown_three);
+  //   setTimeout(() => {
+  //     this.gameContext.setCountdown(TEXT.countdown_two);
+  //     setTimeout(() => {
+  //       this.gameContext.setCountdown(TEXT.countdown_one);
+  //       setTimeout(() => {
+  //         this.gameContext.setCountdown(TEXT.countdown_go);
+  //         setTimeout(() => {
+  //           this.gameContext.setCountdown(TEXT.blank);
+  //           this.gameContext.setIsLevelPlaying(true);
+  //           setTimeout(() => {
+  //             this.gameContext.setIsLevelPlaying(false);
+  //             this.gameContext.setLevelComplete(2);
+  //             this.gameContext.setCountdown(TEXT.countdown_get_ready);
+  //           }, this.playTime);            
+  //         }, this.delay); 
+  //       }, this.delay); 
+  //     }, this.delay);
+  //   }, this.delay);  
+  // }
 
-  onLeaveLevel3() { 
-    console.log('GameStateMachine Exit Level3 state'); 
-    super.onLeaveLevel3();
+  // onEnterLevel3() { 
+  //   console.log('GameStateMachine Entered Level3 state'); 
+  //   super.onEnterLevel3();
 
-    // console.log(`topScore: ${this.sceneContext.topScore}`);
-    // console.log(`bottomScore: ${this.sceneContext.bottomScore}`);
-    if (this.sceneContext.bottomScore > this.sceneContext.topScore) {
-      this.sceneContext.setCountdown(TEXT.human_wins);
-    }
+  //   // this.gameContext.setIsGame(true);
+  //   this.gameContext.setLevel('3');
+    
+  //   this.gameContext.setCountdown(TEXT.countdown_three);
+  //   setTimeout(() => {
+  //     this.gameContext.setCountdown(TEXT.countdown_two);
+  //     setTimeout(() => {
+  //       this.gameContext.setCountdown(TEXT.countdown_one);
+  //       setTimeout(() => {
+  //         this.gameContext.setCountdown(TEXT.countdown_go);
+  //         setTimeout(() => {
+  //           this.gameContext.setCountdown(TEXT.blank);
+  //           this.gameContext.setIsLevelPlaying(true);
+  //           // setTimeout(() => {
+  //           //   this.gameContext.setIsPlaying(false);
+  //           //   this.gameContext.setLevelComplete(3); 
+  //           // }, this.playTime);            
+  //         }, this.delay); 
+  //       }, this.delay); 
+  //     }, this.delay);
+  //   }, this.delay);
+  // }
 
-    if (this.sceneContext.bottomScore < this.sceneContext.topScore) {
-      this.sceneContext.setCountdown(TEXT.tyler_wins);
-    }
+  // onLeaveLevel3() { 
+  //   console.log('GameStateMachine Exit Level3 state'); 
+  //   super.onLeaveLevel3();
+      
+      // setIsGamePlaying(false);
 
-    if (this.sceneContext.bottomScore == this.sceneContext.topScore) {
-      this.sceneContext.setCountdown(TEXT.draw);
-    }
-  }
+  //   // console.log(`topScore: ${this.gameContext.topScore}`);
+  //   // console.log(`bottomScore: ${this.gameContext.bottomScore}`);
+  //   if (this.gameContext.bottomScore > this.gameContext.topScore) {
+  //     this.gameContext.setCountdown(TEXT.human_wins);
+  //   }
+
+  //   if (this.gameContext.bottomScore < this.gameContext.topScore) {
+  //     this.gameContext.setCountdown(TEXT.tyler_wins);
+  //   }
+
+  //   if (this.gameContext.bottomScore == this.gameContext.topScore) {
+  //     this.gameContext.setCountdown(TEXT.draw);
+  //   }
+  // }
 
 }
 

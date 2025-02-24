@@ -4,7 +4,7 @@ import GameStateMachine from './GameStateMachine';
 import GamePlay from './GamePlay';
 import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
-import {SceneContext} from './SceneContext';
+import {GameContext} from './GameContext';
 import { v4 as uuidv4 } from 'uuid';
 // const logger = require('./logger');
 
@@ -13,7 +13,7 @@ function App() {
 
   const [size, setSize] = useState({ width: 800, height: 600 });
 
-  const sceneContext = useContext(SceneContext);
+  const gameContext = useContext(GameContext);
 
   const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
   const port = process.env.REACT_APP_MQTT_PORT || 9001;
@@ -22,7 +22,9 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
+  console.log("app constructor");
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
+  const gameStateMachineRef = useRef(new GameStateMachine(pongAPIRef.current, gameContext));
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -30,12 +32,15 @@ function App() {
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
 
-    const gameStateMachine = new GameStateMachine(pongAPIRef.current, sceneContext);
+    // const gameStateMachine = new GameStateMachine(pongAPIRef.current, GameContext);
 
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
     }
-    gameStateMachine.startMachine();
+
+    if (gameStateMachineRef.current) {
+      gameStateMachineRef.current.startMachine();
+    }
 
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });

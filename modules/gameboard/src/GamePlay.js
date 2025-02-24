@@ -1,12 +1,19 @@
 import { useContext, useEffect, useState, useRef } from 'react';
-import {SceneContext, PlayState} from './SceneContext';
+import {GameContext} from './GameContext';
+import {PlayContext, PlayState} from './PlayContext';
 import {PongAPI} from 'dw-state-machine';
 
 // class GamePlay {
 const GamePlay = ({pongAPIRef}) => {
+
+  const {
+    isGamePlaying,
+    setIsGamePlaying,
+    levelComplete,
+  } = useContext(GameContext);
+
   const {
     level,
-    levelComplete,
     topScore,
     bottomScore,
     topPaddlePosition,
@@ -22,8 +29,8 @@ const GamePlay = ({pongAPIRef}) => {
     resetPaddles, 
     setResetPaddles,
     playState, 
-  } = useContext(SceneContext);
-
+  } = useContext(PlayContext);
+  
   const prevBallPositionRef = useRef();
 
   useEffect(() => {
@@ -64,11 +71,12 @@ const GamePlay = ({pongAPIRef}) => {
           prevBallPositionRef.current = ballPosition;
         }
 
-        if (playState == PlayState.IDLE && (topPaddleState == "ready" || topPaddleState == "start") && (bottomPaddleState == "ready" || bottomPaddleState == "start")) {
+        if (!isGamePlaying && (topPaddleState == "ready" || topPaddleState == "start") && (bottomPaddleState == "ready" || bottomPaddleState == "start")) {
+          setIsGamePlaying(true);
           const message = {
             "transition": "player_ready"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }
@@ -77,7 +85,7 @@ const GamePlay = ({pongAPIRef}) => {
           const message = {
             "transition": "start_game"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }        
@@ -86,7 +94,7 @@ const GamePlay = ({pongAPIRef}) => {
           const message = {
             "transition": "player_exit"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }  

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { useLoader, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import {SceneContext, PlayState} from './SceneContext';
+import {GameContext} from './GameContext';
+import {PlayContext, PlayState} from './PlayContext';
 import * as IMAGES from './loadImages';
 import Gameboard from './Gameboard';
 import Ball from './Ball';
@@ -9,6 +10,7 @@ import Paddle from './Paddle';
 import Goal from './Goal';
 import Wall from './Wall';
 import AudioPlayer from './AudioPlayer';
+import * as TEXT from './loadText';
 
 const speed = 200;
 const gameboardHeight = 160; // height used in AI 
@@ -26,20 +28,25 @@ const angles = [-60, -45, -30, 0, 0, 30, 45, 60]; // Bounce angles
 // const regionSize = paddleWidth / 8;
 
 function Game() {
+
+  const {
+    isLevelPlaying,
+  } = useContext(GameContext);
+
   const {
     level,
+    setCountdown,
     setLevelComplete,
     topPaddlePosition,
     bottomPaddlePosition,
     setBallPosition, 
-    isLevelPlaying,
     isPaddlesReset,
     setResetPaddles,
     setTopScore,
     setBottomScore,
     playState, 
     setPlayState,
-  } = useContext(SceneContext);
+  } = useContext(PlayContext);
 
   const ballRef = useRef();
   const topPaddleRef = useRef();
@@ -51,8 +58,10 @@ function Game() {
 
   const audioPlayerRef = useRef(null);
   const audioVolume = 0.5;
+  const delay = 600;
 
   useEffect(() => {
+    console.log("game constructor");
     setPlayState(PlayState.IDLE);
     if (!audioPlayerRef.current) {
       audioPlayerRef.current = new AudioPlayer();
@@ -67,10 +76,25 @@ function Game() {
       case PlayState.IDLE:
         console.log('State: IDLE');
         break;
-      case PlayState.PLAY:
-        console.log('State: PLAY');
-        setIsBallReset(false);
-        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
+      case PlayState.COUNTDOWN:
+        console.log('State: COUNTDOWN');
+        setCountdown(TEXT.countdown_get_ready);
+        setTimeout(() => {
+          setCountdown(TEXT.countdown_three);
+          setTimeout(() => {
+            setCountdown(TEXT.countdown_two);
+            setTimeout(() => {
+              setCountdown(TEXT.countdown_one);
+              setTimeout(() => {
+                setCountdown(TEXT.countdown_go);
+                setTimeout(() => {
+                  setCountdown(TEXT.blank);
+                  setPlayState(PlayState.RESET);        
+                }, delay); 
+              }, delay); 
+            }, delay);
+          }, delay);
+        }, delay);
         break;
       case PlayState.RESET:
         console.log('State: RESET ###############');
@@ -86,6 +110,11 @@ function Game() {
             setIsBallReset(true);
           }, 2000); 
         }
+      break;    
+      case PlayState.PLAY:
+        console.log('State: PLAY');
+        setIsBallReset(false);
+        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
         break;
       case PlayState.TOP_GOAL:
         console.log('State: TOP_GOAL');
@@ -107,7 +136,7 @@ function Game() {
         setTopScore((prev) => prev + 1);
         setPlayState(PlayState.RESET);
         if (level == 3) {
-          setLevelComplete(3); 
+          setLevelComplete(3);
         }
         break;
       default:
@@ -118,7 +147,7 @@ function Game() {
   useFrame(() => {
 
     if (isLevelPlaying && playState == PlayState.IDLE) {
-      setPlayState(PlayState.RESET);
+      setPlayState(PlayState.COUNTDOWN);
     }   
     
     // console.log(`isBallReset: ${isBallReset}`);
