@@ -31,6 +31,7 @@ function Game() {
 
   const {
     isLevelPlaying,
+    levelComplete,
     setLevelComplete,
   } = useContext(GameContext);
 
@@ -83,9 +84,9 @@ function Game() {
         setTimeout(() => {
         }, delay);
         break;
+
       case PlayState.COUNTDOWN:
         console.log('State: COUNTDOWN');
-        // setIsCountdownComplete(false);
         setCountdown(TEXT.countdown_three);
         setTimeout(() => {
           setCountdown(TEXT.countdown_two);
@@ -95,23 +96,21 @@ function Game() {
               setCountdown(TEXT.countdown_go);
               setTimeout(() => {
                 setCountdown(TEXT.blank);
-                setIsCountdownComplete(true);
-                // setPlayState(PlayState.PADDLE_RESET);        
+                setIsCountdownComplete(true);     
               }, delay); 
             }, delay); 
           }, delay);
         }, delay);
         break;
+
       case PlayState.PADDLE_RESET:
-        console.log('State: PADDLE_RESET ###############');
+        console.log('State: PADDLE_RESET');
         // setIsPaddlesReset(false);
         setResetPaddles(true);
         break;
+
       case PlayState.RESET:
-        console.log('State: RESET ###############');
-        console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
-        // setResetPaddles(true);
-        // setIsBallReset(false);
+        console.log('State: RESET');
         if (ballRef.current) {
           ballRef.current.setTranslation(ballStartTranslation, true);
           // ballRef.current.setTranslation( {x: 0, y:-50, z: 0}, true); 
@@ -119,14 +118,16 @@ function Game() {
           ballRef.current.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);
           setTimeout(() => {
             setIsBallReset(true);
-          }, 1000); 
+          }, 500); 
         }
-      break;    
+      break;
+
       case PlayState.PLAY:
         console.log('State: PLAY');
         // setIsBallReset(false);
         ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
         break;
+
       case PlayState.TOP_GOAL:
         console.log('State: TOP_GOAL');
         if (audioPlayerRef.current) {
@@ -135,8 +136,8 @@ function Game() {
           });
         }
         setBottomScore((prev) => prev + 1);
-        // setPlayState(PlayState.PADDLE_RESET);
-        break;      
+        break;
+
       case PlayState.BOTOM_GOAL:
         console.log('State: BOTOM_GOAL'); 
         if (audioPlayerRef.current) {
@@ -145,38 +146,42 @@ function Game() {
           });
         }
         setTopScore((prev) => prev + 1);
-        // setPlayState(PlayState.PADDLE_RESET);
         if (level == 3) {
-          // setPlayState(PlayState.IDLE);
-          console.log(`topScore: ${topScore}`);
-          console.log(`bottomScore: ${bottomScore}`);
-          if (bottomScore > topScore) {
-            setCountdown(TEXT.human_wins);
-          }
-
-          if (bottomScore < topScore) {
-            setCountdown(TEXT.tyler_wins);
-          }
-
-          if (bottomScore == topScore) {
-            setCountdown(TEXT.draw);
-          }
-
           setLevelComplete(3);
         }
         break;
+
+      case PlayState.GAME_FINISHED:
+        console.log('State: GAME_FINISHED'); 
+        console.log(`topScore: ${topScore}`);
+        console.log(`bottomScore: ${bottomScore}`);
+        if (bottomScore > topScore) {
+          setCountdown(TEXT.human_wins);
+        }
+
+        if (bottomScore < topScore) {
+          setCountdown(TEXT.tyler_wins);
+        }
+
+        if (bottomScore == topScore) {
+          setCountdown(TEXT.draw);
+        }
+      break;
+
       default:
         break;
     }
   }, [playState]);
 
-  // useFrame(() => {
   useEffect(() => {
 
     if (isLevelPlaying && playState == PlayState.IDLE) {
-        // setPlayState(PlayState.COUNTDOWN);
       setPlayState(PlayState.PADDLE_RESET);
     }   
+
+    if (levelComplete == 3 && playState != PlayState.IDLE) {
+      setPlayState(PlayState.GAME_FINISHED);
+    }       
 
     if (!isLevelPlaying && playState != PlayState.IDLE) {
       setPlayState(PlayState.PADDLE_RESET);
@@ -201,8 +206,6 @@ function Game() {
       setPlayState(PlayState.RESET);
     }
 
-    // console.log(`isBallReset: ${isBallReset}`);
-    // console.log(`isPaddlesReset: ${isPaddlesReset}`);
     if(isLevelPlaying && isBallReset && isPaddlesReset && playState == PlayState.RESET) {
       console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
       console.log(`isBallReset: ${isBallReset}`);
@@ -214,7 +217,6 @@ function Game() {
     }
 
     if (isLevelPlaying && (playState == PlayState.TOP_GOAL || playState == PlayState.BOTOM_GOAL)) {
-      // setPlayState(PlayState.COUNTDOWN);
       setPlayState(PlayState.PADDLE_RESET);
     }
 

@@ -10,6 +10,7 @@ const PlayState = {
   PLAY: 'play',
   TOP_GOAL: 'top_goal',
   BOTOM_GOAL: 'bottom_goal',
+  GAME_FINISHED: 'game_finished',
 };
 
 const PlayContext = createContext();
