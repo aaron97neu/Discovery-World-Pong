@@ -60,27 +60,70 @@ class GameStateMachine extends BaseStateMachine {
 
     // this.audioPlayer.stop('musicBackground');
   }  
-  
+
+  onEnterLevel1Intro() { 
+    console.log('GameStateMachine Entered Level1 Intro state');
+    super.onEnterLevel1Intro();
+
+    this.gameContext.setIsGame(true);       
+  }
+
   onEnterLevel1() { 
     console.log('GameStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
-    this.gameContext.setIsGame(true);
     this.gameContext.setLevelComplete(0);
-    // this.gameContext.setTopScore(0);
-    // this.gameContext.setBottomScore(0);
-    
-    // this.gameContext.setTopPaddlePosition(0.5);
-    // this.gameContext.setBottomPaddlePosition(0.5);
-    // this.gameContext.setBallPosition({x: 0.0, y: 0.0});
-
-    // this.gameContext.setLevel('1');
 
     this.gameContext.setIsLevelPlaying(true);
     setTimeout(() => {
       this.gameContext.setIsLevelPlaying(false);
       this.gameContext.setLevelComplete(1);
     }, this.playTime);            
+  }
+
+
+  onEnterLevel2() { 
+    console.log('GameStateMachine Entered Level2 state');
+    super.onEnterLevel2();
+
+    this.gameContext.setIsLevelPlaying(true);
+    setTimeout(() => {
+      this.gameContext.setIsLevelPlaying(false);
+      this.gameContext.setLevelComplete(2);
+    }, this.playTime);            
+  }
+
+  
+  onEnterLevel3() { 
+    console.log('GameStateMachine Entered Level3 state');
+    super.onEnterLevel3();
+
+    this.gameContext.setIsLevelPlaying(true);
+    setTimeout(() => {
+      this.gameContext.setIsLevelPlaying(false);
+      this.gameContext.setLevelComplete(3);
+    }, this.playTime);            
+  }
+
+  onLeaveLevel3() { 
+    console.log('GameStateMachine Exit Level3 state'); 
+    super.onLeaveLevel3();
+      
+    this.gameContext.setIsGamePlaying(false);
+
+    // // console.log(`topScore: ${this.gameContext.topScore}`);
+    // // console.log(`bottomScore: ${this.gameContext.bottomScore}`);
+    // if (this.gameContext.bottomScore > this.gameContext.topScore) {
+    //   this.gameContext.setCountdown(TEXT.human_wins);
+    // }
+
+    // if (this.gameContext.bottomScore < this.gameContext.topScore) {
+    //   this.gameContext.setCountdown(TEXT.tyler_wins);
+    // }
+
+    // if (this.gameContext.bottomScore == this.gameContext.topScore) {
+    //   this.gameContext.setCountdown(TEXT.draw);
+    // }
   }
 
   // onEnterLevel2() { 

@@ -15,8 +15,9 @@ export default class BaseStateMachine {
       transitions: [
         { name: 'start', from: 'stopped', to: 'idle' },
         { name: 'playerReady', from: 'idle', to: 'intro' },
-        { name: 'startGame', from: 'intro', to: 'level1' },
         { name: 'playerExit', from: 'intro', to: 'idle' },
+        { name: 'introComplete', from: 'intro', to: 'level1Intro' },
+        { name: 'level1IntroComplete', from: 'level1Intro', to: 'level1' },
         { name: 'playerExit', from: 'level1', to: 'idle' },
         { name: 'level1Complete', from: 'level1', to: 'level2Intro' },
         { name: 'level2IntroComplete', from: 'level2Intro', to: 'level2' },
@@ -35,6 +36,8 @@ export default class BaseStateMachine {
         onLeaveIdle: this.onLeaveIdle.bind(this),
         onEnterIntro: this.onEnterIntro.bind(this),
         onLeaveIntro: this.onLeaveIntro.bind(this),
+        onEnterLevel1Intro: this.onEnterLevel1Intro.bind(this),
+        onLeaveLevel1Intro: this.onLeaveLevel1Intro.bind(this),
         onEnterLevel2Intro: this.onEnterLevel2Intro.bind(this),
         onLeaveLevel2Intro: this.onLeaveLevel2Intro.bind(this),
         onEnterLevel3Intro: this.onEnterLevel3Intro.bind(this),
@@ -88,24 +91,27 @@ export default class BaseStateMachine {
           case 'player_exit':
             this.fsm.playerExit();
             break;
-          case 'level2_intro_complete':
-            this.fsm.level2IntroComplete();
+          case 'intro_complete':
+            this.fsm.introComplete();
             break;
-          case 'level3_intro_complete':
-            this.fsm.level3IntroComplete();
-            break;
-          case 'start_game':
-            this.fsm.startGame();
+          case 'level1_intro_complete':
+            this.fsm.level1IntroComplete();
             break;
           case 'level1_complete':
             this.fsm.level1Complete();
             break;
+          case 'level2_intro_complete':
+            this.fsm.level2IntroComplete();
+            break;
           case 'level2_complete':
-              this.fsm.level2Complete();
-              break;
+            this.fsm.level2Complete();
+            break;
+          case 'level3_intro_complete':
+            this.fsm.level3IntroComplete();
+            break;
           case 'level3_complete':
-              this.fsm.level3Complete();
-              break;
+            this.fsm.level3Complete();
+            break;
           case 'game_complete':
               this.fsm.gameComplete();
               break;
@@ -127,6 +133,8 @@ export default class BaseStateMachine {
   onLeaveIdle() { }
   onEnterIntro() { }
   onLeaveIntro() { }
+  onEnterLevel1Intro() { }
+  onLeaveLevel1Intro() { }
   onEnterLevel2Intro() { }
   onLeaveLevel2Intro() { }
   onEnterLevel3Intro() { }

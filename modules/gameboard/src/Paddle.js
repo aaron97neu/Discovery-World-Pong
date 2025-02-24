@@ -15,8 +15,8 @@ const Paddle = forwardRef(({
     const min = -max;
 
     useEffect(() => {
-      console.log(`isTop: ${isTop}`);
-      console.log(`paddlePosition: ${paddlePosition}`);
+      console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
+      console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
       if (ref.current) {
         const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
   

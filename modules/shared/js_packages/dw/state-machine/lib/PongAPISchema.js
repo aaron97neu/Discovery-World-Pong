@@ -82,8 +82,8 @@ const pongAPISchema = {
         "transition": {
           "type": "string",
           "enum": [
-            "start", "player_ready", "start_game", "player_exit",
-            "intro_complete", "move_left_intro_complete",
+            "start", "player_ready", "intro_complete", "level1_intro_complete",
+             "player_exit", "intro_complete", "move_left_intro_complete",
             "level1_complete", "level2_complete", "level3_complete", "stop"
           ]
         }

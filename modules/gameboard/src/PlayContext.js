@@ -5,10 +5,11 @@ import * as TEXT from './loadText';
 const PlayState = {
   IDLE: 'idle',
   COUNTDOWN: 'countdown',
+  PADDLE_RESET: 'paddle_reset',
   RESET: 'reset',
   PLAY: 'play',
   TOP_GOAL: 'top_goal',
-  BOTOM_GOAL: 'bttom_goal',
+  BOTOM_GOAL: 'bottom_goal',
 };
 
 const PlayContext = createContext();

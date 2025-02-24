@@ -60,19 +60,23 @@ class GameStateMachine extends BaseStateMachine {
           this.audioPlayer.play('tylerMove').then(() => {
             this.audioPlayer.onEnd('tylerMove', () => 
               {
-                this.sceneContext.setPlayerInstructionProps({
-                  image: IMAGES.TYLERFace_Neutral,
-                  position: [0.0, 0.0, 0.0],
-                  scale: 4.0,
-                  text: TEXT.duel
-                }); 
-                this.audioPlayer.play('tylerDuel').then(() => {
-                  this.audioPlayer.onEnd('tylerDuel', () => 
-                    {
-                      this.pongAPI.update(PongAPI.Topics.GAME_STATE, { transition: "start_game" });
-                      // this.pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM, { state: "start" });
-                    })
-                })
+                const message = {
+                  "transition": "intro_complete"
+                };
+                this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
+                // this.sceneContext.setPlayerInstructionProps({
+                //   image: IMAGES.TYLERFace_Neutral,
+                //   position: [0.0, 0.0, 0.0],
+                //   scale: 4.0,
+                //   text: TEXT.duel
+                // }); 
+                // this.audioPlayer.play('tylerDuel').then(() => {
+                //   this.audioPlayer.onEnd('tylerDuel', () => 
+                //     {
+                //       this.pongAPI.update(PongAPI.Topics.GAME_STATE, { transition: "level1_intro_complete" });
+                //       // this.pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM, { state: "start" });
+                //     })
+                // })
               })
           })
         })
@@ -86,7 +90,36 @@ class GameStateMachine extends BaseStateMachine {
     this.audioPlayer.stop('tylerIntro');  
     this.audioPlayer.stop('tylerMove');  
     this.audioPlayer.stop('tylerDuel');  
-    this.audioPlayer.stop('tylerCountdown');  
+    // this.audioPlayer.stop('tylerCountdown');  
+  }
+
+  onEnterLevel1Intro() { 
+    console.log('GameStateMachine Entered Level1 Intro state');
+    super.onEnterLevel1Intro();
+
+    this.sceneContext.setPlayerInstructionProps({
+      image: IMAGES.TYLERFace_Neutral,
+      position: [0.0, 0.0, 0.0],
+      scale: 4.0,
+      text: TEXT.duel
+    }); 
+    this.audioPlayer.play('tylerDuel').then(() => {
+      this.audioPlayer.onEnd('tylerDuel', () => 
+        {
+          const message = {
+            "transition": "level1_intro_complete"
+          };
+          this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
+          // this.pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM, { state: "start" });
+        })
+    })
+  }
+
+  onLeaveLevel1Intro() { 
+    console.log('GameStateMachine Exit Level1 Intro state');
+    super.onLeaveLevel1Intro();
+
+    this.audioPlayer.stop('tylerDuel');  
   }
 
   onEnterLevel1() { 
@@ -134,7 +167,7 @@ class GameStateMachine extends BaseStateMachine {
           };
           console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-          this.pongAPI.update('game/state', message );
+          this.pongAPI.update(PongAPI.Topics.GAME_STATE, message );
         })
     });
   }
@@ -191,7 +224,7 @@ class GameStateMachine extends BaseStateMachine {
           };
           console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-          this.pongAPI.update('game/state', message );
+          this.pongAPI.update(PongAPI.Topics.GAME_STATE, message );
         })
     });
   }
@@ -259,7 +292,7 @@ class GameStateMachine extends BaseStateMachine {
                 };
                 console.log(`message: ${JSON.stringify(message, null, 2)}`);
       
-                this.pongAPI.update('game/state', message );
+                this.pongAPI.update(PongAPI.Topics.GAME_STATE, message );
               })
           });
         })

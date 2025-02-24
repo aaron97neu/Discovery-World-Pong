@@ -14,6 +14,7 @@ const GamePlay = ({pongAPIRef}) => {
 
   const {
     level,
+    setLevel,
     topScore,
     bottomScore,
     topPaddlePosition,
@@ -25,6 +26,7 @@ const GamePlay = ({pongAPIRef}) => {
     setBottomPaddleState, 
     bottomPaddleState, 
     ballPosition,
+    isPaddlesReset,
     setIsPaddlesReset,
     resetPaddles, 
     setResetPaddles,
@@ -32,6 +34,7 @@ const GamePlay = ({pongAPIRef}) => {
   } = useContext(PlayContext);
   
   const prevBallPositionRef = useRef();
+  const prevLevelCompleteRef = useRef();
 
   useEffect(() => {
     if (pongAPIRef.current) {
@@ -73,6 +76,8 @@ const GamePlay = ({pongAPIRef}) => {
 
         if (!isGamePlaying && (topPaddleState == "ready" || topPaddleState == "start") && (bottomPaddleState == "ready" || bottomPaddleState == "start")) {
           setIsGamePlaying(true);
+          setLevel(1);
+
           const message = {
             "transition": "player_ready"
           };
@@ -83,7 +88,7 @@ const GamePlay = ({pongAPIRef}) => {
 
         if (topPaddleState == "start" && bottomPaddleState == "start") {
           const message = {
-            "transition": "start_game"
+            "transition": "intro_complete"
           };
           console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
@@ -99,19 +104,28 @@ const GamePlay = ({pongAPIRef}) => {
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }  
 
-        if (resetPaddles) { 
-            // console.log(`transition to reset`);
-            setResetPaddles(false);
-            setIsPaddlesReset(false);
-  
-            const message =  { "transition": "reset" };
-            console.log(`message: ${JSON.stringify(message, null, 2)}`);
-            pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
-            pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
-        }
-
-        if (topPaddleState == "reset" && bottomPaddleState == "reset") {
-          setIsPaddlesReset(true);
+        if (playState == PlayState.PADDLE_RESET) {
+          if (resetPaddles) { 
+              console.log(`transition to reset $$$$$$$$$$$$$$`);
+              setResetPaddles(false);
+              setIsPaddlesReset(false);
+              setTopPaddleState("resetting");
+              setBottomPaddleState("resetting");
+              console.log(`topPaddleState: ${topPaddleState}`);
+              console.log(`bottomPaddleState: ${bottomPaddleState}`);
+    
+              const message =  { "transition": "reset" };
+              console.log(`message: ${JSON.stringify(message, null, 2)}`);
+              pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
+              pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
+          } else {
+            if (!isPaddlesReset && topPaddleState == "reset" && bottomPaddleState == "reset") {
+              console.log(`reset &&&&&&&&&&&&&&&&&`);
+              console.log(`topPaddleState: ${topPaddleState}`);
+              console.log(`bottomPaddleState: ${bottomPaddleState}`);
+              setIsPaddlesReset(true);
+            }
+          }
         }
 
         if (playState == PlayState.TOP_GOAL || playState == PlayState.BOTOM_GOAL) {
@@ -125,31 +139,37 @@ const GamePlay = ({pongAPIRef}) => {
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATS, scoreMessage );
         }
 
-        if (levelComplete == 1) {
-          const message = {
-            "transition": "level1_complete"
-          };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+        if (levelComplete != prevLevelCompleteRef.current) {
+          if (levelComplete == 1) {
+            setLevel(2);
+            const message = {
+              "transition": "level1_complete"
+            };
+            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-          pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
-        }
+            pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
+          }
 
-        if (levelComplete == 2) {
-          const message = {
-            "transition": "level2_complete"
-          };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          if (levelComplete == 2) {
+            setLevel(3);
+            const message = {
+              "transition": "level2_complete"
+            };
+            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-          pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
-        }
+            pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
+          }
 
-        if (levelComplete == 3) {
-          const message = {
-            "transition": "level3_complete"
-          };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          if (levelComplete == 3) {
+            const message = {
+              "transition": "level3_complete"
+            };
+            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
-          pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
+            pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
+          }
+
+          prevLevelCompleteRef.current = levelComplete;
         }
 
       }
