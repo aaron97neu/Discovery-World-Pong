@@ -1,20 +1,19 @@
 import { useContext, useEffect, useState, useRef } from 'react';
 import {GameContext} from './GameContext';
-import {PlayContext, PlayState} from './PlayContext';
+import {PlayContext} from './PlayContext';
 import {PongAPI} from 'dw-state-machine';
 
 // class GamePlay {
 const GamePlay = ({pongAPIRef}) => {
 
   const {
+    level,
     isGamePlaying,
     setIsGamePlaying,
     levelComplete,
   } = useContext(GameContext);
 
   const {
-    level,
-    setLevel,
     topScore,
     bottomScore,
     topPaddlePosition,
@@ -26,11 +25,7 @@ const GamePlay = ({pongAPIRef}) => {
     setBottomPaddleState, 
     bottomPaddleState, 
     ballPosition,
-    isPaddlesReset,
-    setIsPaddlesReset,
     resetPaddles, 
-    setResetPaddles,
-    playState, 
   } = useContext(PlayContext);
   
   const prevBallPositionRef = useRef();
@@ -76,12 +71,12 @@ const GamePlay = ({pongAPIRef}) => {
 
         if (!isGamePlaying && (topPaddleState == "ready" || topPaddleState == "start") && (bottomPaddleState == "ready" || bottomPaddleState == "start")) {
           setIsGamePlaying(true);
-          setLevel(1);
+          // setLevel(1);
 
           const message = {
             "transition": "player_ready"
           };
-          console.log(`message: ${JSON.stringify(message, null, 2)}`);
+          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }
@@ -104,44 +99,8 @@ const GamePlay = ({pongAPIRef}) => {
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }  
 
-        if (playState == PlayState.PADDLE_RESET) {
-          if (resetPaddles) { 
-              console.log(`transition to reset $$$$$$$$$$$$$$`);
-              setResetPaddles(false);
-              setIsPaddlesReset(false);
-              setTopPaddleState("resetting");
-              setBottomPaddleState("resetting");
-              console.log(`topPaddleState: ${topPaddleState}`);
-              console.log(`bottomPaddleState: ${bottomPaddleState}`);
-    
-              const message =  { "transition": "reset" };
-              console.log(`message: ${JSON.stringify(message, null, 2)}`);
-              pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
-              pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
-          } else {
-            if (!isPaddlesReset && topPaddleState == "reset" && bottomPaddleState == "reset") {
-              console.log(`reset &&&&&&&&&&&&&&&&&`);
-              console.log(`topPaddleState: ${topPaddleState}`);
-              console.log(`bottomPaddleState: ${bottomPaddleState}`);
-              setIsPaddlesReset(true);
-            }
-          }
-        }
-
-        if (playState == PlayState.TOP_GOAL || playState == PlayState.BOTOM_GOAL) {
-          const scoreMessage = {
-            "player_top": { "score": topScore },
-            "player_bottom": { "score": bottomScore},
-            "level": level
-          };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
-
-          pongAPIRef.current.update(PongAPI.Topics.GAME_STATS, scoreMessage );
-        }
-
         if (levelComplete != prevLevelCompleteRef.current) {
           if (levelComplete == 1) {
-            setLevel(2);
             const message = {
               "transition": "level1_complete"
             };
@@ -151,7 +110,6 @@ const GamePlay = ({pongAPIRef}) => {
           }
 
           if (levelComplete == 2) {
-            setLevel(3);
             const message = {
               "transition": "level2_complete"
             };
@@ -176,28 +134,67 @@ const GamePlay = ({pongAPIRef}) => {
     }
   });
 
+  useEffect(() => {
+    if (pongAPIRef.current) {     
+      if ( pongAPIRef.current.isConnected()) {
+        const scoreMessage = {
+          "player_top": { "score": topScore },
+          "player_bottom": { "score": bottomScore},
+          "level": level
+        };
+        // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+
+        pongAPIRef.current.update(PongAPI.Topics.GAME_STATS, scoreMessage );
+      }
+    }
+  }, [topScore, bottomScore]);
+
+  useEffect(() => {
+    if (pongAPIRef.current) {     
+      if ( pongAPIRef.current.isConnected()) {
+        // if (playState == PlayState.PADDLE_RESET) {
+          if (resetPaddles) {
+            // console.log(`topPaddleState: ${topPaddleState}`);
+            // console.log(`bottomPaddleState: ${bottomPaddleState}`);
+            const message =  { "transition": "reset" };
+            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
+            pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
+            pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
+        }
+      }
+    }
+  }, [resetPaddles]);
+
   const onPaddleTopPosition = (message) => {
       const paddlePosition = message.position.x;
-      console.log('top  paddlePosition:', paddlePosition);
+      // console.log('%%%%%%%%%%%%%%%% topPaddlePosition:', topPaddlePosition);
+      // console.log('%%%%%%%%%%%%%%%% top  paddlePosition:', paddlePosition);
       setTopPaddlePosition(paddlePosition);   
   }
 
   const onPaddleTopState = (message) => {
       const paddleState = message.state;
-      // console.log('top paddleState:', paddleState);
+      console.log('top paddleState:', paddleState);
+      // console.log('%%%%%%%%%%%%%%%% topPaddleState:', topPaddleState);
+      // console.log('%%%%%%%%%%%%%%%% top  paddleState:', paddleState);
       setTopPaddleState(paddleState);      
+      // console.log('%%%%%%%%%%%%%%%% topPaddleState2:', topPaddleState);
   }
 
   const onPaddleBottomPosition = (message) => {
       const paddlePosition = message.position.x;
-      console.log('bottom paddlePosition:', paddlePosition);
+      // console.log('%%%%%%%%%%%%%%%% bottomPaddlePosition:', bottomPaddlePosition);
+      // console.log('%%%%%%%%%%%%%%%% bottom paddlePosition:', paddlePosition);
       setBottomPaddlePosition(paddlePosition);   
   }  
 
   const onPaddleBottomState = (message) => {
       const paddleState = message.state;
-      // console.log('bottom paddleState:', paddleState);
+      console.log('bottom paddleState:', paddleState);
+      // console.log('%%%%%%%%%%%%%%%% bottomPaddleState:', bottomPaddleState);
+      // console.log('%%%%%%%%%%%%%%%% bottom  paddleState:', paddleState);
       setBottomPaddleState(paddleState);      
+      // console.log('%%%%%%%%%%%%%%%% bottomPaddleState:', bottomPaddleState);
   }  
 
   return null;

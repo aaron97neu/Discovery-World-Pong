@@ -24,7 +24,6 @@ class GameStateMachine extends BaseStateMachine {
 
     // this.gameContext.setPlayersReady(false);
     this.gameContext.setIsGame(false);
-
     this.audioPlayer.stop('musicBackground');
     this.audioPlayer.setVolume('musicIdle', this.volume);
     this.audioPlayer.play('musicIdle');
@@ -46,7 +45,7 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onEnterIntro() {
-    console.log('GameStateMachine Entered Idle state'); 
+    console.log('GameStateMachine Entered Intro state'); 
     super.onEnterIntro();
 
     // this.gameContext.setPlayersReady(true);
@@ -55,7 +54,7 @@ class GameStateMachine extends BaseStateMachine {
   }  
 
   onLeaveIntro() {
-    console.log('GameStateMachine Entered Idle state'); 
+    console.log('GameStateMachine Leave Intro state'); 
     super.onLeaveIntro();
 
     // this.audioPlayer.stop('musicBackground');
@@ -65,18 +64,17 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
 
-    this.gameContext.setIsGame(true);       
+    this.gameContext.setLevel(0);
+    this.gameContext.setIsGame(true); 
+    this.gameContext.setLevelComplete(0);    
   }
 
   onEnterLevel1() { 
     console.log('GameStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
-    this.gameContext.setLevelComplete(0);
-
-    this.gameContext.setIsLevelPlaying(true);
+    this.gameContext.setLevel(1);
     setTimeout(() => {
-      this.gameContext.setIsLevelPlaying(false);
       this.gameContext.setLevelComplete(1);
     }, this.playTime);            
   }
@@ -86,9 +84,10 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level2 state');
     super.onEnterLevel2();
 
-    this.gameContext.setIsLevelPlaying(true);
+    // this.gameContext.setIsLevelPlaying(true);
+    this.gameContext.setLevel(2);
     setTimeout(() => {
-      this.gameContext.setIsLevelPlaying(false);
+      // this.gameContext.setIsLevelPlaying(false);
       this.gameContext.setLevelComplete(2);
     }, this.playTime);            
   }
@@ -98,11 +97,12 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level3 state');
     super.onEnterLevel3();
 
-    this.gameContext.setIsLevelPlaying(true);
-    setTimeout(() => {
-      this.gameContext.setIsLevelPlaying(false);
-      this.gameContext.setLevelComplete(3);
-    }, this.playTime);            
+    this.gameContext.setLevel(3);
+    // this.gameContext.setIsLevelPlaying(true);
+    // setTimeout(() => {
+      // this.gameContext.setIsLevelPlaying(false);
+      // this.gameContext.setLevelComplete(3);
+    // }, this.playTime);            
   }
 
   onLeaveLevel3() { 

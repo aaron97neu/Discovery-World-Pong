@@ -40,6 +40,11 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Intro state');
     super.onEnterIntro();
 
+    // const message = {
+    //   "transition": "intro_complete"
+    // };
+    // this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
+
     this.sceneContext.setStateTransition('intro');
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
@@ -96,6 +101,11 @@ class GameStateMachine extends BaseStateMachine {
   onEnterLevel1Intro() { 
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
+
+    // const message = {
+    //   "transition": "level1_intro_complete"
+    // };
+    // this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
 
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,

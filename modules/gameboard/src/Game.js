@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState, useCallback } from 'rea
 import { useLoader, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import {GameContext} from './GameContext';
-import {PlayContext, PlayState} from './PlayContext';
+import {PlayContext} from './PlayContext';
 import * as IMAGES from './loadImages';
 import Gameboard from './Gameboard';
 import Ball from './Ball';
@@ -11,6 +11,9 @@ import Goal from './Goal';
 import Wall from './Wall';
 import AudioPlayer from './AudioPlayer';
 import * as TEXT from './loadText';
+import PlayStateMachine from './PlayStateMachine';
+// import StateMachine from 'javascript-state-machine';
+import ChildComponent from './ChildComponent';
 
 const speed = 200;
 const gameboardHeight = 160; // height used in AI 
@@ -27,218 +30,186 @@ const ballStartTranslation = {x: 0, y: -(gameboardHeight / 2) + 10, z: 0};
 const angles = [-60, -45, -30, 0, 0, 30, 45, 60]; // Bounce angles
 // const regionSize = paddleWidth / 8;
 
+
+// playStateMachine[transition]();
+
 function Game() {
+  const childRef = useRef(null);
 
   const {
-    isLevelPlaying,
+    // isLevelPlaying,
+    level,
     levelComplete,
     setLevelComplete,
   } = useContext(GameContext);
 
   const {
-    level,
-    setCountdown,
     topPaddlePosition,
+    setTopPaddlePosition,
     bottomPaddlePosition,
+    setBottomPaddlePosition,
+    topPaddleState,
+    bottomPaddleState,
     setBallPosition, 
-    isPaddlesReset,
-    setIsPaddlesReset,
-    setResetPaddles,
-    topScore,
-    setTopScore,
-    bottomScore,
-    setBottomScore,
-    playState, 
-    setPlayState,
-  } = useContext(PlayContext);
-
-  const ballRef = useRef();
+    isCountdownComplete, 
+    setIsCountdownComplete,
+    includeCountDown, 
+    setIncludeCountDown,
+    isPaddleReset, 
+    isTopPaddleReset,
+    setIsTopPaddleReset,
+    isBottomPaddleReset,
+    setIsBottomPaddleReset,
+    isBallReset, 
+    prevLevel, 
+    setPrevLevel,
+    stateMachine, 
+    setStateMachine,
+    forcePaddleRerender, 
+    setForcePaddleRerender,
+    setForceBallRerender,
+    setIsBallReset,
+  } = useContext(PlayContext);  
+  
+  const fsmRef = useRef(null);
   const topPaddleRef = useRef();
   const bottomPaddleRef = useRef();
+  const ballRef = useRef();
+
   const texture = useLoader(THREE.TextureLoader, IMAGES.gameboard);
 
-  const [oldBall, setOldBallPosition] = useState({x: 0.0, y: 0.0, z: 0.0});
-  const [isBallReset, setIsBallReset] = useState(false);
-  const [isCountdownComplete, setIsCountdownComplete] = useState(false);
+  const [oldBallPosition, setOldBallPosition] = useState({x: 0.0, y: 0.0, z: 0.0});
+  const [counter, setCounter] = useState(0);
 
   const audioPlayerRef = useRef(null);
   const audioVolume = 0.5;
   const delay = 600;
 
   useEffect(() => {
-    console.log("game constructor");
-    setPlayState(PlayState.IDLE);
+    // console.log("game constructor");
     if (!audioPlayerRef.current) {
       audioPlayerRef.current = new AudioPlayer();
       audioPlayerRef.current.setVolume('paddleHit', audioVolume);
-      audioPlayerRef.current.setVolume('pointScore', audioVolume);
-      audioPlayerRef.current.setVolume('pointLose', audioVolume);
     }
   }, []);
 
-  useEffect(() => {
-    switch (playState) {
-      case PlayState.IDLE:
-        console.log('State: IDLE');
-        setCountdown(TEXT.countdown_get_ready);
-        setTimeout(() => {
-        }, delay);
-        break;
+  useFrame(() => {
+  // useEffect(() => {
+    if (fsmRef.current) {
 
-      case PlayState.COUNTDOWN:
-        console.log('State: COUNTDOWN');
-        setCountdown(TEXT.countdown_three);
-        setTimeout(() => {
-          setCountdown(TEXT.countdown_two);
-          setTimeout(() => {
-            setCountdown(TEXT.countdown_one);
-            setTimeout(() => {
-              setCountdown(TEXT.countdown_go);
-              setTimeout(() => {
-                setCountdown(TEXT.blank);
-                setIsCountdownComplete(true);     
-              }, delay); 
-            }, delay); 
-          }, delay);
-        }, delay);
-        break;
+      if(fsmRef.current.state === 'levelFinished') {
+        fsmRef.current.returnToIdle();
+      }
 
-      case PlayState.PADDLE_RESET:
-        console.log('State: PADDLE_RESET');
-        // setIsPaddlesReset(false);
-        setResetPaddles(true);
-        break;
+      if(fsmRef.current.state === 'idle') {
+        fsmRef.current.resetPaddle();
+        // if (level != prevLevel) {
+        //   setPrevLevel(level);
+        //   fsmRef.current.resetPaddle();
+        // }
 
-      case PlayState.RESET:
-        console.log('State: RESET');
-        if (ballRef.current) {
-          ballRef.current.setTranslation(ballStartTranslation, true);
-          // ballRef.current.setTranslation( {x: 0, y:-50, z: 0}, true); 
-          ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-          ballRef.current.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);
-          setTimeout(() => {
-            setIsBallReset(true);
-          }, 500); 
+        // if (levelComplete == 3) {
+        //   fsmRef.current.endGame();
+        // }
+      }
+
+      if(fsmRef.current.state === 'paddleReset') {
+        if (isTopPaddleReset && isBottomPaddleReset) {
+          fsmRef.current.resetBall();
+          setForceBallRerender(prevState => !prevState);
         }
-      break;
+      }
 
-      case PlayState.PLAY:
-        console.log('State: PLAY');
-        // setIsBallReset(false);
-        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
-        break;
-
-      case PlayState.TOP_GOAL:
-        console.log('State: TOP_GOAL');
-        if (audioPlayerRef.current) {
-          audioPlayerRef.current.play('pointScore').catch((error) => {
-            console.error('Error playing audio:', error);
-          });
+      if(fsmRef.current.state === 'ballReset') {
+        if(isBallReset) {
+          setForcePaddleRerender(prevState => !prevState);
+          fsmRef.current.resetGame();
         }
-        setBottomScore((prev) => prev + 1);
-        break;
+      }
 
-      case PlayState.BOTOM_GOAL:
-        console.log('State: BOTOM_GOAL'); 
-        if (audioPlayerRef.current) {
-          audioPlayerRef.current.play('pointLose').catch((error) => {
-            console.error('Error playing audio:', error);
-          });
-        }
-        setTopScore((prev) => prev + 1);
-        if (level == 3) {
-          setLevelComplete(3);
-        }
-        break;
-
-      case PlayState.GAME_FINISHED:
-        console.log('State: GAME_FINISHED'); 
-        console.log(`topScore: ${topScore}`);
-        console.log(`bottomScore: ${bottomScore}`);
-        if (bottomScore > topScore) {
-          setCountdown(TEXT.human_wins);
-        }
-
-        if (bottomScore < topScore) {
-          setCountdown(TEXT.tyler_wins);
-        }
-
-        if (bottomScore == topScore) {
-          setCountdown(TEXT.draw);
-        }
-      break;
-
-      default:
-        break;
-    }
-  }, [playState]);
-
-  useEffect(() => {
-
-    if (isLevelPlaying && playState == PlayState.IDLE) {
-      setPlayState(PlayState.PADDLE_RESET);
-    }   
-
-    if (levelComplete == 3 && playState != PlayState.IDLE) {
-      setPlayState(PlayState.GAME_FINISHED);
-    }       
-
-    if (!isLevelPlaying && playState != PlayState.IDLE) {
-      setPlayState(PlayState.PADDLE_RESET);
-    }  
-    
-    if (!isLevelPlaying && isBallReset && isPaddlesReset && playState == PlayState.RESET) {
-      setPlayState(PlayState.IDLE);
-    }  
-
-    if (isCountdownComplete && playState == PlayState.COUNTDOWN) {
-      // setPlayState(PlayState.PADDLE_RESET);
-      setPlayState(PlayState.PLAY);
-    }   
-
-    if(isPaddlesReset && playState == PlayState.PADDLE_RESET) {
-      console.log(`topPaddlePosition: ${topPaddlePosition}`);
-      console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
-      console.log(`isBallReset: ${isBallReset}`);
-      console.log(`isPaddlesReset: ${isPaddlesReset}`);
-
-      setIsBallReset(false);
-      setPlayState(PlayState.RESET);
-    }
-
-    if(isLevelPlaying && isBallReset && isPaddlesReset && playState == PlayState.RESET) {
-      console.log(`bottomPaddlePosition: ${bottomPaddlePosition}`);
-      console.log(`isBallReset: ${isBallReset}`);
-      console.log(`isPaddlesReset: ${isPaddlesReset}`);
-
-      // setPlayState(PlayState.PLAY);
-      setIsCountdownComplete(false);
-      setPlayState(PlayState.COUNTDOWN);
-    }
-
-    if (isLevelPlaying && (playState == PlayState.TOP_GOAL || playState == PlayState.BOTOM_GOAL)) {
-      setPlayState(PlayState.PADDLE_RESET);
-    }
-
-    if (ballRef && ballRef.current) {
-      if (playState == PlayState.PLAY) {
-        try {
-          const currentPosition = ballRef.current.translation();
-
-          if (currentPosition.y > 90) {
-            setPlayState(PlayState.TOP_GOAL);
+      if(fsmRef.current.state === 'gameReset') {
+        // if(isBallReset && isPaddlesReset) {
+  
+          if (includeCountDown) {
+            setIsCountdownComplete(false);
+            fsmRef.current.startCountdown();
+          } else {
+            fsmRef.current.skipCountdown();
           }
+        // }
+      }
 
-          if (currentPosition.y < -90) {
-            setPlayState(PlayState.BOTOM_GOAL);
+      if(fsmRef.current.state === 'countdown') {
+        if (isCountdownComplete) {
+          fsmRef.current.beginPlay();
+        }   
+      }
+
+      if(fsmRef.current.state === 'play') {
+        if (ballRef && ballRef.current) {
+          try {
+            const currentPosition = ballRef.current.translation();
+
+            if (currentPosition.y > 90) {
+              fsmRef.current.topGoalScored();
+            }
+
+            if (currentPosition.y < -90) {
+              fsmRef.current.bottomGoalScored();
+            }
+          } catch (error) {
+            console.log(`Error: ${error.message}`);
           }
-
-        } catch (error) {
-          console.log(`Error: ${error.message}`);
         }
+      }
+
+      if(fsmRef.current.state === 'topGoal') {
+        fsmRef.current.resetPaddle();
+      }
+
+      if(fsmRef.current.state === 'bottomGoal') {
+        fsmRef.current.resetPaddle();
+      }
+
+      if(fsmRef.current.state === 'gameFinished') {
+        fsmRef.current.returnToIdle();
       }
     }
   });
+
+  useEffect(() => {
+    if (levelComplete == 3) {
+      fsmRef.current.endGame();
+    } else {
+      if (levelComplete > 0) {
+        fsmRef.current.endLevel();
+      }
+    }  
+  }, [level, levelComplete]);
+
+  // useEffect(() => {
+  //   if (levelComplete == 3) {
+  //     fsmRef.current.endGame();
+  //   }
+
+  //   if (level != prevLevel) {
+  //     setPrevLevel(level);
+  //     fsmRef.current.resetPaddle();
+  //   }
+   
+  // }, [level, levelComplete]);
+  
+  useEffect(() => {
+    if (bottomPaddleState == "reset") {
+      setIsBottomPaddleReset(true);
+    }
+  }, [bottomPaddleState]);
+
+  useEffect(() => {
+    if (topPaddleState == "reset") {
+      setIsTopPaddleReset(true);
+    }
+  }, [topPaddleState]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -250,7 +221,7 @@ function Game() {
           currentPosition.y = Math.round(currentPosition.y);
           currentPosition.z = Math.round(currentPosition.z);
 
-          if (currentPosition.x != oldBall.x || currentPosition.y != oldBall.y) {
+          if (currentPosition.x != oldBallPosition.x || currentPosition.y != oldBallPosition.y) {
             setBallPosition(currentPosition);
             setOldBallPosition(currentPosition);
           }
@@ -261,7 +232,7 @@ function Game() {
     }, 100);
 
     return () => clearInterval(interval); // Cleanup the interval on component unmount   
-  },);  
+  });  
   
   const handleCollision = useCallback((event) => {
     const otherObject = event.rigidBody;
@@ -285,14 +256,16 @@ function Game() {
           y: speed * Math.cos(radians) * (targetObject.isTop ? -1 : 1), // Adjust y based on whether it's the top or bottom paddle
           z: 0,
         };   
-        // console.log(handleCollision);
         otherObject.setLinvel(newVelocity, true);
       }
     }
   }, []);
-  
+
   return (
     <group position={[0, 0, 0]} >
+      <ChildComponent ref={childRef} />
+      <PlayStateMachine ref={fsmRef} ballRef={ballRef} />
+
       <Gameboard 
         position={[0.0, 0.0, gameboardZ]} 
         args={[gameboardWidth, gameboardHeight]} 
@@ -322,9 +295,10 @@ function Game() {
       />
 
       <Paddle
-        ref={topPaddleRef}
+        // ref={topPaddleRef}
         isTop={true}
-        position={[gameboardWidth / 2, gameboardHeight / 2 - paddlePadding, 0.0]} 
+        // position={[gameboardWidth / 2, gameboardHeight / 2 - paddlePadding, 0.0]} 
+        position={[0.0, gameboardHeight / 2 - paddlePadding, 0.0]} 
         args={[paddleWidth, paddleHeigth]} 
         color="rgb(187,30,50)" 
         gameboardWidth={gameboardWidth} 
@@ -334,9 +308,10 @@ function Game() {
       />
 
       <Paddle 
-        ref={bottomPaddleRef}
+        // ref={bottomPaddleRef}
         isTop={false}
-        position={[gameboardWidth / 2, -gameboardHeight / 2 + paddlePadding, 0.0]} 
+        // position={[gameboardWidth / 2, -gameboardHeight / 2 + paddlePadding, 0.0]} 
+        position={[0.0, -gameboardHeight / 2 + paddlePadding, 0.0]} 
         args={[paddleWidth, paddleHeigth]} 
         color="rgb(20,192,243)" 
         gameboardWidth={gameboardWidth} 
@@ -346,7 +321,8 @@ function Game() {
       />
 
       <Ball 
-        ref={ballRef}  
+        // ref={ballRef}  
+        ballRef={ballRef}
         position={ballStartPosition} 
         args={[ballRadius, 64, 64]}  
         color="rgb(255,255,255)" 

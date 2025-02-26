@@ -65,10 +65,12 @@ const Controller = ({pongAPIRef}) => {
   useEffect(() => {
     if (pongAPIRef.current && isReset) {
       console.log(`isReset: ${isReset}`);
-      pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
       setIsReset(false);
+      console.log(`position: ${position}`);
+      pongAPIRef.current.update(paddlePositionTopic, { position: { x: parseFloat(position.toFixed(2)) } });  
+      pongAPIRef.current.update(paddleStateTopic, { state: "reset" });
     }
-  }, [isReset]);
+  }, [isReset, position]);
 
   const onPaddleStateTransition = (message) => {
       const paddleStateTransition = message.transition;

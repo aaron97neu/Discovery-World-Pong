@@ -22,7 +22,7 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
-  console.log("app constructor");
+  // console.log("app constructor");
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
   const gameStateMachineRef = useRef(new GameStateMachine(pongAPIRef.current, gameContext));
 
