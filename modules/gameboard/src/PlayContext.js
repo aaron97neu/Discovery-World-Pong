@@ -25,6 +25,7 @@ const PlayProvider = ({ children }) => {
   const [forcePaddleRerender, setForcePaddleRerender] = useState(false);
   const [forceBallRerender, setForceBallRerender] = useState(false);
   const [resetBall, setResetBall] = useState(false);
+  const [isDontPlay, setIsDontPlay] = useState(true);
 
   // console.log("start PlayContext");
 
@@ -51,6 +52,7 @@ const PlayProvider = ({ children }) => {
       forcePaddleRerender, setForcePaddleRerender,
       forceBallRerender, setForceBallRerender,
       resetBall, setResetBall,
+      isDontPlay, setIsDontPlay
       }}>
       {children}
     </PlayContext.Provider>

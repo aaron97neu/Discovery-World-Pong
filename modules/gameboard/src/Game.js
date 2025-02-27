@@ -69,6 +69,12 @@ function Game() {
     setForcePaddleRerender,
     setForceBallRerender,
     setIsBallReset,
+    isDontPlay,
+    setIsDontPlay,
+    topScore,
+    setTopScore,
+    bottomScore,
+    setBottomScore,    
   } = useContext(PlayContext);  
   
   const fsmRef = useRef(null);
@@ -97,20 +103,12 @@ function Game() {
   // useEffect(() => {
     if (fsmRef.current) {
 
-      if(fsmRef.current.state === 'levelFinished') {
-        fsmRef.current.returnToIdle();
-      }
-
       if(fsmRef.current.state === 'idle') {
         fsmRef.current.resetPaddle();
-        // if (level != prevLevel) {
-        //   setPrevLevel(level);
-        //   fsmRef.current.resetPaddle();
-        // }
+      }
 
-        // if (levelComplete == 3) {
-        //   fsmRef.current.endGame();
-        // }
+      if(fsmRef.current.state === 'levelReset') {
+        fsmRef.current.startLevel();
       }
 
       if(fsmRef.current.state === 'paddleReset') {
@@ -128,15 +126,13 @@ function Game() {
       }
 
       if(fsmRef.current.state === 'gameReset') {
-        // if(isBallReset && isPaddlesReset) {
-  
+        if (!isDontPlay) {
           if (includeCountDown) {
-            setIsCountdownComplete(false);
             fsmRef.current.startCountdown();
           } else {
-            fsmRef.current.skipCountdown();
+            fsmRef.current.beginPlay();
           }
-        // }
+        }
       }
 
       if(fsmRef.current.state === 'countdown') {
@@ -169,36 +165,39 @@ function Game() {
 
       if(fsmRef.current.state === 'bottomGoal') {
         fsmRef.current.resetPaddle();
-      }
-
-      if(fsmRef.current.state === 'gameFinished') {
-        fsmRef.current.returnToIdle();
+        console.log(`bottom goal level: ${level}`);
+        if (level == 3) {
+          setLevelComplete(3);
+        }
       }
     }
   });
 
   useEffect(() => {
-    if (levelComplete == 3) {
+    if (level === 4) {
+      setTopScore(0);
+      setBottomScore(0);
+      fsmRef.current.returnToIdle();
+    } else {
+      if (level > 0) {
+        console.log(`level: ${level}`);
+        fsmRef.current.resetLevel();
+      }
+    }
+  }, [level]);
+
+  useEffect(() => {
+    if (levelComplete === 3) {
+      console.log(`levelComplete: ${levelComplete}`);
       fsmRef.current.endGame();
     } else {
       if (levelComplete > 0) {
+        console.log(`levelComplete: ${levelComplete}`);
         fsmRef.current.endLevel();
       }
-    }  
-  }, [level, levelComplete]);
-
-  // useEffect(() => {
-  //   if (levelComplete == 3) {
-  //     fsmRef.current.endGame();
-  //   }
-
-  //   if (level != prevLevel) {
-  //     setPrevLevel(level);
-  //     fsmRef.current.resetPaddle();
-  //   }
-   
-  // }, [level, levelComplete]);
-  
+    }    
+  }, [levelComplete]);
+ 
   useEffect(() => {
     if (bottomPaddleState == "reset") {
       setIsBottomPaddleReset(true);

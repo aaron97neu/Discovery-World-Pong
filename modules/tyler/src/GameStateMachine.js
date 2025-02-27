@@ -309,7 +309,7 @@ class GameStateMachine extends BaseStateMachine {
     });
   }
 
-  onLeaveLevel3Intro() { 
+  onLeaveOutro() { 
     console.log('GameStateMachine Exit Outtro state');
     super.onLeaveOutro();
 

@@ -1,6 +1,7 @@
 import { forwardRef, useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import StateMachine from 'javascript-state-machine';
 import * as TEXT from './loadText';
+import {GameContext} from './GameContext';
 import {PlayContext} from './PlayContext';
 import AudioPlayer from './AudioPlayer';
 
@@ -8,9 +9,14 @@ const PlayStateMachine = forwardRef(({ ballRef }, ref) => {
 // function PlayStateMachine() {
 // const PlayStateMachine = (playContext, setIncludeCountDown, setCounter, ballRef ) => new StateMachine({
 
-const {
+  const {
+    // isLevelPlaying,
     level,
+    levelComplete,
     setLevelComplete,
+  } = useContext(GameContext);
+
+const {
     setCountdown,
     setTopPaddleState,
     setTopPaddlePosition,
@@ -33,6 +39,8 @@ const {
     setForcePaddleRerender,
     setForceBallRerender,
     setResetBall,
+    isDontPlay,
+    setIsDontPlay,
   } = useContext(PlayContext);  
 
   const gameboardHeight = 160; // height used in AI 
@@ -55,43 +63,51 @@ const {
         }
 
         const fsm = new StateMachine({   
-            init: 'gameFinished',
+            init: 'idle',
             transitions: [
+                { name: 'resetLevel', from: ['gameReset'], to: 'levelReset' },
+                { name: 'startLevel', from: 'levelReset', to: 'paddleReset'},
+                { name: 'startCountdown', from: 'gameReset', to: 'countdown'},
+                { name: 'beginPlay', from: ['countdown', 'gameReset'], to: 'play'},
+                { name: 'topGoalScored', from: 'play', to: 'topGoal'},
+                { name: 'bottomGoalScored', from: 'play', to: 'bottomGoal'},                
+                { name: 'endLevel', from: ['topGoal', 'bottomGoal', 'play', 'paddleReset'], to: 'idle'},
+
                 { name: 'resetPaddle', from: ['idle', 'topGoal', 'bottomGoal'], to: 'paddleReset' },
                 { name: 'resetBall', from: 'paddleReset', to: 'ballReset' },
                 { name: 'resetGame', from: 'ballReset', to: 'gameReset' },
-                { name: 'startCountdown', from: 'gameReset', to: 'countdown' },
-                { name: 'skipCountdown', from: 'gameReset', to: 'play' },
-                { name: 'beginPlay', from: 'countdown', to: 'play' },
-                { name: 'topGoalScored', from: 'play', to: 'topGoal' },
-                { name: 'bottomGoalScored', from: 'play', to: 'bottomGoal' },
-                { name: 'endLevel', from: ['gameFinished', 'topGoal', 'bottomGoal', 'play'], to: 'levelFinished' },
-                { name: 'endGame', from: ['topGoal', 'bottomGoal'], to: 'gameFinished' },
-                { name: 'returnToIdle', from: ['levelFinished', 'gameFinished'], to: 'idle' },
+
+                { name: 'endGame', from: ['paddleReset'], to: 'gameFinished' },
+                { name: 'returnToIdle', from: ['gameFinished'], to: 'idle' },
             ],
             methods: {
-                // Method called when entering the 'idle' state
-                onEnterLevelFinished: () => {
-                    console.log('PlayStateMachine Entering idle state');
-                },
-                // Method called when leaving the 'idle' state
-                onLeaveLevelFinished: () => {
-                    console.log('PlayStateMachine Leaving idle state');
-                },  
                 // Method called when entering the 'idle' state
                 onEnterIdle: () => {
                     console.log('PlayStateMachine Entering idle state');
                     // setForcePaddleRerender(prevState => !prevState);
-                    setIncludeCountDown(true);
+                    setIsDontPlay(true);
+                    setIncludeCountDown(false);
                     setCountdown(TEXT.countdown_get_ready);
-                    setTimeout(() => {
-                    }, 2000);
+                    // setTimeout(() => {
+                    // }, 2000);
                     // }, delay);
                 },
                 // Method called when leaving the 'idle' state
                 onLeaveIdle: () => {
                     console.log('PlayStateMachine Leaving idle state');
                 },    
+                // Method called when entering the 'levelReset' state
+                onEnterLevelReset: () => {
+                    console.log('PlayStateMachine Entering levelReset state');
+                    setIsDontPlay(false);
+                    setIsCountdownComplete(false);
+                    setIncludeCountDown(true);
+                    setCountdown(TEXT.blank);
+                },
+                // Method called when leaving the 'levelReset' state
+                onLeaveLevelReset: () => {
+                    console.log('PlayStateMachine Leaving levelReset state');
+                },  
                 // Method called when entering the 'paddleReset' state
                 onEnterPaddleReset: () => {
                     console.log('PlayStateMachine Entering paddleReset state');
@@ -180,11 +196,10 @@ const {
                     setForcePaddleRerender(prevState => !prevState);
             
                     setIncludeCountDown(false);
-                    console.log("onEnterTopGoal done");
                 },
                 // Method called when leaving the 'topGoal' state
                 onLeaveTopGoal: () => {
-                    console.log('Leaving topGoal state');
+                    console.log('PlayStateMachine Leaving topGoal state');
                 },
                 // Method called when entering the 'bottomGoal' state
                 onEnterBottomGoal: () => {
@@ -199,10 +214,6 @@ const {
                     setForcePaddleRerender(prevState => !prevState);
             
                     setIncludeCountDown(false);
-
-                    if (level == 3) {
-                        setLevelComplete(3);
-                    }
                 },
                 // Method called when leaving the 'bottomGoal' state
                 onLeaveBottomGoal: () => {

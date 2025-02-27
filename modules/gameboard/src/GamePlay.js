@@ -174,7 +174,7 @@ const GamePlay = ({pongAPIRef}) => {
 
   const onPaddleTopState = (message) => {
       const paddleState = message.state;
-      console.log('top paddleState:', paddleState);
+      // console.log('top paddleState:', paddleState);
       // console.log('%%%%%%%%%%%%%%%% topPaddleState:', topPaddleState);
       // console.log('%%%%%%%%%%%%%%%% top  paddleState:', paddleState);
       setTopPaddleState(paddleState);      
@@ -190,7 +190,7 @@ const GamePlay = ({pongAPIRef}) => {
 
   const onPaddleBottomState = (message) => {
       const paddleState = message.state;
-      console.log('bottom paddleState:', paddleState);
+      // console.log('bottom paddleState:', paddleState);
       // console.log('%%%%%%%%%%%%%%%% bottomPaddleState:', bottomPaddleState);
       // console.log('%%%%%%%%%%%%%%%% bottom  paddleState:', paddleState);
       setBottomPaddleState(paddleState);      

@@ -79,7 +79,6 @@ class GameStateMachine extends BaseStateMachine {
     }, this.playTime);            
   }
 
-
   onEnterLevel2() { 
     console.log('GameStateMachine Entered Level2 state');
     super.onEnterLevel2();
@@ -92,17 +91,11 @@ class GameStateMachine extends BaseStateMachine {
     }, this.playTime);            
   }
 
-  
   onEnterLevel3() { 
     console.log('GameStateMachine Entered Level3 state');
     super.onEnterLevel3();
 
-    this.gameContext.setLevel(3);
-    // this.gameContext.setIsLevelPlaying(true);
-    // setTimeout(() => {
-      // this.gameContext.setIsLevelPlaying(false);
-      // this.gameContext.setLevelComplete(3);
-    // }, this.playTime);            
+    this.gameContext.setLevel(3);        
   }
 
   onLeaveLevel3() { 
@@ -110,97 +103,14 @@ class GameStateMachine extends BaseStateMachine {
     super.onLeaveLevel3();
       
     this.gameContext.setIsGamePlaying(false);
-
-    // // console.log(`topScore: ${this.gameContext.topScore}`);
-    // // console.log(`bottomScore: ${this.gameContext.bottomScore}`);
-    // if (this.gameContext.bottomScore > this.gameContext.topScore) {
-    //   this.gameContext.setCountdown(TEXT.human_wins);
-    // }
-
-    // if (this.gameContext.bottomScore < this.gameContext.topScore) {
-    //   this.gameContext.setCountdown(TEXT.tyler_wins);
-    // }
-
-    // if (this.gameContext.bottomScore == this.gameContext.topScore) {
-    //   this.gameContext.setCountdown(TEXT.draw);
-    // }
   }
 
-  // onEnterLevel2() { 
-  //   console.log('GameStateMachine Entered Level2 state'); 
-  //   super.onEnterLevel2();
-
-  //   // this.gameContext.setIsGame(true);
-  //   this.gameContext.setLevel('2');
-    
-  //   this.gameContext.setCountdown(TEXT.countdown_three);
-  //   setTimeout(() => {
-  //     this.gameContext.setCountdown(TEXT.countdown_two);
-  //     setTimeout(() => {
-  //       this.gameContext.setCountdown(TEXT.countdown_one);
-  //       setTimeout(() => {
-  //         this.gameContext.setCountdown(TEXT.countdown_go);
-  //         setTimeout(() => {
-  //           this.gameContext.setCountdown(TEXT.blank);
-  //           this.gameContext.setIsLevelPlaying(true);
-  //           setTimeout(() => {
-  //             this.gameContext.setIsLevelPlaying(false);
-  //             this.gameContext.setLevelComplete(2);
-  //             this.gameContext.setCountdown(TEXT.countdown_get_ready);
-  //           }, this.playTime);            
-  //         }, this.delay); 
-  //       }, this.delay); 
-  //     }, this.delay);
-  //   }, this.delay);  
-  // }
-
-  // onEnterLevel3() { 
-  //   console.log('GameStateMachine Entered Level3 state'); 
-  //   super.onEnterLevel3();
-
-  //   // this.gameContext.setIsGame(true);
-  //   this.gameContext.setLevel('3');
-    
-  //   this.gameContext.setCountdown(TEXT.countdown_three);
-  //   setTimeout(() => {
-  //     this.gameContext.setCountdown(TEXT.countdown_two);
-  //     setTimeout(() => {
-  //       this.gameContext.setCountdown(TEXT.countdown_one);
-  //       setTimeout(() => {
-  //         this.gameContext.setCountdown(TEXT.countdown_go);
-  //         setTimeout(() => {
-  //           this.gameContext.setCountdown(TEXT.blank);
-  //           this.gameContext.setIsLevelPlaying(true);
-  //           // setTimeout(() => {
-  //           //   this.gameContext.setIsPlaying(false);
-  //           //   this.gameContext.setLevelComplete(3); 
-  //           // }, this.playTime);            
-  //         }, this.delay); 
-  //       }, this.delay); 
-  //     }, this.delay);
-  //   }, this.delay);
-  // }
-
-  // onLeaveLevel3() { 
-  //   console.log('GameStateMachine Exit Level3 state'); 
-  //   super.onLeaveLevel3();
+  onLeaveOutro() { 
+    console.log('GameStateMachine Exit Outro state'); 
+    super.onLeaveOutro();
       
-      // setIsGamePlaying(false);
-
-  //   // console.log(`topScore: ${this.gameContext.topScore}`);
-  //   // console.log(`bottomScore: ${this.gameContext.bottomScore}`);
-  //   if (this.gameContext.bottomScore > this.gameContext.topScore) {
-  //     this.gameContext.setCountdown(TEXT.human_wins);
-  //   }
-
-  //   if (this.gameContext.bottomScore < this.gameContext.topScore) {
-  //     this.gameContext.setCountdown(TEXT.tyler_wins);
-  //   }
-
-  //   if (this.gameContext.bottomScore == this.gameContext.topScore) {
-  //     this.gameContext.setCountdown(TEXT.draw);
-  //   }
-  // }
+    this.gameContext.setLevel(4); 
+  }
 
 }
 

@@ -24,8 +24,6 @@ const Paddle = ({
   const min = -max;
 
     useEffect(() => {
-      console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
-      console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
       if (paddleRef.current) {
         const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
   
@@ -35,73 +33,9 @@ const Paddle = ({
       }
     }, [forcePaddleRerender, paddlePosition]);
 
-  // useEffect(() => {
-  //   // console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
-  //   // console.log(`!!!!!!!!!!!!!!!!! oldPaddlePosition: ${oldPaddlePosition}`);
-  //   // console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
-  //   if (paddleRef.current) {
-  //     if (paddlePosition != oldPaddlePosition) {
-  //       try {
-  //         console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
-  //         console.log(`!!!!!!!!!!!!!!!!! oldPaddlePosition: ${oldPaddlePosition}`);
-  //         console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
-          
-  //         const currentPosition = paddleRef.current.translation();
-  //         const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
-
-  //         const newPositionX = Math.round(Math.max(min, Math.min(max, xfactor)) * 100) / 100;
-  //         console.log(`!!!!!!!!!!!!!!!!! newPositionX: ${newPositionX}`);
-  //         console.log(`!!!!!!!!!!!!!!!!! currentPosition.x: ${currentPosition.x}`);
-  //         console.log(`!!!!!!!!!!!!!!!!! currentPosition.y: ${currentPosition.y}`);
-  //         console.log(`!!!!!!!!!!!!!!!!! currentPosition.z: ${currentPosition.z}`);
-  //         paddleRef.current.setTranslation({ x: newPositionX, y: currentPosition.y, z: currentPosition.z }, true);
-  //         setOldPaddlePosition(paddlePosition);
-  //         console.log(`!!!!!!!!!!!!!!!!! done:}`);
-
-  //       } catch (error) {
-  //         console.log(`Error: ${error.message}`);
-  //       }
-  //     }
-  //   }
-  // });
-
-    useEffect(() => {
-      console.log(`!!!!!!!!!!!!!!!!! forcePaddleRerender: ${forcePaddleRerender}`);
-    }, [forcePaddleRerender]);
-
     // useEffect(() => {
-
-    //   if (paddleRef.current) {
-    //     console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
-    //     console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
-
-    //     const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
-  
-    //     const newPositionX = Math.max(min, Math.min(max, xfactor));
-    //     const currentPosition = paddleRef.current.translation();
-    //     console.log(`!!!!!!!!!!!!!!!!! newPositionX: ${newPositionX}`);
-    //     console.log(`!!!!!!!!!!!!!!!!! currentPosition.x: ${currentPosition.x}`);
-    //     console.log(`!!!!!!!!!!!!!!!!! currentPosition.y: ${currentPosition.y}`);
-    //     console.log(`!!!!!!!!!!!!!!!!! currentPosition.z: ${currentPosition.z}`);
-    //     paddleRef.current.setTranslation({ x: newPositionX, y: currentPosition.y, z: currentPosition.z }, true);
-    //     // const currentPositionout = paddleRef.current.translation();
-    //     // console.log(`paddle new position: ${currentPositionout.x}`);
-    //   }
-    // }, [paddlePosition]);
-
-    // useEffect(() => {
-    //   console.log(`!!!!!!!!!!!!!!!!! isTop: ${isTop}`);
-    //   console.log(`!!!!!!!!!!!!!!!!! paddlePosition: ${paddlePosition}`);
-    //   if (paddleRef.current) {
-    //     const xfactor = ((paddlePosition - 0.5) * (gameboardWidth - paddleWidth));
-  
-    //     const newPositionX = Math.max(min, Math.min(max, xfactor));
-    //     const currentPosition = paddleRef.current.translation();
-    //     paddleRef.current.setTranslation({ x: newPositionX, y: currentPosition.y, z: currentPosition.z }, true);
-    //     const currentPositionout = paddleRef.current.translation();
-    //     console.log(`paddle new position: ${currentPositionout.x}`);
-    //   }
-    // }, [paddlePosition]);
+    //   console.log(`!!!!!!!!!!!!!!!!! forcePaddleRerender: ${forcePaddleRerender}`);
+    // }, [forcePaddleRerender]);
 
     return (
       <RigidBody ref={paddleRef} position={position} type="static" colliders="cuboid" onCollisionEnter={handleCollision} restitution={1.0} friction={0.0} userData={{ isPaddle: true, isTop: {isTop} }} >

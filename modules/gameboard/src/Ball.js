@@ -29,9 +29,9 @@ const Ball = ({ ballRef, position, args, color  }) => {
     }
   }, [forceBallRerender, resetBall]);
 
-  useEffect(() => {
-    console.log(`^^^^^^^^^^^^^ forceBallRerender: ${forceBallRerender}`);
-  }, [forceBallRerender]);
+  // useEffect(() => {
+  //   console.log(`^^^^^^^^^^^^^ forceBallRerender: ${forceBallRerender}`);
+  // }, [forceBallRerender]);
 
   return (
     <RigidBody ref={ballRef} position={position} colliders="ball"  restitution={1.0} friction={0.0} userData={{ isBall: true }}>
