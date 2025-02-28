@@ -10,10 +10,7 @@ import Paddle from './Paddle';
 import Goal from './Goal';
 import Wall from './Wall';
 import AudioPlayer from './AudioPlayer';
-import * as TEXT from './loadText';
 import PlayStateMachine from './PlayStateMachine';
-// import StateMachine from 'javascript-state-machine';
-import ChildComponent from './ChildComponent';
 
 const speed = 200;
 const gameboardHeight = 160; // height used in AI 
@@ -114,13 +111,13 @@ function Game() {
       if(fsmRef.current.state === 'paddleReset') {
         if (isTopPaddleReset && isBottomPaddleReset) {
           fsmRef.current.resetBall();
-          setForceBallRerender(prevState => !prevState);
+          // setForceBallRerender(prevState => !prevState);
         }
       }
 
       if(fsmRef.current.state === 'ballReset') {
         if(isBallReset) {
-          setForcePaddleRerender(prevState => !prevState);
+          // setForcePaddleRerender(prevState => !prevState);
           fsmRef.current.resetGame();
         }
       }
@@ -181,8 +178,6 @@ function Game() {
   useEffect(() => {
     if (level === 4) {
       console.log(`level: ${level}`);
-      // setTopScore(0);
-      // setBottomScore(0);
       fsmRef.current.returnToIdle();
     } else {
       if (level > 0) {
@@ -268,7 +263,6 @@ function Game() {
 
   return (
     <group position={[0, 0, 0]} >
-      <ChildComponent ref={childRef} />
       <PlayStateMachine ref={fsmRef} ballRef={ballRef} />
 
       <Gameboard 

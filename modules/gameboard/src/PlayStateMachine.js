@@ -114,6 +114,7 @@ const {
                 onEnterPaddleReset: () => {
                     console.log('PlayStateMachine Entering paddleReset state');
                     setResetPaddles(true);
+                    setForcePaddleRerender(prevState => !prevState);
                 },
                 // Method called when leaving the 'paddleReset' state
                 onLeavePaddleReset: () => {
@@ -123,6 +124,7 @@ const {
                     setIsTopPaddleReset(false);
                     setIsBottomPaddleReset(false);
                     setResetPaddles(false);
+                    setForcePaddleRerender(prevState => !prevState);
                 },
                 // Method called when entering the 'ballReset' state
                 onEnterBallReset: () => {
@@ -195,7 +197,7 @@ const {
                     }
                     setBottomScore((prev) => prev + 1);
 
-                    setForcePaddleRerender(prevState => !prevState);
+                    // setForcePaddleRerender(prevState => !prevState);
             
                     setIncludeCountDown(false);
                 },
@@ -213,7 +215,7 @@ const {
                     }
                     setTopScore((prev) => prev + 1);
 
-                    setForcePaddleRerender(prevState => !prevState);
+                    // setForcePaddleRerender(prevState => !prevState);
             
                     setIncludeCountDown(false);
                 },
