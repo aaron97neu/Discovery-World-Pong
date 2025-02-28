@@ -85,8 +85,8 @@ const {
                 onEnterIdle: () => {
                     console.log('PlayStateMachine Entering idle state');
                     // setForcePaddleRerender(prevState => !prevState);
-                    setTopScore(0);
-                    setBottomScore(0);
+                    // setTopScore(0);
+                    // setBottomScore(0);
                     setIsDontPlay(true);
                     setIncludeCountDown(false);
                     setCountdown(TEXT.countdown_get_ready);
@@ -242,6 +242,8 @@ const {
                 // Method called when leaving the 'gameFinished' state
                 onLeaveGameFinished: () => {
                     console.log('PlayStateMachine Leaving gameFinished state');
+                    setTopScore(0);
+                    setBottomScore(0);
                 },
                 onInvalidTransition: function(transition, from, to) {
                     console.log("PlayStateMachine transition '%s' not allowed from state '%s'", transition, from);

@@ -129,7 +129,7 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onEnterOutro() { 
-    console.log('GameStateMachine Exit Outro state'); 
+    console.log('GameStateMachine Enter Outro state'); 
     super.onLeaveOutro();
       
     // this.gameContext.setLevel(4); 
@@ -140,8 +140,9 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Exit Outro state'); 
     super.onLeaveOutro();
       
-    this.gameContext.setLevel(4); 
+    // this.gameContext.setLevel(4); 
     this.gameContext.setIsGamePlaying(false);
+    this.gameContext.setIsIntroPlaying(false);
   }
 
 }

@@ -38,6 +38,7 @@ function Game() {
     level,
     levelComplete,
     setLevelComplete,
+    isGamePlaying,
   } = useContext(GameContext);
 
   const {
@@ -167,24 +168,29 @@ function Game() {
           setLevelComplete(3);
         }
       }
-    }
 
-    if(fsmRef.current.state === 'gameFinished') {
-      fsmRef.current.returnToIdle();
+      if (!isGamePlaying) {
+        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+        fsmRef.current.returnToIdle();
+      }
     }
-    
+    // if(fsmRef.current.state === 'gameFinished') {
+    //   fsmRef.current.returnToIdle();
+    // }
+
   });
 
   useEffect(() => {
-    if (level === 4) {
-      console.log(`level: ${level}`);
-      fsmRef.current.returnToIdle();
-    } else {
+    // console.log(`level: ${level}`);
+    // if (level === 4) {
+    //   console.log(`level: ${level}`);
+    //   fsmRef.current.returnToIdle();
+    // } else {
       if (level > 0) {
         console.log(`level: ${level}`);
         fsmRef.current.resetLevel();
       }
-    }
+    // }
   }, [level]);
 
   useEffect(() => {
@@ -198,6 +204,13 @@ function Game() {
       }
     }    
   }, [levelComplete]);
+
+  useEffect(() => {
+    if (isGamePlaying === false) {
+      console.log(`isGamePlaying: ${isGamePlaying}`);
+      fsmRef.current.returnToIdle();
+    }    
+  }, [isGamePlaying]);
  
   useEffect(() => {
     if (bottomPaddleState == "reset") {

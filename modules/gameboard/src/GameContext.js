@@ -4,7 +4,6 @@ import * as IMAGES from './loadImages';
 const GameContext = createContext();
 
 const GameProvider = ({ children }) => {
-  const [isGame, setIsGame] = useState(false);
   const [playerInstructionProps, setPlayerInstructionProps] = useState({
     image: IMAGES.noImage,
     // image: IMAGES.welcomeScreen,
@@ -12,6 +11,7 @@ const GameProvider = ({ children }) => {
     scale: 1.0
   });
 
+  const [isGame, setIsGame] = useState(false);
   const [levelComplete, setLevelComplete] = useState('0');
   const [level, setLevel] = useState(0);
   const [isIntroPlaying, setIsIntroPlaying] = useState(false);

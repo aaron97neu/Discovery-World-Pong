@@ -6,7 +6,10 @@ import * as TEXT from './loadText';
 // class GamePlay {
 const GamePlay = ({pongAPIRef}) => {
   const {
+    isGamePlaying,
     setPlayerInstructionProps,
+    topScore, setTopScore,
+    bottomScore, setBottomScore,
   } = useContext(SceneContext);
 
   const [prevTopScore, setPrevTopScore] = useState(0);
@@ -17,30 +20,48 @@ const GamePlay = ({pongAPIRef}) => {
       pongAPIRef.current.registerObserver('game/stats', onGameStats);
     }
   }, [pongAPIRef]);
+
+  useEffect(() => {
+    console.log(`isGamePlaying: ${isGamePlaying}`);
+    if (isGamePlaying) {
+      if (topScore > prevTopScore) {
+        console.log("playerTopScore > topScore");
+        setPlayerInstructionProps({
+          image: IMAGES.TYLERFace_Happy,
+          position: [0.0, 0.0, 0.0],
+          scale: 4.0,
+          text: TEXT.blank
+        }); 
+        setPrevTopScore(topScore);
+      }
+    }
+  }, [topScore]);
+
+  useEffect(() => {
+    console.log(`isGamePlaying: ${isGamePlaying}`);
+    if (isGamePlaying) {
+      if (bottomScore > prevBottomScore) {
+        console.log("playerBottomScore > bottomScore");
+        setPlayerInstructionProps({
+          image: IMAGES.TYLERFace_Annoyed,
+          position: [0.0, 0.0, 0.0],
+          scale: 4.0,
+          text: TEXT.blank
+        });       
+        setPrevBottomScore(bottomScore);
+      }
+    }
+  }, [bottomScore]);
   
   const onGameStats = (message) => {
     const playerTopScore = message.player_top.score;
     const playerBottomScore = message.player_bottom.score;
 
-    if (playerTopScore > prevTopScore) {
-      setPlayerInstructionProps({
-        image: IMAGES.TYLERFace_Happy,
-        position: [0.0, 0.0, 0.0],
-        scale: 4.0,
-        text: TEXT.blank
-      }); 
-    }
-    if (playerBottomScore > prevBottomScore) {
-      setPlayerInstructionProps({
-        image: IMAGES.TYLERFace_Annoyed,
-        position: [0.0, 0.0, 0.0],
-        scale: 4.0,
-        text: TEXT.blank
-      });       
-    }
+    setTopScore(playerTopScore);
+    setBottomScore(playerBottomScore);
   }
 
-  return null;
+    return null;
 }
 
 export default GamePlay;

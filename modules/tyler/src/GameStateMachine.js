@@ -133,6 +133,10 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
+    console.log(`isGamePlaying1: ${this.sceneContext.isGamePlaying}`);
+    this.sceneContext.setIsGamePlaying(true);
+    console.log(`isGamePlaying2: ${this.sceneContext.isGamePlaying}`);
+
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
@@ -187,8 +191,10 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onEnterLevel2() { 
-    console.log('GameStateMachine Entered Level1 state');
+    console.log('GameStateMachine Entered Level2 state');
     super.onEnterLevel1();
+
+    console.log(`isGamePlaying3: ${this.sceneContext.isGamePlaying}`);
 
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
@@ -273,6 +279,9 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Outtro state');
     super.onEnterOutro();
 
+    this.sceneContext.setIsGamePlaying(false);
+
+    console.log("onEnterOutro1");
     this.sceneContext.setStateTransition('intro');
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
@@ -280,10 +289,14 @@ class GameStateMachine extends BaseStateMachine {
       scale: 4.0,
       text: TEXT.level_three_complete
     });  
+    console.log("onEnterOutro2");
         
     this.audioPlayer.play('tylerLevelThreeComplete').then(() => {
       this.audioPlayer.onEnd('tylerLevelThreeComplete', () => 
         {
+
+          console.log("onEnterOutro3");
+
           this.sceneContext.setStateTransition('intro');
           this.sceneContext.setPlayerInstructionProps({
             image: IMAGES.TYLERFace_Neutral,

@@ -23,6 +23,7 @@ function App() {
   const fullClientId = `${clientId}-${uuid}`;
 
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
+  const gameStateMachineRef = useRef();
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -35,7 +36,11 @@ function App() {
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
     }
-    gameStateMachine.startMachine();
+
+    if (!gameStateMachineRef.current) {
+      gameStateMachineRef.current = new GameStateMachine(pongAPIRef.current, sceneContext);
+      gameStateMachineRef.current.startMachine();
+    }
 
 
     const handleResize = () => {
