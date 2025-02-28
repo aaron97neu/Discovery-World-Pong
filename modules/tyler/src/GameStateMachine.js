@@ -41,6 +41,7 @@ class GameStateMachine extends BaseStateMachine {
     super.onEnterIntro();
 
     this.sceneContext.setStateTransition('intro');
+
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
@@ -71,6 +72,7 @@ class GameStateMachine extends BaseStateMachine {
     super.onEnterMoveIntro();
 
     this.sceneContext.setStateTransition('intro');
+
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
@@ -99,6 +101,8 @@ class GameStateMachine extends BaseStateMachine {
   onEnterLevel1Intro() { 
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
+
+    this.sceneContext.setStateTransition('intro');
 
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
