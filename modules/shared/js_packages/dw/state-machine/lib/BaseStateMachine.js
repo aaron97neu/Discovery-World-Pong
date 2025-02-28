@@ -16,7 +16,11 @@ export default class BaseStateMachine {
         { name: 'start', from: 'stopped', to: 'idle' },
         { name: 'playerReady', from: 'idle', to: 'intro' },
         { name: 'playerExit', from: 'intro', to: 'idle' },
-        { name: 'introComplete', from: 'intro', to: 'level1Intro' },
+        { name: 'introComplete', from: 'intro', to: 'moveIntro' },
+
+        { name: 'playerExit', from: 'moveIntro', to: 'idle' },
+        { name: 'moveIntroComplete', from: 'moveIntro', to: 'level1Intro' },
+
         { name: 'level1IntroComplete', from: 'level1Intro', to: 'level1' },
         { name: 'playerExit', from: 'level1', to: 'idle' },
         { name: 'level1Complete', from: 'level1', to: 'level2Intro' },
@@ -36,6 +40,8 @@ export default class BaseStateMachine {
         onLeaveIdle: this.onLeaveIdle.bind(this),
         onEnterIntro: this.onEnterIntro.bind(this),
         onLeaveIntro: this.onLeaveIntro.bind(this),
+        onEnterMoveIntro: this.onEnterMoveIntro.bind(this),
+        onLeaveMoveIntro: this.onLeaveMoveIntro.bind(this),
         onEnterLevel1Intro: this.onEnterLevel1Intro.bind(this),
         onLeaveLevel1Intro: this.onLeaveLevel1Intro.bind(this),
         onEnterLevel2Intro: this.onEnterLevel2Intro.bind(this),
@@ -94,6 +100,9 @@ export default class BaseStateMachine {
           case 'intro_complete':
             this.fsm.introComplete();
             break;
+          case 'move_intro_complete':
+            this.fsm.moveIntroComplete();
+            break;
           case 'level1_intro_complete':
             this.fsm.level1IntroComplete();
             break;
@@ -133,6 +142,8 @@ export default class BaseStateMachine {
   onLeaveIdle() { }
   onEnterIntro() { }
   onLeaveIntro() { }
+  onEnterMoveIntro() { }
+  onLeaveMoveIntro() { }
   onEnterLevel1Intro() { }
   onLeaveLevel1Intro() { }
   onEnterLevel2Intro() { }

@@ -40,11 +40,6 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Intro state');
     super.onEnterIntro();
 
-    // const message = {
-    //   "transition": "intro_complete"
-    // };
-    // this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
-
     this.sceneContext.setStateTransition('intro');
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
@@ -56,34 +51,10 @@ class GameStateMachine extends BaseStateMachine {
     this.audioPlayer.play('tylerIntro').then(() => {
       this.audioPlayer.onEnd('tylerIntro', () => 
         {
-          this.sceneContext.setPlayerInstructionProps({
-            image: IMAGES.TYLERFace_MoveLeft,
-            position: [0.0, 0.0, 0.0],
-            scale: 4.0,
-            text: TEXT.move
-          }); 
-          this.audioPlayer.play('tylerMove').then(() => {
-            this.audioPlayer.onEnd('tylerMove', () => 
-              {
-                const message = {
-                  "transition": "intro_complete"
-                };
-                this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
-                // this.sceneContext.setPlayerInstructionProps({
-                //   image: IMAGES.TYLERFace_Neutral,
-                //   position: [0.0, 0.0, 0.0],
-                //   scale: 4.0,
-                //   text: TEXT.duel
-                // }); 
-                // this.audioPlayer.play('tylerDuel').then(() => {
-                //   this.audioPlayer.onEnd('tylerDuel', () => 
-                //     {
-                //       this.pongAPI.update(PongAPI.Topics.GAME_STATE, { transition: "level1_intro_complete" });
-                //       // this.pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM, { state: "start" });
-                //     })
-                // })
-              })
-          })
+          const message = {
+            "transition": "intro_complete"
+          };
+          this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
         })
     });
   }
@@ -93,19 +64,41 @@ class GameStateMachine extends BaseStateMachine {
     super.onLeaveIntro();
 
     this.audioPlayer.stop('tylerIntro');  
-    this.audioPlayer.stop('tylerMove');  
-    this.audioPlayer.stop('tylerDuel');  
-    // this.audioPlayer.stop('tylerCountdown');  
   }
+
+  onEnterMoveIntro() {
+    console.log('GameStateMachine Entered MoveIntro state'); 
+    super.onEnterMoveIntro();
+
+    this.sceneContext.setStateTransition('intro');
+    this.sceneContext.setPlayerInstructionProps({
+      image: IMAGES.TYLERFace_MoveLeft,
+      position: [0.0, 0.0, 0.0],
+      scale: 4.0,
+      text: TEXT.move
+    }); 
+
+    this.audioPlayer.play('tylerMove').then(() => {
+      this.audioPlayer.onEnd('tylerMove', () => 
+        {
+          const message = {
+            "transition": "move_intro_complete"
+          };
+          this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
+        })
+    });
+  }  
+
+  onLeaveMoveIntro() {
+    console.log('GameStateMachine Leave MoveIntro state'); 
+    super.onLeaveIntro();
+
+    this.audioPlayer.stop('tylerMove');  
+  }  
 
   onEnterLevel1Intro() { 
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
-
-    // const message = {
-    //   "transition": "level1_intro_complete"
-    // };
-    // this.pongAPI.update(PongAPI.Topics.GAME_STATE, message);
 
     this.sceneContext.setPlayerInstructionProps({
       image: IMAGES.TYLERFace_Neutral,

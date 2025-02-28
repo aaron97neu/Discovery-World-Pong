@@ -24,7 +24,8 @@ function App() {
 
   // console.log("app constructor");
   const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
-  const gameStateMachineRef = useRef(new GameStateMachine(pongAPIRef.current, gameContext));
+  // const gameStateMachineRef = useRef(new GameStateMachine(pongAPIRef.current, gameContext));
+  const gameStateMachineRef = useRef();
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -38,9 +39,14 @@ function App() {
       pongAPIRef.current.start();
     }
 
-    if (gameStateMachineRef.current) {
+    if (!gameStateMachineRef.current) {
+      gameStateMachineRef.current = new GameStateMachine(pongAPIRef.current, gameContext);
       gameStateMachineRef.current.startMachine();
     }
+
+    // if (gameStateMachineRef.current) {
+    //   gameStateMachineRef.current.startMachine();
+    // }
 
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });

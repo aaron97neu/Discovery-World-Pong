@@ -60,6 +60,28 @@ class GameStateMachine extends BaseStateMachine {
     // this.audioPlayer.stop('musicBackground');
   }  
 
+  onEnterMoveIntro() {
+    console.log('GameStateMachine Entered MoveIntro state'); 
+    super.onEnterMoveIntro();
+
+    this.gameContext.setPlayerInstructionProps({
+      image: IMAGES.playerInstructionsMoveLeftRight,
+      position: [0.0, 0.2, 0.0],
+      scale: 8.5
+    });
+  }  
+
+  onLeaveMoveIntro() {
+    console.log('GameStateMachine Leave MoveIntro state'); 
+    super.onLeaveMoveIntro();
+
+    this.gameContext.setPlayerInstructionProps({
+      image: IMAGES.welcomeScreen,
+      position: [0.0, 0.2, 0.0],
+      scale: 8.5
+    });
+  }  
+
   onEnterLevel1Intro() { 
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
