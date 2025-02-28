@@ -83,7 +83,7 @@ const GamePlay = ({pongAPIRef}) => {
 
         if (topPaddleState == "start" && bottomPaddleState == "start") {
           const message = {
-            "transition": "intro_complete"
+            "transition": "move_intro_complete"
           };
           console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
