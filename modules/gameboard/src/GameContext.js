@@ -14,6 +14,7 @@ const GameProvider = ({ children }) => {
 
   const [levelComplete, setLevelComplete] = useState('0');
   const [level, setLevel] = useState(0);
+  const [isIntroPlaying, setIsIntroPlaying] = useState(false);
   const [isGamePlaying, setIsGamePlaying] = useState(false);
 
   // console.log("start GameContext");
@@ -24,6 +25,7 @@ const GameProvider = ({ children }) => {
       playerInstructionProps, setPlayerInstructionProps,
       level, setLevel,
       levelComplete, setLevelComplete,
+      isIntroPlaying, setIsIntroPlaying,
       isGamePlaying, setIsGamePlaying,
       }}>
       {children}

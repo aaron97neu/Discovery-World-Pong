@@ -85,6 +85,8 @@ const {
                 onEnterIdle: () => {
                     console.log('PlayStateMachine Entering idle state');
                     // setForcePaddleRerender(prevState => !prevState);
+                    setTopScore(0);
+                    setBottomScore(0);
                     setIsDontPlay(true);
                     setIncludeCountDown(false);
                     setCountdown(TEXT.countdown_get_ready);

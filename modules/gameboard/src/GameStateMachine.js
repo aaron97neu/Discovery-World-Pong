@@ -10,7 +10,8 @@ class GameStateMachine extends BaseStateMachine {
   constructor(pongAPI, gameContext) {
     console.log('GameStateMachine Entered Constructor'); 
     super(pongAPI);
-    this.playTime = 30000;
+    // this.playTime = 30000;
+    this.playTime = 10000;
     this.volume = 0.5;
     this.gameContext = gameContext;
     this.audioPlayer = new AudioPlayer();
@@ -86,9 +87,10 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
 
+    this.gameContext.setIsGamePlaying(true); 
     this.gameContext.setLevel(0);
     this.gameContext.setIsGame(true); 
-    this.gameContext.setLevelComplete(0);    
+    this.gameContext.setLevelComplete(0);   
   }
 
   onEnterLevel1() { 
@@ -105,10 +107,8 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Level2 state');
     super.onEnterLevel2();
 
-    // this.gameContext.setIsLevelPlaying(true);
     this.gameContext.setLevel(2);
     setTimeout(() => {
-      // this.gameContext.setIsLevelPlaying(false);
       this.gameContext.setLevelComplete(2);
     }, this.playTime);            
   }
@@ -124,7 +124,16 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Exit Level3 state'); 
     super.onLeaveLevel3();
       
-    this.gameContext.setIsGamePlaying(false);
+    // this.gameContext.setLevel(4); 
+    // this.gameContext.setIsGamePlaying(false);
+  }
+
+  onEnterOutro() { 
+    console.log('GameStateMachine Exit Outro state'); 
+    super.onLeaveOutro();
+      
+    // this.gameContext.setLevel(4); 
+    // this.gameContext.setIsGamePlaying(false);
   }
 
   onLeaveOutro() { 
@@ -132,6 +141,7 @@ class GameStateMachine extends BaseStateMachine {
     super.onLeaveOutro();
       
     this.gameContext.setLevel(4); 
+    this.gameContext.setIsGamePlaying(false);
   }
 
 }

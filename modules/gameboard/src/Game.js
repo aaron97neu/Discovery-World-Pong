@@ -171,12 +171,18 @@ function Game() {
         }
       }
     }
+
+    if(fsmRef.current.state === 'gameFinished') {
+      fsmRef.current.returnToIdle();
+    }
+    
   });
 
   useEffect(() => {
     if (level === 4) {
-      setTopScore(0);
-      setBottomScore(0);
+      console.log(`level: ${level}`);
+      // setTopScore(0);
+      // setBottomScore(0);
       fsmRef.current.returnToIdle();
     } else {
       if (level > 0) {

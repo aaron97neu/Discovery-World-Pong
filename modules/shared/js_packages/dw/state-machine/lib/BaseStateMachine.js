@@ -18,7 +18,7 @@ export default class BaseStateMachine {
         { name: 'playerExit', from: 'intro', to: 'idle' },
         { name: 'introComplete', from: 'intro', to: 'moveIntro' },
         { name: 'playerExit', from: 'moveIntro', to: 'idle' },
-        { name: 'moveIntroComplete', from: ['intro', 'moveIntro'], to: 'level1Intro' },
+        { name: 'moveIntroComplete', from: ['idle', 'intro', 'moveIntro'], to: 'level1Intro' },
         { name: 'level1IntroComplete', from: 'level1Intro', to: 'level1' },
         { name: 'playerExit', from: 'level1', to: 'idle' },
         { name: 'level1Complete', from: 'level1', to: 'level2Intro' },
