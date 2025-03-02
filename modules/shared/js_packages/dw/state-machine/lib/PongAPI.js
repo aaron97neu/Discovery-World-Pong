@@ -26,9 +26,11 @@ export default class PongAPI {
    * @param {string} clientId - The client ID for the MQTT connection.
    * @param {string} brokerUrl - The URL of the MQTT broker.
    */
-  constructor(clientId, brokerUrl) {
+  constructor(clientId, brokerUrl, connectCallback, disconnectCallback) {
     this.clientId = clientId;
     this.brokerUrl = brokerUrl;
+    this.connectCallback = connectCallback;
+    this.disconnectCallback = disconnectCallback;
     this.client = null;
     this.observers = {};
     this.ajv = new Ajv();
@@ -54,11 +56,19 @@ export default class PongAPI {
         this.client.subscribe(topic);
       });
       this.connected = true;
+
+      if (this.connectCallback && typeof this.connectCallback === 'function') {
+        this.connectCallback();
+      }  
     });
 
     this.client.on('disconnect', () => {
       console.log('Disconnected from MQTT broker');
       this.connected = false;
+      
+      if (this.disconnectCallback && typeof this.disconnectCallback === 'function') {
+        this.disconnectCallback();
+      }      
     });
 
     this.client.on('error', (err) => {
@@ -109,6 +119,7 @@ export default class PongAPI {
     this.observers[topic].push(callback);
   }
 
+  
   /**
    * Notifies observers of a new message.
    * @param {string} topic - The topic of the message.

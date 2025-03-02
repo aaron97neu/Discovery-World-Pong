@@ -53,14 +53,14 @@ services:
     #                       count: 1
     #                       capabilities: [gpu]
     ai-paddle-control-no-gpu:
-        container_name: ai-paddle-control
+        container_name: ai-paddle-control-no-gpu
+        image: ai-paddle-control-no-gpu:latest
         build:
             context: ./modules/ai-paddle-control
             additional_contexts:
                 util: ./modules/shared
                 validation: ./modules/shared/validation
                 certs: ./certs
-        profiles: [dev]
         restart: unless-stopped
         networks:
             - pong-network
@@ -168,27 +168,50 @@ services:
     #     networks:
     #         - pong-network
 
-    # gameboard:
-    #     container_name: gameboard
-    #     image: gameboard:latest
-    #     build:
-    #         # dockerfile: Dockerfile.zscaler
-    #         context: ./modules/gameboard
-    #         additional_contexts:
-    #             util: ./modules/shared
-    #             certs: ./certs
-    #     ports:
-    #         - 5000:80
-    #     depends_on:
-    #         - mqtt-broker         
-    #     restart: unless-stopped
-    #     networks:
-    #         - pong-network
-    #     # volumes:
-    #     # - .:/app
-    #     # - /app/node_modules
-    #     environment:
-    #         - CHOKIDAR_USEPOLLING=true            
+
+    tyler:
+        container_name: tyler
+        image: tyler:latest
+        build:
+            # dockerfile: Dockerfile.zscaler
+            context: ./modules/tyler
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        ports:
+            - 5003:80
+        depends_on:
+            - mqtt-broker         
+        restart: unless-stopped
+        networks:
+            - pong-network
+        # volumes:
+        # - .:/app
+        # - /app/node_modules
+        environment:
+            - CHOKIDAR_USEPOLLING=true  
+
+    gameboard:
+        container_name: gameboard
+        image: gameboard:latest
+        build:
+            # dockerfile: Dockerfile.zscaler
+            context: ./modules/gameboard
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        ports:
+            - 5000:80
+        depends_on:
+            - mqtt-broker         
+        restart: unless-stopped
+        networks:
+            - pong-network
+        # volumes:
+        # - .:/app
+        # - /app/node_modules
+        environment:
+            - CHOKIDAR_USEPOLLING=true            
 
     # gameboard:
     #     container_name: gameboard

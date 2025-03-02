@@ -28,7 +28,7 @@ export default class BaseStateMachine {
         { name: 'level3IntroComplete', from: 'level3Intro', to: 'level3' },
         { name: 'playerExit', from: 'level3', to: 'idle' },
         { name: 'level3Complete', from: 'level3', to: 'outro' },
-        { name: 'gameComplete', from: 'outro', to: 'idle' },
+        { name: 'gameComplete', from: ['idle', 'outro'], to: 'idle' },
         { name: 'stop', from: 'idle', to: 'stopped' },
       ],
       methods: {

@@ -15,6 +15,12 @@ function App() {
 
   const gameContext = useContext(GameContext);
 
+  const {
+    isAppInitialized, 
+    setisAppInitialized,
+    setIsGameComplete,
+  } = useContext(GameContext);
+
   const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
   const port = process.env.REACT_APP_MQTT_PORT || 9001;
   const brokerUrl = `ws://${broker}:${port}`;
@@ -22,8 +28,19 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
+  const onPongApiConnection = () => {
+    console.log('isAppInitialized:', isAppInitialized);
+    if (!isAppInitialized) {
+      setisAppInitialized(true);
+      setIsGameComplete(true);
+    }
+  }  
+  
+  const onPongApiDisconnection = () => {
+  }
+
   // console.log("app constructor");
-  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
+  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl, onPongApiConnection, onPongApiDisconnection));
   // const gameStateMachineRef = useRef(new GameStateMachine(pongAPIRef.current, gameContext));
   const gameStateMachineRef = useRef();
 

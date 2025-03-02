@@ -45,4 +45,4 @@ COPY --from=util ./validation ./validation
 
 # Copy source
 COPY . .
-CMD ["python3", "ai_driver.py"]
+CMD ["python3", "src/ai_driver.py"]

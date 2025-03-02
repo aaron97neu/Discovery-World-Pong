@@ -13,6 +13,8 @@ const GamePlay = ({pongAPIRef}) => {
     setIsIntroPlaying,
     setIsGamePlaying,
     levelComplete,
+    setIsGameComplete,
+    isGameComplete,
   } = useContext(GameContext);
 
   const {
@@ -35,6 +37,7 @@ const GamePlay = ({pongAPIRef}) => {
 
   useEffect(() => {
     if (pongAPIRef.current) {
+      console.log("????????????????????????????????????????????  1");
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_POSITION, onPaddleTopPosition);
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_STATE, onPaddleTopState);
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_BOTTOM_POSITION, onPaddleBottomPosition);
@@ -45,6 +48,19 @@ const GamePlay = ({pongAPIRef}) => {
   useEffect(() => {
     if (pongAPIRef.current) {     
       if ( pongAPIRef.current.isConnected()) {
+
+        if (isGameComplete) {
+          console.log(`isGameComplete: ${isGameComplete}`);
+          setIsGameComplete(false);
+          const message = {
+            "transition": "game_complete"
+          };
+          console.log(`message: ${JSON.stringify(message, null, 2)}`);
+
+          pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
+
+          
+        }  
 
         if (prevBallPositionRef.current !== ballPosition) {
           const message = {

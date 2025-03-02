@@ -1,45 +1,27 @@
-import { forwardRef, useContext, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import { forwardRef, useContext, useEffect, useRef, useState } from 'react';
 import StateMachine from 'javascript-state-machine';
 import * as TEXT from './loadText';
-import {GameContext} from './GameContext';
 import {PlayContext} from './PlayContext';
 import AudioPlayer from './AudioPlayer';
 
 const PlayStateMachine = forwardRef(({ ballRef }, ref) => {
-// function PlayStateMachine() {
-// const PlayStateMachine = (playContext, setIncludeCountDown, setCounter, ballRef ) => new StateMachine({
-
-  const {
-    // isLevelPlaying,
-    level,
-    levelComplete,
-    setLevelComplete,
-  } = useContext(GameContext);
 
 const {
     setCountdown,
     setTopPaddleState,
-    setTopPaddlePosition,
     setBottomPaddleState,
-    setBottomPaddlePosition,    
     setResetPaddles,
-    topScore,
     setTopScore,
-    bottomScore,
     setBottomScore,
     setIsCountdownComplete,
     setIncludeCountDown,
     setIsTopPaddleReset,
     setIsBottomPaddleReset,
     setIsBallReset,
-    prevLevel, 
     setPrevLevel,
-    // stateMachine, 
-    // setStateMachine,
     setForcePaddleRerender,
     setForceBallRerender,
     setResetBall,
-    isDontPlay,
     setIsDontPlay,
   } = useContext(PlayContext);  
 
@@ -49,13 +31,11 @@ const {
     const delay = 500;
     const speed = 200;
   
-    const ballStartTranslation = {x: 0, y: -(gameboardHeight / 2) + 10, z: 0};
-
     const [stateMachine, setStateMachine] = useState(null);
 
     useEffect(() => {
         // console.log("game constructor");
-        // fsm.start();
+
         if (!audioPlayerRef.current) {
             audioPlayerRef.current = new AudioPlayer();
             audioPlayerRef.current.setVolume('pointScore', audioVolume);
@@ -63,8 +43,9 @@ const {
         }
 
         const fsm = new StateMachine({   
-            init: 'idle',
+            init: 'gameStarted',
             transitions: [
+                { name: 'startGame', from: ['gameStarted'], to: 'idle' },
                 { name: 'resetLevel', from: ['gameReset'], to: 'levelReset' },
                 { name: 'startLevel', from: 'levelReset', to: 'paddleReset'},
                 { name: 'startCountdown', from: 'gameReset', to: 'countdown'},
@@ -81,18 +62,23 @@ const {
                 { name: 'returnToIdle', from: ['gameFinished'], to: 'idle' },
             ],
             methods: {
+                // Method called when entering the 'gameStarted' state
+                onEnterGameStarted: () => {
+                    console.log('PlayStateMachine Entering gameStarted state');
+                    setPrevLevel(0);
+                    setTopScore(0);
+                    setBottomScore(0);
+                },
+                // Method called when leaving the 'gameStarted' state
+                onLeaveGameStarted: () => {
+                    console.log('PlayStateMachine Leaving gameStarted state');
+                },                 
                 // Method called when entering the 'idle' state
                 onEnterIdle: () => {
                     console.log('PlayStateMachine Entering idle state');
-                    // setForcePaddleRerender(prevState => !prevState);
-                    // setTopScore(0);
-                    // setBottomScore(0);
                     setIsDontPlay(true);
                     setIncludeCountDown(false);
                     setCountdown(TEXT.countdown_get_ready);
-                    // setTimeout(() => {
-                    // }, 2000);
-                    // }, delay);
                 },
                 // Method called when leaving the 'idle' state
                 onLeaveIdle: () => {
@@ -129,15 +115,6 @@ const {
                 // Method called when entering the 'ballReset' state
                 onEnterBallReset: () => {
                     console.log('PlayStateMachine Entering ballReset state');
-                    // if (ballRef.current) {
-                    //     ballRef.current.setTranslation(ballStartTranslation, true);
-                    //     // ballRef.current.setTranslation( {x: 0, y:-50, z: 0}, true); 
-                    //     ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-                    //     ballRef.current.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);
-                    //     setTimeout(() => {
-                    //         setIsBallReset(true);
-                    //     }, 5000); 
-                    // }
                     setResetBall(true);
                     setForceBallRerender(prevState => !prevState);
                 },
@@ -196,9 +173,7 @@ const {
                         });
                     }
                     setBottomScore((prev) => prev + 1);
-
-                    // setForcePaddleRerender(prevState => !prevState);
-            
+          
                     setIncludeCountDown(false);
                 },
                 // Method called when leaving the 'topGoal' state
@@ -214,8 +189,6 @@ const {
                         });
                     }
                     setTopScore((prev) => prev + 1);
-
-                    // setForcePaddleRerender(prevState => !prevState);
             
                     setIncludeCountDown(false);
                 },
@@ -226,24 +199,10 @@ const {
                 // Method called when entering the 'gameFinished' state
                 onEnterGameFinished: () => {
                     console.log('PlayStateMachine Entering gameFinished state');
-                    setPrevLevel(0);
-                    if (bottomScore > topScore) {
-                        setCountdown(TEXT.human_wins);
-                    }
-                
-                    if (bottomScore < topScore) {
-                        setCountdown(TEXT.tyler_wins);
-                    }
-                
-                    if (bottomScore == topScore) {
-                        setCountdown(TEXT.draw);
-                    }
                 },
                 // Method called when leaving the 'gameFinished' state
                 onLeaveGameFinished: () => {
                     console.log('PlayStateMachine Leaving gameFinished state');
-                    setTopScore(0);
-                    setBottomScore(0);
                 },
                 onInvalidTransition: function(transition, from, to) {
                     console.log("PlayStateMachine transition '%s' not allowed from state '%s'", transition, from);
@@ -255,7 +214,7 @@ const {
             ref.current = fsm;
         }
     }, [ref]);
-     
+
     return null;
 });
 

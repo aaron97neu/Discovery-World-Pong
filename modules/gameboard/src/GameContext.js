@@ -16,6 +16,8 @@ const GameProvider = ({ children }) => {
   const [level, setLevel] = useState(0);
   const [isIntroPlaying, setIsIntroPlaying] = useState(false);
   const [isGamePlaying, setIsGamePlaying] = useState(false);
+  const [isAppInitialized, setisAppInitialized] = useState(false);
+  const [isGameComplete, setIsGameComplete] = useState(false);
 
   // console.log("start GameContext");
 
@@ -27,6 +29,8 @@ const GameProvider = ({ children }) => {
       levelComplete, setLevelComplete,
       isIntroPlaying, setIsIntroPlaying,
       isGamePlaying, setIsGamePlaying,
+      isAppInitialized, setisAppInitialized,
+      isGameComplete, setIsGameComplete,
       }}>
       {children}
     </GameContext.Provider>

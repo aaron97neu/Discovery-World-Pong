@@ -80,7 +80,8 @@ pong_api_schema = {
                          "move_left_intro_complete", 
                          "level1_complete", 
                          "level2_complete", 
-                         "level3_complete", 
+                         "level3_complete",
+                         "game_complete", 
                          "stop"]
             }
         },
@@ -104,7 +105,11 @@ pong_api_schema = {
         "properties": {
             "state": {
                 "type": "string",
-                "enum": ["not_ready", "ready", "start", "reset", "stop"]
+                "enum": ["not_ready", 
+                         "ready", 
+                         "start", 
+                         "reset", 
+                         "stop"]
             }
         },
         "required": ["state"]
@@ -137,7 +142,11 @@ pong_api_schema = {
         "properties": {
             "state": {
                 "type": "string",
-                "enum": ["not_ready", "ready", "start", "reset", "stop"]
+                "enum": ["not_ready", 
+                         "ready", 
+                         "start", 
+                         "reset", 
+                         "stop"]
             }
         },
         "required": ["state"]

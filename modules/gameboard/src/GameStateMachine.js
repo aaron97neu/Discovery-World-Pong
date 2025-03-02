@@ -58,6 +58,7 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Leave Intro state'); 
     super.onLeaveIntro();
 
+    this.audioPlayer.stop('musicBackground');
     // this.audioPlayer.stop('musicBackground');
   }  
 

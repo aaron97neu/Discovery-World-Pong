@@ -82,9 +82,18 @@ const pongAPISchema = {
         "transition": {
           "type": "string",
           "enum": [
-            "start", "player_ready", "intro_complete", "level1_intro_complete",
-             "player_exit", "intro_complete", "move_left_intro_complete",
-            "level1_complete", "level2_complete", "level3_complete", "stop"
+            "start", 
+            "player_ready", 
+            "intro_complete", 
+            "level1_intro_complete", 
+            "player_exit", 
+            "intro_complete", 
+            "move_left_intro_complete", 
+            "level1_complete", 
+            "level2_complete", 
+            "level3_complete", 
+            "game_complete",
+            "stop"
           ]
         }
       },
@@ -112,7 +121,11 @@ const pongAPISchema = {
       "properties": {
         "state": {
           "type": "string",
-          "enum": ["not_ready", "ready", "start", "reset", "stop"]
+          "enum": ["not_ready", 
+            "ready", 
+            "start", 
+            "reset", 
+            "stop"]
         }
       },
       "required": ["state"]
@@ -152,7 +165,11 @@ const pongAPISchema = {
     "properties": {
       "state": {
         "type": "string",
-        "enum": ["not_ready", "ready", "start", "reset", "stop"]
+        "enum": ["not_ready", 
+          "ready", 
+          "start", 
+          "reset", 
+          "stop"]
       }
     },
     "required": ["state"]

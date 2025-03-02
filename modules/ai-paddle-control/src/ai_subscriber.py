@@ -48,6 +48,20 @@ class AISubscriber:
     #         self.trailing_frame = self.latest_frame
     #         self.latest_frame = self.render_latest_preprocessed()
 
+    def on_game_state(self, message):
+        """
+        Callback method for when the BaseState changes.
+
+        Parameters:
+        changed_state (dict): The changed state values.
+        """
+
+        transition = message["transition"]
+        if transition == "game_complete":
+            data = {"state": "start"}    
+            self.state.publish(Topics.PADDLE_TOP_STATE, data)   
+
+
     def on_game_play(self, message):
         """
         Callback method for when the BaseState changes.
@@ -364,6 +378,7 @@ class AISubscriber:
         # self.client.loop_forever()
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_PLAY, self.on_game_play)
+        self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         data = {"state": "ready"}    
         self.publish(Topics.PADDLE_TOP_STATE, data)      
 
