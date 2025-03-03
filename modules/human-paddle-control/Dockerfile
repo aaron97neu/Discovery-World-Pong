@@ -31,6 +31,12 @@ COPY requirements.txt .
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
+COPY --from=util ./py_packages ./py_packages
+COPY requirements.txt .
+RUN python3 -m pip install --upgrade pip && python3 -m pip install --no-cache-dir -r requirements.txt 
+RUN python -m pip install --upgrade build
+RUN python -m build py_packages
+RUN python -m pip install ./py_packages/dist/dw-0.2.0-py3-none-any.whl
 
 FROM ssl_${CERTS} AS final
 
@@ -57,13 +63,6 @@ RUN sudo apt-get update --fix-missing
 RUN sudo apt-get install -y librealsense2-utils
 
 WORKDIR /app
-
-COPY --from=util ./py_packages ./py_packages
-COPY requirements.txt .
-RUN python3 -m pip install --upgrade pip && python3 -m pip install --no-cache-dir -r requirements.txt 
-RUN python -m pip install --upgrade build
-RUN python -m build py_packages
-RUN python -m pip install ./py_packages/dist/dw-0.2.0-py3-none-any.whl
 
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
