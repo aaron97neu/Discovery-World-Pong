@@ -10,8 +10,8 @@ class GameStateMachine extends BaseStateMachine {
   constructor(pongAPI, gameContext) {
     console.log('GameStateMachine Entered Constructor'); 
     super(pongAPI);
-    // this.playTime = 30000;
-    this.playTime = 10000;
+    this.playTime = 30000;
+    // this.playTime = 10000;
     this.volume = 0.5;
     this.gameContext = gameContext;
     this.audioPlayer = new AudioPlayer();
