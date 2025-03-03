@@ -52,23 +52,23 @@ services:
     #                     - driver: nvidia
     #                       count: 1
     #                       capabilities: [gpu]
-    ai-paddle-control-no-gpu:
-        container_name: ai-paddle-control-no-gpu
-        image: ai-paddle-control-no-gpu:latest
-        depends_on:
-            - mqtt-broker
-        build:
-            context: ./modules/ai-paddle-control
-            additional_contexts:
-                util: ./modules/shared
-                validation: ./modules/shared/validation
-                certs: ./certs
-        restart: unless-stopped
-        networks:
-            - pong-network
-        volumes:
-            - ./screens:/app/screens
-            - ./files:/app/files
+    # ai-paddle-control-no-gpu:
+    #     container_name: ai-paddle-control-no-gpu
+    #     image: ai-paddle-control-no-gpu:latest
+    #     depends_on:
+    #         - mqtt-broker
+    #     build:
+    #         context: ./modules/ai-paddle-control
+    #         additional_contexts:
+    #             util: ./modules/shared
+    #             validation: ./modules/shared/validation
+    #             certs: ./certs
+    #     restart: unless-stopped
+    #     networks:
+    #         - pong-network
+    #     volumes:
+    #         - ./screens:/app/screens
+    #         - ./files:/app/files
 
     # ai-paddle-control:
     #     container_name: ai-paddle-control
@@ -270,24 +270,24 @@ services:
     #     networks:
     #         - pong-network
 
-    # top-web-paddle-control:
-    #     container_name: top-web-paddle-control
-    #     image: top-web-paddle-control:latest
-    #     build:
-    #         # dockerfile: Dockerfile.zscaler
-    #         context: ./modules/web-paddle-control
-    #         additional_contexts:
-    #             util: ./modules/shared
-    #             certs: ./certs
-    #         args:
-    #             REACT_APP_PADDLE_ID: top
-    #             REACT_APP_INCREMENT: 0.02
-    #             REACT_APP_INTERVAL: 70
-    #     ports:
-    #         - 5004:80                
-    #     restart: unless-stopped
-    #     networks:
-    #         - pong-network
+    top-web-paddle-control:
+        container_name: top-web-paddle-control
+        image: top-web-paddle-control:latest
+        build:
+            # dockerfile: Dockerfile.zscaler
+            context: ./modules/web-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+            args:
+                REACT_APP_PADDLE_ID: top
+                REACT_APP_INCREMENT: 0.02
+                REACT_APP_INTERVAL: 70
+        ports:
+            - 5004:80                
+        restart: unless-stopped
+        networks:
+            - pong-network
 
     bottom-web-paddle-control:
         container_name: bottom-web-paddle-control
