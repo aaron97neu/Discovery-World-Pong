@@ -312,13 +312,13 @@ function Game() {
         console.error('Error playing audio:', error);
       });
 
-      console.log(`ballCurrentPostion: ${otherObject.translation().x}`);
-      console.log(`paddleCurrentPostion: ${targetObject.translation().x}`);
+      // console.log(`ballCurrentPostion: ${otherObject.translation().x}`);
+      // console.log(`paddleCurrentPostion: ${targetObject.translation().x}`);
       const collisionPoint = event.manifold.localContactPoint1().x;
-      console.log(`collisionPoint: ${collisionPoint}`);
+      // console.log(`collisionPoint: ${collisionPoint}`);
       const d = (collisionPoint + (paddleWidth / 2));
       const regionIndex = Math.min(7, Math.floor((collisionPoint + (paddleWidth / 2)) / 2.5))
-      console.log(`regionIndex: ${regionIndex}`);
+      // console.log(`regionIndex: ${regionIndex}`);
 
       if (regionIndex >= 0 && regionIndex < angles.length) {
         const radians = (angles[regionIndex] * (Math.PI / 180)); // Convert angle to radians
@@ -328,7 +328,7 @@ function Game() {
           z: 0,
         };   
 
-        console.log(`newVelocity: ${JSON.stringify(newVelocity, null, 2)}`);
+        // console.log(`newVelocity: ${JSON.stringify(newVelocity, null, 2)}`);
         otherObject.setLinvel(newVelocity, true);
       }
     }

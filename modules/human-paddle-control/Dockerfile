@@ -1,10 +1,20 @@
 # This dockerfile was quickly made to dockerize the application it has not been optimized.
+ARG CERTS=default
+
+FROM --platform=amd64 ubuntu:22.04 AS ssl_default
+
+FROM ssl_default AS ssl_zscaler
+COPY --from=certs . ./certs
+RUN apt-get update -y && apt-get upgrade -y && apt-get install -y ca-certificates
+RUN cp ./certs/zscaler.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 # This build only works on amd64 platforms,
 # other platforms can emulate this if needed
-FROM --platform=amd64 ubuntu:22.04 AS builder
+FROM ssl_${CERTS} AS builder
 ENV PYTHONDONTWRITEBYTECODE=1
-RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get update --fix-missing && apt-get upgrade -y
 RUN apt-get install curl sudo lsb-base lsb-release -y
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -22,8 +32,13 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
 
-FROM --platform=amd64 ubuntu:22.04 AS final
-RUN apt-get update && apt-get upgrade -y
+FROM ssl_${CERTS} AS final
+
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
+
+RUN apt-get update --fix-missing && apt-get upgrade -y
+
 RUN apt-get install curl sudo lsb-base lsb-release -y
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -38,11 +53,9 @@ RUN sudo mkdir -p /etc/apt/keyrings
 RUN curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
 RUN sudo apt-get install apt-transport-https -y
 RUN echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | sudo tee /etc/apt/sources.list.d/librealsense.list
-RUN sudo apt-get update
-RUN sudo apt-get install -y librealsense2-dkms \
-			    librealsense2-utils \
-                            librealsense2-dev \
-                            librealsense2-dbg
+RUN sudo apt-get update --fix-missing
+RUN sudo apt-get install -y librealsense2-utils
+
 WORKDIR /app
 COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
