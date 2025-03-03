@@ -69,4 +69,4 @@ COPY --from=builder /app .
 COPY --from=builder /opt/venv /opt/venv
 COPY . .
 ENV PATH="/opt/venv/bin:$PATH"
-CMD ["python", "motion_driver.py"]
+CMD ["python", "src/motion_driver.py"]
