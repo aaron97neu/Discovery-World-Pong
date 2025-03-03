@@ -158,11 +158,15 @@ function Game() {
       }
 
       if(fsmRef.current.state === 'gameReset') {
-        if (!isDontPlay) {
-          if (includeCountDown) {
-            fsmRef.current.startCountdown();
-          } else {
-            fsmRef.current.beginPlay();
+        if (levelComplete === 3) {
+          fsmRef.current.endGame();
+        } else {
+          if (!isDontPlay) {
+            if (includeCountDown) {
+              fsmRef.current.startCountdown();
+            } else {
+              fsmRef.current.beginPlay();
+            }
           }
         }
       }
@@ -198,12 +202,14 @@ function Game() {
       if(fsmRef.current.state === 'bottomGoal') {
         fsmRef.current.resetPaddle();
 
-        if (level == 3) {
+        if (level === 3) {
           setLevelComplete(3);
         }
       }
 
       if(fsmRef.current.state === 'gameFinished') {
+        
+        console.log("1111111111=%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         if (bottomScore > topScore) {
           setCountdown(TEXT.human_wins);
         }
@@ -216,7 +222,8 @@ function Game() {
             setCountdown(TEXT.draw);
         }
 
-        setIsGameComplete(true);
+        // setIsGameComplete(true);
+        // setLevelComplete(3);
       }
 
       // if (!isGamePlaying) {
@@ -228,19 +235,28 @@ function Game() {
   });
 
   useEffect(() => {
+    if (level === 4) {
+      fsmRef.current.endGame();
+    } else {
       if (level > 0) {
         fsmRef.current.resetLevel();
       }
+    }
   }, [level]);
 
   useEffect(() => {
-    if (levelComplete === 3) {
-      fsmRef.current.endGame();
-    } else {
+    // if (levelComplete === 3) {
+    //   // fsmRef.current.endGame();
+    // } else {
+    //   if (levelComplete > 0) {
+    //     fsmRef.current.endLevel();
+    //   }
+    // }    
+
       if (levelComplete > 0) {
         fsmRef.current.endLevel();
       }
-    }    
+
   }, [levelComplete]);
 
   useEffect(() => {

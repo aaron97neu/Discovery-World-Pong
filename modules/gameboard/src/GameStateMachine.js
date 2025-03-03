@@ -144,6 +144,7 @@ class GameStateMachine extends BaseStateMachine {
     // this.gameContext.setLevel(4); 
     this.gameContext.setIsGamePlaying(false);
     this.gameContext.setIsIntroPlaying(false);
+    this.gameContext.setIsGameComplete(true);
   }
 
 }

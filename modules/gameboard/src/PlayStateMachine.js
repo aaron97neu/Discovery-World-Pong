@@ -58,7 +58,7 @@ const {
                 { name: 'resetBall', from: 'paddleReset', to: 'ballReset' },
                 { name: 'resetGame', from: 'ballReset', to: 'gameReset' },
 
-                { name: 'endGame', from: ['paddleReset'], to: 'gameFinished' },
+                { name: 'endGame', from: ['gameReset'], to: 'gameFinished' },
                 { name: 'returnToIdle', from: ['gameFinished'], to: 'idle' },
             ],
             methods: {
