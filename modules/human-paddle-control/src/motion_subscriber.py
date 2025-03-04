@@ -1,6 +1,6 @@
 # from distutils.command.config import config
 import time
-
+import logging
 import paho.mqtt.client as mqtt
 import numpy as np
 import json
@@ -8,6 +8,8 @@ import json
 from dw.state_machine import PongAPI, Topics
 # from dw import Config
 # from dw.utils import utils
+
+logging.basicConfig(level=logging.INFO)
 
 """
 This class was removed from the driver to follow previous development patterns
@@ -80,6 +82,7 @@ class MotionSubscriber:
         :param message: payload object, will be JSON stringified
         :return:
         """
+        logging.info("Update - topic: %s, message: %s", topic, message.payload)
         self.pong_api.update(topic, message)
 
     # get depth camera feed into browser
