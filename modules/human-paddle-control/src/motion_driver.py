@@ -203,8 +203,8 @@ class MotionDriver:
             
             depth_cropped_3d_colormap = cv2.line(depth_cropped_3d_colormap, (int(m),h), (int(m),0), (255,255,255), 1)
             
-            # buffer = cv2.imencode('.jpg', depth_cropped_3d_colormap)[1].tostring()
-            buffer = b
+            buffer = cv2.imencode('.jpg', depth_cropped_3d_colormap)[1].tostring()
+            # buffer = b
             self.depth_feed = base64.b64encode(buffer).decode()
 
             # emit visual over mqtt
@@ -241,7 +241,6 @@ class MotionDriver:
                     print("          No still player.        ")
                     # self.subscriber.publish("motion/presence", False)  
                     data = {"state": "not_ready"}    
-                    logging.info("Update2 - topic: %s, message: %s", Topics.PADDLE_BOTTOM_STATE, data)
                     self.subscriber.publish(Topics.PADDLE_BOTTOM_STATE, data)
                     continue
                 else:
