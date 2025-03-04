@@ -108,5 +108,6 @@ class MotionSubscriber:
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         data = {"state": "not_ready"}    
+        logging.info("Update1 - topic: %s, message: %s", Topics.PADDLE_TOP_STATE, data)
         self.publish(Topics.PADDLE_TOP_STATE, data)  
         print("MotionSubscriber start - end")

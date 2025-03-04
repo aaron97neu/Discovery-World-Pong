@@ -1,4 +1,5 @@
 from ast import Subscript
+import logging
 # import sys
 # from tabnanny import check
 # from turtle import pos
@@ -240,6 +241,7 @@ class MotionDriver:
                     print("          No still player.        ")
                     # self.subscriber.publish("motion/presence", False)  
                     data = {"state": "not_ready"}    
+                    logging.info("Update2 - topic: %s, message: %s", Topics.PADDLE_TOP_STATE, data)
                     self.subscriber.publish(Topics.PADDLE_TOP_STATE, data)
                     continue
                 else:
