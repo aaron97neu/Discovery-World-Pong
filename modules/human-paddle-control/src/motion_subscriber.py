@@ -88,6 +88,7 @@ class MotionSubscriber:
         #print(f'emitting depth feed: {feed}')
 
     def __init__(self):
+        self.pong_api = PongAPI("human-paddle-control")
         self.level = 0
         self.game_state = 0
 
