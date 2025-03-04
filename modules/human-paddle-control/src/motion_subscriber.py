@@ -102,12 +102,6 @@ class MotionSubscriber:
     def start(self):
         # self.client.loop_forever()
         self.pong_api.start()
-        self.pong_api.register_observer(Topics.GAME_PLAY, self.on_game_play)
-        data = {"state": "ready"}    
-        self.publish(Topics.PADDLE_TOP_STATE, data)
-
-        self.pong_api.start()
-        # self.pong_api.register_observer(Topics.GAME_PLAY, self.on_game_play)
         self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         data = {"state": "ready"}    
         self.publish(Topics.PADDLE_TOP_STATE, data)    
