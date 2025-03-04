@@ -82,7 +82,7 @@ class MotionSubscriber:
         :param message: payload object, will be JSON stringified
         :return:
         """
-        logging.info("Update - topic: %s, message: %s", topic, message.payload)
+        logging.info("Update - topic: %s, message: %s", topic, message)
         self.pong_api.update(topic, message)
 
     # get depth camera feed into browser
