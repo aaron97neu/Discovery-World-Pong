@@ -100,8 +100,10 @@ class MotionSubscriber:
         self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
         
     def start(self):
+        print("MotionSubscriber start - begin")
         # self.client.loop_forever()
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
-        data = {"state": "ready"}    
-        self.publish(Topics.PADDLE_TOP_STATE, data)    
+        data = {"state": "not_ready"}    
+        self.publish(Topics.PADDLE_TOP_STATE, data)  
+        print("MotionSubscriber start - end")
