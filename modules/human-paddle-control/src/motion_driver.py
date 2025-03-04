@@ -203,7 +203,7 @@ class MotionDriver:
             
             depth_cropped_3d_colormap = cv2.line(depth_cropped_3d_colormap, (int(m),h), (int(m),0), (255,255,255), 1)
             
-            buffer = cv2.imencode('.jpg', depth_cropped_3d_colormap)[1].tostring()
+            buffer = cv2.imencode('.jpg', depth_cropped_3d_colormap)[1].tobytes()
             # buffer = b
             self.depth_feed = base64.b64encode(buffer).decode()
 

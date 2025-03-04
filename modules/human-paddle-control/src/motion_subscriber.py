@@ -89,7 +89,7 @@ class MotionSubscriber:
     def emit_depth_feed(self, feed):
         logging.info("Depth Feed - feed: %s", feed)
         # self.client.publish("depth/feed", payload=json.dumps({"feed": feed}))
-        self.publish("depth/feed", payload=json.dumps({"feed": feed}))
+        self.publish("depth/feed", {"feed": feed})
         #print(f'emitting depth feed: {feed}')
 
     def __init__(self):
