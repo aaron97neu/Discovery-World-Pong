@@ -278,11 +278,11 @@ class MotionDriver:
         self.configure_pipeline() # set up the pipeline for depth retrieval
 
         self.subscriber = MotionSubscriber()
+        self.subscriber.start() # loop the subscriber forever
 
         self.motion_thread = threading.Thread(target=self.motion_loop)
         self.motion_thread.start()
 
-        self.subscriber.start() # loop the subscriber forever
 
 
 # def main(in_q):
