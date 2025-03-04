@@ -55,7 +55,7 @@ class MotionSubscriber:
         if transition == "game_complete":
             # data = {"state": "start"}    
             data = {"state": "not_ready"}    
-            self.state.publish(Topics.PADDLE_TOP_STATE, data)   
+            self.state.publish(Topics.PADDLE_BOTTOM_STATE, data)   
 
 
     # def on_game_play(self, message):
@@ -87,7 +87,9 @@ class MotionSubscriber:
 
     # get depth camera feed into browser
     def emit_depth_feed(self, feed):
-        self.client.publish("depth/feed", payload=json.dumps({"feed": feed}))
+        logging.info("Depth Feed - feed: %s", feed)
+        # self.client.publish("depth/feed", payload=json.dumps({"feed": feed}))
+        self.publish("depth/feed", payload=json.dumps({"feed": feed}))
         #print(f'emitting depth feed: {feed}')
 
     def __init__(self):
@@ -95,12 +97,12 @@ class MotionSubscriber:
         self.level = 0
         self.game_state = 0
 
-        self.client = mqtt.Client(client_id="human-paddle-control")
-        self.client.on_connect = lambda client, userdata, flags, rc : self.on_connect(client, userdata, flags, rc)
-        self.client.on_message = lambda client, userdata, msg : self.on_message(client, userdata, msg)
-        # self.client.connect_async("localhost", port=1883, keepalive=60)
-        # self.client.connect_async("192.168.2.214", port=1883, keepalive=60)
-        self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
+        # self.client = mqtt.Client(client_id="human-paddle-control")
+        # self.client.on_connect = lambda client, userdata, flags, rc : self.on_connect(client, userdata, flags, rc)
+        # self.client.on_message = lambda client, userdata, msg : self.on_message(client, userdata, msg)
+        # # self.client.connect_async("localhost", port=1883, keepalive=60)
+        # # self.client.connect_async("192.168.2.214", port=1883, keepalive=60)
+        # self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
         
     def start(self):
         print("MotionSubscriber start - begin")
@@ -108,6 +110,6 @@ class MotionSubscriber:
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         data = {"state": "not_ready"}    
-        logging.info("Update1 - topic: %s, message: %s", Topics.PADDLE_TOP_STATE, data)
-        self.publish(Topics.PADDLE_TOP_STATE, data)  
+        logging.info("Update1 - topic: %s, message: %s", Topics.PADDLE_BOTTOM_STATE, data)
+        self.publish(Topics.PADDLE_BOTTOM_STATE, data)  
         print("MotionSubscriber start - end")
