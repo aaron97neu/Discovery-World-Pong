@@ -89,12 +89,12 @@ services:
         ports:
             - 5003:80
         depends_on:
-            - mqtt-broker         
+            - mqtt-broker
         restart: unless-stopped
         networks:
             - pong-network
         environment:
-            - CHOKIDAR_USEPOLLING=true  
+            - CHOKIDAR_USEPOLLING=true
     human-visualizer:
         container_name: human-visualizer
         image: ghcr.io/aaron97neu/human-visualizer:${TAG:-next}
@@ -180,7 +180,7 @@ services:
                 REACT_APP_INTERVAL: 70
         profiles: [top-player-web]
         ports:
-            - 5004:80                
+            - 5004:80
         restart: unless-stopped
         networks:
             - pong-network
@@ -198,11 +198,11 @@ services:
                 REACT_APP_INTERVAL: 70
         ports:
             - 5005:80
-        profiles: [bottom-player-web]       
+        profiles: [bottom-player-web]
         restart: unless-stopped
         networks:
-            - pong-network  
-    
+            - pong-network
+
     # Keyboard control: Deprecated
     keyboard-paddle-control-bottom:
         container_name: keyboard-paddle-control
@@ -217,11 +217,11 @@ services:
         volumes:
             - /dev:/dev
         environment:
-            - PADDLE_ID=bottom_paddle  
+            - PADDLE_ID=bottom_paddle
         restart: unless-stopped
         networks:
             - pong-network
-    
+
     # Keyboard control: Deprecated
     keyboard-paddle-control-top:
         container_name: keyboard-paddle-control
@@ -236,10 +236,10 @@ services:
         volumes:
             - /dev:/dev
         environment:
-            - PADDLE_ID=top_paddle  
+            - PADDLE_ID=top_paddle
         restart: unless-stopped
         networks:
-            - pong-network   
+            - pong-network
 networks:
     pong-network:
         name: pong-network
