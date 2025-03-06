@@ -11,6 +11,7 @@ ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 FROM ssl_${CERTS} AS builder
 WORKDIR /app
 COPY --from=util ./js_packages ./js_packages
+COPY --from=util ./schema/PongAPISchema.json ./js_packages/dw/state-machine/lib/
 COPY package*.json ./
 RUN npm install
 RUN npm install ./js_packages/dw/state-machine
