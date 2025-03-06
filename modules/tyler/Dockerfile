@@ -29,6 +29,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY --from=util ./js_packages ./js_packages
+COPY --from=util ./schema ./js_packages/dw/state-machine/lib
 RUN npm install ./js_packages/dw/state-machine
 COPY . ./
 RUN npm run build

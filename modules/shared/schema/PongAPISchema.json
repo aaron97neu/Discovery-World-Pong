@@ -1,4 +1,6 @@
-const pongAPISchema = {
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PongAPI Message Schema",
   "type": "object",
   "properties": {
     "game/play": {
@@ -61,14 +63,14 @@ const pongAPISchema = {
         "player_top": {
           "type": "object",
           "properties": {
-            "score": { "type": "number" },
+            "score": { "type": "number" }
           },
           "required": ["score"]
         },
         "player_bottom": {
           "type": "object",
           "properties": {
-            "score": { "type": "number" },
+            "score": { "type": "number" }
           },
           "required": ["score"]
         },
@@ -87,7 +89,6 @@ const pongAPISchema = {
             "intro_complete", 
             "level1_intro_complete", 
             "player_exit", 
-            "intro_complete", 
             "move_left_intro_complete", 
             "level1_complete", 
             "level2_complete", 
@@ -142,7 +143,7 @@ const pongAPISchema = {
       },
       "required": ["transition"]
     },
-    "paddle/bottom/postion": {
+    "paddle/bottom/position": {
       "type": "object",
       "properties": {
         "position": {
@@ -158,41 +159,42 @@ const pongAPISchema = {
         }
       },
       "required": ["position"]
+    },
+    "paddle/bottom/state": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["not_ready", 
+            "ready", 
+            "start", 
+            "reset", 
+            "stop"]
+        }
+      },
+      "required": ["state"]
+    },
+    "paddle/bottom/state_transition": {
+      "type": "object",
+      "properties": {
+        "transition": {
+          "type": "string",
+          "enum": [
+            "reset"
+          ]
+        }
+      },
+      "required": ["transition"]
+    },
+    "depth/feed": {
+      "type": "object",
+      "properties": {
+        "feed": {
+          "type": "string",
+          "contentEncoding": "base64"
+        }
+      },
+      "required": ["feed"]
     }
-  },
-  "paddle/bottom/state": {
-    "type": "object",
-    "properties": {
-      "state": {
-        "type": "string",
-        "enum": ["not_ready", 
-          "ready", 
-          "start", 
-          "reset", 
-          "stop"]
-      }
-    },
-    "required": ["state"]
-  },
-  "paddle/bottom/state_transition": {
-    "type": "object",
-    "properties": {
-      "transition": {
-        "type": "string",
-        "enum": [
-          "reset"
-        ]
-      }
-    },
-    "required": ["transition"]
-  },
-
-  "required": [
-    "game/play", 
-    "game/stats", 
-    "game/state", 
-    "paddle/top/position", 
-    "paddle/top/state", 
-    "paddle/bottom/position",
-    "paddle/bottom/state"]
-};
+  }
+}

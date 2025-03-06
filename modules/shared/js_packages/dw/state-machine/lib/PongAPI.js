@@ -1,6 +1,8 @@
 import mqtt from 'mqtt';
 import Ajv from 'ajv';
-import pongAPISchema from './PongAPISchema.js';
+// import fs from 'fs';
+// import pongAPISchema from './PongAPISchema.js';
+import pongAPISchema from './PongAPISchema.json'
 import { v4 as uuidv4 } from 'uuid';
 
 export default class PongAPI {
@@ -19,6 +21,7 @@ export default class PongAPI {
     PADDLE_BOTTOM_POSITION: 'paddle/bottom/position',
     PADDLE_BOTTOM_STATE: 'paddle/bottom/state',
     PADDLE_BOTTOM_STATE_TRANSITION: 'paddle/bottom/state_transition',
+    DEPTH_FEED: 'depth/feed',
   };
 
   /**
@@ -38,6 +41,8 @@ export default class PongAPI {
     this.validate = this.ajv.compile(pongAPISchema);
     this.connected = false;
     this.instanceId = uuidv4();
+    // Load JSON schema from file
+    // this.pongAPISchema = JSON.parse(fs.readFileSync("PongAPISchema.json", "utf8"));
   }
 
   getInstanceId() {

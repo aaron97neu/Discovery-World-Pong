@@ -3,7 +3,7 @@ import json
 from jsonschema import validate, ValidationError, SchemaError
 from enum import Enum
 import logging
-from .pong_api_schema import pong_api_schema
+# from .pong_api_schema import pong_api_schema
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,6 +19,7 @@ class Topics(Enum):
     PADDLE_BOTTOM_POSITION = 'paddle/bottom/position'
     PADDLE_BOTTOM_STATE = 'paddle/bottom/state'
     PADDLE_BOTTOM_STATE_TRANSITION = 'paddle/bottom/state_transition'
+    DEPTH_FEED = 'depth/feed'
 
 class PongAPI:
     def __init__(self, client_id, broker='mqtt-broker', port=1883):
@@ -31,6 +32,10 @@ class PongAPI:
 
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+
+        # Load JSON schema from file
+        with open('PongAPISchema.json', 'r') as file:
+            self.schema = json.load(file)
 
     def on_connect(self, client, userdata, flags, rc):
         logging.info(f"Connected with result code {rc}")
@@ -55,7 +60,8 @@ class PongAPI:
 
     def validate_message(self, topic, message):
         # logging.info("validate_message - topic: %s, message: %s", topic, message)
-        schema = pong_api_schema.get(topic)
+        # schema = pong_api_schema.get(topic)
+        schema = self.schema.get(topic)
         # logging.info(f"validate_message - schema: {schema}")
         try:
             validate(instance=message, schema=schema)
