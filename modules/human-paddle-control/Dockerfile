@@ -26,12 +26,13 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
 RUN sudo apt-get install python3.9-dev python3.9-distutils python3.9-venv pkg-config libcairo2-dev gcc libdbus-1-3 libdbus-1-dev libgirepository1.0-dev -y
 RUN python -m ensurepip && python -m ensurepip --upgrade
 WORKDIR /app
-COPY --from=util . ./shared
+# COPY --from=util . ./shared
 COPY requirements.txt .
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
 COPY --from=util ./py_packages ./py_packages
+COPY --from=util ./schema ./py_packages/dw/state_machine
 COPY requirements.txt .
 RUN python3 -m pip install --upgrade pip && python3 -m pip install --no-cache-dir -r requirements.txt 
 RUN python -m pip install --upgrade build
