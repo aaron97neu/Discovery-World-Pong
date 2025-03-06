@@ -31,7 +31,7 @@ services:
         build:
             context: ./modules/ai-paddle-control
             additional_contexts:
-                util: ./modules/shared/code
+                util: ./modules/shared
                 validation: ./modules/shared/validation
                 certs: ./certs
         profiles: [prod, top-player-ai-gpu]
@@ -49,10 +49,10 @@ services:
         container_name: ai-paddle-control
         image: ghcr.io/aaron97neu/ai-paddle-control:${TAG:-next}
         build:
-            context: ./src/ai-paddle-control
+            context: ./modules/ai-paddle-control
             additional_contexts:
-                util: ./src/shared/code
-                validation: ./src/shared/validation
+                util: ./modules/shared
+                validation: ./modules/shared/validation
                 certs: ./certs
         profiles: [top-player-ai-cpu]
         restart: unless-stopped
@@ -64,7 +64,7 @@ services:
         build:
             context: ./modules/human-paddle-control
             additional_contexts:
-                util: ./modules/shared/code
+                util: ./modules/shared
                 certs: ./certs
         profiles: [prod, bottom-player-depth]
         volumes:
@@ -101,7 +101,7 @@ services:
         build:
             context: ./modules/human-visualizer
             additional_contexts:
-                util: ./modules/shared/code
+                util: ./modules/shared
                 certs: ./certs
         profiles: [dev, prod]
         ports:
@@ -117,7 +117,7 @@ services:
         build:
             context: ./modules/neural-net-visualizer
             additional_contexts:
-                util: ./modules/shared/code
+                util: ./modules/shared
                 models: ./modules/shared/models
                 certs: ./certs
         profiles: [dev, prod]
@@ -128,41 +128,15 @@ services:
             - pong-network
     gameboard:
         container_name: gameboard
-
         image: ghcr.io/aaron97neu/gameboard:${TAG:-next}
         build:
             context: ./modules/gameboard
             additional_contexts:
                 certs: ./certs
+                util: ./modules/shared
         profiles: [dev, prod]
         ports:
             - 5000:80
-        restart: unless-stopped
-        networks:
-            - pong-network
-    audio-engine:
-        container_name: audio-engine
-        image: ghcr.io/aaron97neu/audio-engine:${TAG:-next}
-        build:
-            context: ./modules/audio-engine
-            additional_contexts:
-                certs: ./certs
-        profiles: [dev, prod]
-        devices:
-            - "/dev/snd"
-        restart: unless-stopped
-        networks:
-            - pong-network
-    single-screen-development:
-        container_name: single-screen-development
-        image: ghcr.io/aaron97neu/single-screen-development:${TAG:-next}
-        build:
-            context: ./src/single-screen-development
-            additional_contexts:
-                certs: ./certs
-        profiles: [dev]
-        ports:
-            - 5005:80
         restart: unless-stopped
         networks:
             - pong-network
