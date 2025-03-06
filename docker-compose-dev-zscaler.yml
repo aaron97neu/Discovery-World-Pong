@@ -127,6 +127,26 @@ services:
     #         - pong-network
 
 #  this one
+    human-paddle-control:
+        container_name: human-paddle-control
+        image: human-paddle-control:latest
+        depends_on:
+            - mqtt-broker
+        build:
+            context: ./modules/human-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        volumes:
+            - /dev:/dev
+        device_cgroup_rules:
+            - "c 81:* rmw"
+            - "c 189:* rmw"
+        #       devices:
+        #        - "/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22:/devices/pci0000:00/0000:00:14.0/usb1/1-8/1-8:1.0/input/input22"
+        restart: unless-stopped
+        networks:
+            - pong-network
 
     # human-visualizer:
     #     container_name: human-visualizer
