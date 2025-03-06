@@ -24,8 +24,8 @@ for a specific use case.
     - When using prod, you _must_ select the top and bottom players as well.
             To match the exhibit, use profiles `top-player-ai-gpu` and 
             `bottom-player-depth` as such: `docker compose --profile dev 
-            top-player-ai-gpu bottom-player-depth up`. The following 'players'
-            are available:
+            --profile top-player-ai-gpu --profile bottom-player-depth up`. 
+            The following 'players' are available:
         - `top-player-ai-gpu` This is the AI player used in the exhibit. Expects
             an Nvidia GPU and appropiate docker configuration with Nvidia
             container toolkit
