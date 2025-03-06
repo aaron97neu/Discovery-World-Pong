@@ -34,7 +34,7 @@ services:
                 util: ./modules/shared/code
                 validation: ./modules/shared/validation
                 certs: ./certs
-        profiles: [prod]
+        profiles: [prod, top-player-ai-gpu]
         restart: unless-stopped
         networks:
             - pong-network
@@ -47,25 +47,14 @@ services:
                           capabilities: [gpu]
     ai-paddle-control-no-gpu:
         container_name: ai-paddle-control
+        image: ghcr.io/aaron97neu/ai-paddle-control:${TAG:-next}
         build:
             context: ./src/ai-paddle-control
             additional_contexts:
                 util: ./src/shared/code
                 validation: ./src/shared/validation
                 certs: ./certs
-        profiles: [dev]
-        restart: unless-stopped
-        networks:
-            - pong-network
-    game-engine:
-        container_name: game-engine
-        image: ghcr.io/aaron97neu/game-engine:${TAG:-next}
-        build:
-            context: ./modules/game-engine
-            additional_contexts:
-                util: ./modules/shared/code
-                certs: ./certs
-        profiles: [dev, prod]
+        profiles: [top-player-ai-cpu]
         restart: unless-stopped
         networks:
             - pong-network
@@ -77,7 +66,7 @@ services:
             additional_contexts:
                 util: ./modules/shared/code
                 certs: ./certs
-        profiles: [dev, prod]
+        profiles: [prod, bottom-player-depth]
         volumes:
             - /dev:/dev
         device_cgroup_rules:
@@ -88,6 +77,24 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
+    tyler:
+        container_name: tyler
+        image: ghcr.io/aaron97neu/tyler:${TAG:-next}
+        build:
+            context: ./modules/tyler
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        profiles: [dev, prod]
+        ports:
+            - 5003:80
+        depends_on:
+            - mqtt-broker         
+        restart: unless-stopped
+        networks:
+            - pong-network
+        environment:
+            - CHOKIDAR_USEPOLLING=true  
     human-visualizer:
         container_name: human-visualizer
         image: ghcr.io/aaron97neu/human-visualizer:${TAG:-next}
@@ -116,20 +123,6 @@ services:
         profiles: [dev, prod]
         ports:
             - 5002:8000
-        restart: unless-stopped
-        networks:
-            - pong-network
-    clocktower-visualizer:
-        container_name: clocktower-visualizer
-        image: ghcr.io/aaron97neu/clocktower-visualizer:${TAG:-next}
-        build:
-            context: ./modules/clocktower-visualizer
-            additional_contexts:
-                models: ./modules/shared/models
-                certs: ./certs
-        profiles: [dev, prod]
-        ports:
-            - 5003:80
         restart: unless-stopped
         networks:
             - pong-network
@@ -162,7 +155,7 @@ services:
             - pong-network
     single-screen-development:
         container_name: single-screen-development
-        image: single-screen-development:latest
+        image: ghcr.io/aaron97neu/single-screen-development:${TAG:-next}
         build:
             context: ./src/single-screen-development
             additional_contexts:
@@ -173,6 +166,80 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
+    top-web-paddle-control:
+        container_name: top-web-paddle-control
+        image: ghcr.io/aaron97neu/top-web-paddle-control:${TAG:-next}
+        build:
+            context: ./modules/web-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+            args:
+                REACT_APP_PADDLE_ID: top
+                REACT_APP_INCREMENT: 0.02
+                REACT_APP_INTERVAL: 70
+        profiles: [top-player-web]
+        ports:
+            - 5004:80                
+        restart: unless-stopped
+        networks:
+            - pong-network
+    bottom-web-paddle-control:
+        container_name: bottom-web-paddle-control
+        image: ghcr.io/aaron97neu/bottom-web-paddle-control:${TAG:-next}
+        build:
+            context: ./modules/web-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+            args:
+                REACT_APP_PADDLE_ID: bottom
+                REACT_APP_INCREMENT: 0.02
+                REACT_APP_INTERVAL: 70
+        ports:
+            - 5005:80
+        profiles: [bottom-player-web]       
+        restart: unless-stopped
+        networks:
+            - pong-network  
+    
+    # Keyboard control: Deprecated
+    keyboard-paddle-control-bottom:
+        container_name: keyboard-paddle-control
+        image: keyboard-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/keyboard-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        profiles: [bottom-player-keyboard]
+        volumes:
+            - /dev:/dev
+        environment:
+            - PADDLE_ID=bottom_paddle  
+        restart: unless-stopped
+        networks:
+            - pong-network
+    
+    # Keyboard control: Deprecated
+    keyboard-paddle-control-top:
+        container_name: keyboard-paddle-control
+        image: keyboard-paddle-control:latest
+        build:
+            dockerfile: Dockerfile.zscaler
+            context: ./modules/keyboard-paddle-control
+            additional_contexts:
+                util: ./modules/shared
+                certs: ./certs
+        profiles: [top-player-keyboard]
+        volumes:
+            - /dev:/dev
+        environment:
+            - PADDLE_ID=top_paddle  
+        restart: unless-stopped
+        networks:
+            - pong-network   
 networks:
     pong-network:
         name: pong-network
