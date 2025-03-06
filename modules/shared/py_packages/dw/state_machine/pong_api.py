@@ -34,7 +34,7 @@ class PongAPI:
         self.client.on_message = self.on_message
 
         # Load JSON schema from file
-        with open('PongAPISchema.json', 'r') as file:
+        with open('./PongAPISchema.json', 'r') as file:
             self.schema = json.load(file)
 
     def on_connect(self, client, userdata, flags, rc):
