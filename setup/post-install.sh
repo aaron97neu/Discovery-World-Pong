@@ -79,6 +79,11 @@ sudo nmcli dev set enp2s0 managed yes
 sudo nmcli c import type openvpn file $ovpn
 sudo nmcli connection up DiscoveryWorld
 
+# Setup OVPN monitor
+cp openvpn-monitor.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable openvpn-monitor.service
+systemctl start openvpn-monitor.service
 
 # Enable unattended-upgrades
 sudo unattended-upgrades -d

@@ -43,15 +43,14 @@ set -x
 # Fix for ssh/remote connections:
 export DISPLAY=:0
 
-echo "Current monitor configuration:"
-xrandr --listactivemonitors
-
-
 function launch_browser() {
     local profile=$1
     local url=$2
     local display=$3
     
+    # Some windows (human visualizer mostly) crash after a few hours/days due to
+    # a memory leak that I spent way too much time failing to find. This will
+    # just restart it. Def a band-aid
     while true; do
         # Launch browser instance
         firefox -P "$profile" --kiosk --new-instance --new-window "$url" --kiosk-monitor "$display" # > /dev/null 2>&1
@@ -59,8 +58,13 @@ function launch_browser() {
     done
 }
 
+# Ensure and other previous windows are closed
+# TODO: This won't work successfully if open_windows.sh is already running.
+# We can't do ./close_windows.sh as that will kill this script. 
 killall firefox
 
+# TODO: Put together a framwork so that this can work with different deployments
+# which have different 
 launch_browser neural-net-visualizer http://localhost:5002 0 &
 sleep 2
 launch_browser clocktower-visualizer http://localhost:5003 2 &
@@ -70,7 +74,9 @@ sleep 2
 launch_browser gameboard http://localhost:5000 3 &
 sleep 2
 
+# Stop printing out lines as they are executed
 set +x
+# Stay alive
 while true;
 do
 	sleep 5

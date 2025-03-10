@@ -1,3 +1,36 @@
+# Clocktower Visualizer
+This module provides a personified "opponent" representing the AI that the
+player is facing. This is primairly implemented using React and ThreeJS. The
+opponent, a anthropomorphized clock, reacts to events of the game with facial
+expressions while spheres beneath the clock face light up to represent the AI
+neuron activations and output action for each frame
+
+## Directory Tour
+This source code contains the following significant files and  directories:
+- `config`
+    - General webpak customizations related to the Create React App scripts.
+    The original author of this module is no longer involved, and we are unsure
+    if these were manually written, copied from another source, or generated.
+- `public`
+    - Basic files served by the websever. Exact utility unknown
+- `scripts`
+    - Basic build/start/test scripts for use by npm
+- `src/Models`
+    - AI Opponent and Neural Network logic used to animate the associated 3D
+    assets
+- `src/Utils`
+    - Heap related utilities, borrowed from `src/neural-net-visualizer`
+- `*.blend`
+    - Blender source files for 3D assets being used. Exported as `glb` before
+    being used
+- `*.glb`
+    - Blender files exported as [glTF](https://en.wikipedia.org/wiki/GlTF) for
+    use in web applications
+- `App.js`
+    - Main scene setup file. If assets need to be repositioned, this is the 
+    place to start
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

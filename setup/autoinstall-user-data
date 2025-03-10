@@ -33,7 +33,6 @@ autoinstall:
     install: false
   identity:
     hostname: discovery-world-pong-twin
-    password: ***REMOVED***
     realname: Discovery World Pong
     username: dwpong
   kernel:
@@ -65,6 +64,7 @@ autoinstall:
       id: nvme-controller-nvme0
       type: nvme_controller
     - ptable: gpt
+      # TODO: Smarter disk selection, remove serial, more generalization 
       serial: KXG70PNV2T04_NVMe_KIOXIA_2048GB_12RFA0CAFTW5_1
       wwn: eui.00000000000000008ce38e0500a83917
       nvme_controller: nvme-controller-nvme0
