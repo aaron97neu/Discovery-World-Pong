@@ -1,7 +1,8 @@
 ARG CERTS=default
+ARG GPU="-gpu"
 
 # FROM tensorflow/tensorflow:2.13.0-gpu AS ssl_default
-FROM tensorflow/tensorflow:2.13.0 AS ssl_default
+FROM tensorflow/tensorflow:2.13.0${GPU} AS ssl_default
 
 FROM ssl_default AS ssl_zscaler
 COPY --from=certs . ./certs

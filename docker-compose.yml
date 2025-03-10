@@ -54,6 +54,8 @@ services:
                 util: ./modules/shared
                 validation: ./modules/shared/validation
                 certs: ./certs
+            args:
+                GPU: ""
         profiles: [top-player-ai-cpu]
         restart: unless-stopped
         networks:
