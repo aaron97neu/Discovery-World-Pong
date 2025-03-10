@@ -13,3 +13,6 @@ description = "A sample Python package"
 #     "dw.state_machine",
 #     "dw.utils"
 # ]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"] # This should be specific and not use wildcards but I can't figure it out. Are you willing to bother?
