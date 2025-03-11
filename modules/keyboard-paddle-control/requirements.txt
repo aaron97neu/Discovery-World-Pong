@@ -1,2 +1,0 @@
-readchar==4.2.1
-paho-mqtt==1.6.1

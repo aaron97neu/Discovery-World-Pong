@@ -178,44 +178,6 @@ services:
         restart: unless-stopped
         networks:
             - pong-network
-
-    # Keyboard control: Deprecated
-    keyboard-paddle-control-bottom:
-        container_name: keyboard-paddle-control
-        image: keyboard-paddle-control:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./modules/keyboard-paddle-control
-            additional_contexts:
-                util: ./modules/shared
-                certs: ./certs
-        profiles: [bottom-player-keyboard]
-        volumes:
-            - /dev:/dev
-        environment:
-            - PADDLE_ID=bottom_paddle
-        restart: unless-stopped
-        networks:
-            - pong-network
-
-    # Keyboard control: Deprecated
-    keyboard-paddle-control-top:
-        container_name: keyboard-paddle-control
-        image: keyboard-paddle-control:latest
-        build:
-            dockerfile: Dockerfile.zscaler
-            context: ./modules/keyboard-paddle-control
-            additional_contexts:
-                util: ./modules/shared
-                certs: ./certs
-        profiles: [top-player-keyboard]
-        volumes:
-            - /dev:/dev
-        environment:
-            - PADDLE_ID=top_paddle
-        restart: unless-stopped
-        networks:
-            - pong-network
     single-screen-development:
         container_name: single-screen-development
         image: ghcr.io/aaron97neu/single-screen-development:${TAG:-next}
