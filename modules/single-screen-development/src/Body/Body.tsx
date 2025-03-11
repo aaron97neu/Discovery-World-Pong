@@ -30,7 +30,14 @@ function Body() {
     width: 0,
     height: 0,
   });
+
+  const [gameScreenSize, setGameScreenSize] = useState<WindowSize>({
+    width: 0,
+    height: 0,
+  });
+
   const aspectRatio = 9 / 16;
+  const gameScreenAspectRatio = 16 / 9;
 
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]): void => {
@@ -57,20 +64,36 @@ function Body() {
   useEffect(() => {
     const containerWidth = containerSize.width;
     const containerHeight = containerSize.height;
-
-    let newWidth = containerWidth / 3.15;
-    let newHeight = newWidth / aspectRatio;
-
-    if (newHeight > containerHeight * 0.95) {
-      newHeight = containerHeight * 0.95;
-      newWidth = newHeight * aspectRatio;
+    if(screenTabState === 'vertical'){
+      let newWidth = containerWidth / (verticalScreensCount + .20);
+      let newHeight = newWidth / aspectRatio;
+  
+      if (newHeight > containerHeight * 0.95) {
+        newHeight = containerHeight * 0.95;
+        newWidth = newHeight * aspectRatio;
+      }
+  
+      setDivSize({
+        width: Math.round(newWidth),
+        height: Math.round(newHeight),
+      });
+    }else{
+      let newWidth = containerWidth;
+      let newHeight = newWidth / gameScreenAspectRatio;
+  
+      if (newHeight > containerHeight * 0.95) {
+        newHeight = containerHeight * 0.95;
+        newWidth = newHeight * gameScreenAspectRatio;
+      }
+  
+      setGameScreenSize({
+        width: Math.round(newWidth),
+        height: Math.round(newHeight),
+      });
     }
 
-    setDivSize({
-      width: Math.round(newWidth),
-      height: Math.round(newHeight),
-    });
-  }, [containerSize]);
+
+  }, [containerSize, verticalScreensCount]);
 
   return (
     <Box
@@ -89,8 +112,8 @@ function Body() {
             width: "100%",
             alignContent: "flex-start",
             alignItems: "flex-start",
-            justifyContent: "center",
-            gap: `${verticalScreensCount === 1 ? "0" : "20px"}`,
+            justifyContent: `${verticalScreensCount < 3 ? "center" : "space-between"}`,
+            gap: `${verticalScreensCount === 1 ? "0" : "12px"}`,
             transition: "all 0.3s ease",
           }}
         >
@@ -99,18 +122,21 @@ function Body() {
             height={divSize.height}
             open={screenState.networkVisualizer}
             connectionString="http://localhost:5002"
+            container={"neural-net-visualizer"}
           />
           <ExhibitScreen
             width={divSize.width}
             height={divSize.height}
             open={screenState.clockVisualizer}
             connectionString="http://localhost:5003"
+            container={"clocktower-visualizer"}
           />
           <ExhibitScreen
             width={divSize.width}
             height={divSize.height}
             open={screenState.humanVisualizer}
             connectionString="http://localhost:5001"
+            container={"human-visualizer"}
           />
         </Box>
       ) : (
@@ -118,10 +144,11 @@ function Body() {
           sx={{
             width: "100%",
             height: "100%",
-            display: "flex",
+            display: 'flex',
+            justifyContent: 'center'
           }}
         >
-          <GameScreen connectionString="http://localhost:5000"></GameScreen>
+          <GameScreen connectionString="http://localhost:5000" width={gameScreenSize.width} height={gameScreenSize.height}/>
         </Box>
       )}
     </Box>

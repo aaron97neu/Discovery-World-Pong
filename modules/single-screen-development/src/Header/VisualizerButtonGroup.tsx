@@ -7,6 +7,7 @@ import {
   toggleSideScreenDisplays,
   VERTICAL_SCREEN_NAMES,
 } from "../redux/exhibitScreensSlice";
+import useScreenSize from "../app/hooks/useScreenSize";
 
 interface VisualizerButtonProps extends ButtonProps {
   selected: boolean;
@@ -36,6 +37,7 @@ const StyledButton = styled(Button)<VisualizerButtonProps>(
       right: 0,
       bottom: 0,
       backgroundColor: "rgba(255,255,255,0.08)",
+      color: "#E9E9E9",
       boxShadow: theme.shadows[2],
       opacity: 0,
       transition: "opacity 0.3s ease",
@@ -52,13 +54,14 @@ const VisualizerButton: FC<VisualizerButtonProps> = ({
   children,
   selected,
 }) => {
+  const { isMd } = useScreenSize();
   return (
     <StyledButton
       startIcon={
         selected ? (
           <CheckIcon
             fontSize="small"
-            sx={{ "&.MuiSvgIcon-fontSizeSmall": { fontSize: "16px" } }}
+            sx={{ "&.MuiSvgIcon-fontSizeSmall": { fontSize: "12px" } }}
           />
         ) : (
           <></>
@@ -66,6 +69,7 @@ const VisualizerButton: FC<VisualizerButtonProps> = ({
       }
       onClick={onClick}
       selected={selected}
+      sx={{padding: '8px', fontSize: `${isMd ? "10px" : "12px"}`}}
     >
       {children}
     </StyledButton>
@@ -75,6 +79,7 @@ const VisualizerButton: FC<VisualizerButtonProps> = ({
 function VisualizerButtonGroup() {
   const dispatch = useAppDispatch();
   const screenState = useAppSelector(selectVerticalScreens);
+
   const handleClick = (screenName: VERTICAL_SCREEN_NAMES): void => {
     dispatch(toggleSideScreenDisplays({ screenName: screenName }));
   };
@@ -84,7 +89,7 @@ function VisualizerButtonGroup() {
         size="small"
         variant="outlined"
         aria-label="Basic button group"
-        sx={{ height: "35px", transition: "width 0.3s ease" }}
+        sx={{ height: "30px", transition: "width 0.3s ease"}}
       >
         <VisualizerButton
           selected={screenState.networkVisualizer}

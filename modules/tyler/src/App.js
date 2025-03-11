@@ -8,6 +8,21 @@ import {SceneContext} from './SceneContext';
 import { v4 as uuidv4 } from 'uuid';
 // const logger = require('./logger');
 
+const mqtt = require('mqtt');
+const util = require('util');
+const originalLog = console.log;
+
+console.log = function(...args) {
+  // 1. Format message like default console.log
+  const message = util.format(...args);
+  // 2. Publish to MQTT (use a dedicated topic like 'logs/app')
+  client.publish('app/logs/clocktower-visualizer', message);
+  // 3. Maintain original functionality
+  originalLog.apply(console, args);
+};
+
+
+
 function App() {
   // logger.info('This is a winston info message');
 

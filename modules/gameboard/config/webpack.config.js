@@ -294,7 +294,8 @@ module.exports = function (webpackEnv) {
       fallback: {
         "Buffer": require.resolve("buffer/"),
         "process": require.resolve("process/"),
-        "url": require.resolve("url/")
+        "url": require.resolve("url/"),
+        "util": require.resolve("util/")
       },
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"

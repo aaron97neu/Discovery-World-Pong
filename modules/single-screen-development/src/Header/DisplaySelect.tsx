@@ -2,13 +2,15 @@ import { FormControl, MenuItem, Select, styled } from "@mui/material";
 import { FC, useRef } from "react";
 import { useAppDispatch } from "../app/hooks";
 import { DisplayTabs, setDisplayTab } from "../redux/exhibitScreensSlice";
+import useScreenSize from "../app/hooks/useScreenSize";
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   color: "#E9E9E9",
   border: "solid darkgray 1.2px",
   borderRadius: "4px",
   height: "40px",
-  width: "167px",
+  width: "160px",
+  fontSize: '14px',
   transition:
     "background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
   boxShadow: theme.shadows[1],
@@ -41,7 +43,7 @@ interface DisplaySelectProps {
 const DisplaySelect: FC<DisplaySelectProps> = ({ tabState }) => {
   const dispatch = useAppDispatch();
   const selectRef = useRef<HTMLDivElement | null>(null);
-
+  const { isLg } = useScreenSize();
   const handleChange = (tab: DisplayTabs) => {
     dispatch(setDisplayTab({ tab: tab }));
   };
@@ -73,13 +75,14 @@ const DisplaySelect: FC<DisplaySelectProps> = ({ tabState }) => {
         onClose={handleClose}
         onOpen={handleOpen}
         MenuProps={{
-          sx: { transform: "translateY(10px)" },
+          sx: { transform: `translateY(10px) ` },
           MenuListProps: { sx: { paddingTop: "0px", paddingBottom: "0px" } },
         }}
         sx={{
           color: "#E9E9E9",
           fontWeight: "700",
-          width: "167px",
+          width: "160px",
+          fontSize: '14px',
           "&:hover, &.Mui-focused": {
             backgroundColor: "rgba(255,255,255,0.12)",
             boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.2)",
@@ -99,7 +102,7 @@ const DisplaySelect: FC<DisplaySelectProps> = ({ tabState }) => {
         </StyledMenuItem>
         <StyledMenuItem
           sx={{
-            display: `${tabState === "game" ? "none" : ""}`,
+            display: `${tabState === "game" ? "none" : ""}`
           }}
           value={"game"}
         >
