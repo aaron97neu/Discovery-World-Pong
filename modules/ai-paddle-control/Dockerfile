@@ -34,6 +34,7 @@ RUN apt-get update && apt-get install -y ffmpeg libsm6 libxext6
 # Install deps
 # TODO: Move this to a multistage build. I can't seem to do this without breaking opencv for some reason
 COPY --from=util ./py_packages ./py_packages
+COPY --from=util ./schema .
 COPY --from=util ./schema ./py_packages/dw/state_machine
 COPY requirements.txt .
 RUN python3 -m pip install --upgrade pip && python3 -m pip install --no-cache-dir -r requirements.txt 

@@ -241,13 +241,13 @@ class MotionDriver:
                     print("          No still player.        ")
                     # self.subscriber.publish("motion/presence", False)  
                     data = {"state": "not_ready"}    
-                    self.subscriber.publish(Topics.PADDLE_BOTTOM_STATE, data)
+                    self.subscriber.publish(Topics.PADDLE_BOTTOM_STATE, data, retain=True)
                     continue
                 else:
                     print("detected human blob")
                     # self.subscriber.publish("motion/presence", True)
                     data = {"state": "ready"}    
-                    self.subscriber.publish(Topics.PADDLE_BOTTOM_STATE, data)
+                    self.subscriber.publish(Topics.PADDLE_BOTTOM_STATE, data, retain=True)
 
             # let's run this about 60 times a second to approximately keep up with frame rate
             # else: # if ready or running

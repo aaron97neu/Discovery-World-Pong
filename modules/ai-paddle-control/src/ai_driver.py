@@ -167,7 +167,7 @@ class AIDriver:
         # self.inference_thread.start()
         self.state.start()
         data = {"state": "start"}    
-        self.state.publish(Topics.PADDLE_TOP_STATE, data)      
+        self.state.publish(Topics.PADDLE_TOP_STATE, data, retain=True)      
 
 
 # def main(in_q):

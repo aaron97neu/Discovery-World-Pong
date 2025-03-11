@@ -27,27 +27,30 @@ class PongAPI:
         self.broker = broker
         self.port = port
         self.client = mqtt.Client(client_id)
-        self.observers = {topic: [] for topic in Topics}
         self.connected = False
+
+        # Create a dictonary of all Topics, with the value being a list of 
+        # observers so we can subscribe and notify of messages
+        self.observers = {topic: [] for topic in Topics}
 
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
         # Load JSON schema from file
-        with open('./PongAPISchema.json', 'r') as file:
-            self.schema = json.load(file)
+        with open('PongAPISchema.json', 'r') as file:
+            self.schema = json.load(file).get('properties')
 
     def on_connect(self, client, userdata, flags, rc):
-        logging.info(f"Connected with result code {rc}")
+        logging.debug(f"Connected with result code {rc}")
         self.connected = True
         for topic, observers in self.observers.items():
             if observers:
-                logging.info(f"Subscribed to topic: {topic.value}")
+                logging.debug(f"Subscribed to topic: {topic.value}")
                 self.client.subscribe(topic.value)
 
     def on_message(self, client, userdata, msg):
         topic = msg.topic
-        # logging.info("Recieve - topic: %s, message: %s", topic, msg.payload)
+        logging.debug("Recieve - topic: %s, message: %s", topic, msg.payload)
         try:
             payload = json.loads(msg.payload)
             if self.validate_message(topic, payload):
@@ -58,11 +61,12 @@ class PongAPI:
         except json.JSONDecodeError as e:
             print(f"JSONDecodeError: {e}")
 
-    def validate_message(self, topic, message):
-        # logging.info("validate_message - topic: %s, message: %s", topic, message)
+    def validate_message(self, topic: Topics, message):
+        assert(type(topic) == Topics, f"topic argument must of of type Topics Enum: {type(topic)=}")
+        logging.debug("validate_message - topic: %s, message: %s", topic, message)
         # schema = pong_api_schema.get(topic)
         schema = self.schema.get(topic)
-        # logging.info(f"validate_message - schema: {schema}")
+        logging.debug(f"validate_message - schema: {schema}")
         try:
             validate(instance=message, schema=schema)
             return True
@@ -85,21 +89,25 @@ class PongAPI:
     def is_connected(self):
         return self.connected
 
-    def register_observer(self, topic, callback):
-        # logging.error(f"Register observer for topic {topic.value}")
+    def register_observer(self, topic: Topics, callback):
+        assert(type(topic) == Topics, f"topic argument must of of type Topics Enum: {type(topic)=}")
+        logging.debug(f"Register observer for {topic=} {type(topic)}")
+        logging.debug(f"{topic.value=}")
         if topic in Topics:
             self.observers[topic].append(callback)
             if self.connected:
                 logging.error(f"Subscribed to topic {topic.value}")
                 self.client.subscribe(topic.value)
 
-    def update(self, topic, message):
-        # logging.info("Update - topic: %s, message: %s", topic.value, message)
+    def update(self, topic: Topics, message, retain: bool = False):
+        assert(type(topic) == Topics, f"`topic` argument must of of type Topics Enum: {type(topic)=}")
+        logging.debug(f"{topic=} | {type(topic)=}")
+        logging.debug("Update - topic: %s, message: %s", topic.value, message)
         if self.validate_message(topic.value, message):
             try:
                 payload = json.dumps(message)
                 # logging.info("Update - topic: %s, payload: %s", topic.value, payload)
-                self.client.publish(topic.value, payload)
+                self.client.publish(topic.value, payload, retain=retain)
             except TypeError as e:
                 logging.error(f"Payload Error: {e.message}")
             except json.JSONDecodeError as e:

@@ -59,7 +59,10 @@ class AISubscriber:
         transition = message["transition"]
         if transition == "game_complete":
             data = {"state": "start"}    
-            self.state.publish(Topics.PADDLE_TOP_STATE, data)   
+            self.publish(Topics.PADDLE_TOP_STATE, data)   
+
+    def state(self, message):
+        on_game_state(self, message)
 
 
     def on_game_play(self, message):
@@ -137,14 +140,14 @@ class AISubscriber:
         x = math.ceil(x)
         screen[max(y, 0):y+h, max(x, 0):x+w] = color
 
-    def publish(self, topic, message):
+    def publish(self, topic, message, retain: bool = False):
         """
         Use the state subscriber to send a message since we have the connection open anyway
         :param topic: MQTT topic
         :param message: payload object, will be JSON stringified
         :return:
         """
-        self.pong_api.update(topic, message)
+        self.pong_api.update(topic, message, retain)
 
         # if topic == 'paddle1/frame' and Config.instance().NETWORK_TIMESTAMPS:
         #     print(f'{time.time_ns() // 1_000_000} F{message["frame"]} SEND AI->GM')

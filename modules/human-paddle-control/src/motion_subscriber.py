@@ -55,8 +55,10 @@ class MotionSubscriber:
         if transition == "game_complete":
             # data = {"state": "start"}    
             data = {"state": "not_ready"}    
-            self.state.publish(Topics.PADDLE_BOTTOM_STATE, data)   
+            self.publish(Topics.PADDLE_BOTTOM_STATE, data, retain=True)   
 
+    def state(self, message):
+        on_game_state(self, message)
 
     # def on_game_play(self, message):
     #     """
@@ -75,22 +77,22 @@ class MotionSubscriber:
     #     p = json.dumps(message)
     #     self.client.publish(topic, payload=p, qos=qos)
 
-    def publish(self, topic, message):
+    def publish(self, topic, message, retain: bool = False):
         """
         Use the state subscriber to send a message since we have the connection open anyway
         :param topic: MQTT topic
         :param message: payload object, will be JSON stringified
         :return:
         """
-        logging.info("Update - topic: %s, message: %s", topic, message)
-        self.pong_api.update(topic, message)
+        logging.debug("Update - topic: %s, message: %s", topic, message)
+        self.pong_api.update(topic, message, retain=retain)
 
     # get depth camera feed into browser
     def emit_depth_feed(self, feed):
-        logging.info("Depth Feed - feed: %s", feed)
+        logging.debug("Depth Feed - feed: %s", feed)
         # self.client.publish("depth/feed", payload=json.dumps({"feed": feed}))
         data = {"feed": FileNotFoundError}   
-        self.publish("depth/feed", {"feed": feed})
+        self.publish(Topics.DEPTH_FEED, {"feed": feed})
         #print(f'emitting depth feed: {feed}')
 
     def __init__(self):
@@ -111,6 +113,6 @@ class MotionSubscriber:
         self.pong_api.start()
         self.pong_api.register_observer(Topics.GAME_STATE, self.on_game_state)
         data = {"state": "not_ready"}    
-        logging.info("Update1 - topic: %s, message: %s", Topics.PADDLE_BOTTOM_STATE, data)
-        self.publish(Topics.PADDLE_BOTTOM_STATE, data)  
+        logging.debug("Update1 - topic: %s, message: %s", Topics.PADDLE_BOTTOM_STATE, data)
+        self.publish(Topics.PADDLE_BOTTOM_STATE, data, retain=True)
         print("MotionSubscriber start - end")

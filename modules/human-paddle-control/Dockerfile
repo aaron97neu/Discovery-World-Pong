@@ -32,6 +32,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN python -m pip install --upgrade pip && python -m pip install --no-compile --no-cache-dir -r requirements.txt 
 COPY --from=util ./py_packages ./py_packages
+COPY --from=util ./schema .
 COPY --from=util ./schema ./py_packages/dw/state_machine
 COPY requirements.txt .
 RUN python3 -m pip install --upgrade pip && python3 -m pip install --no-cache-dir -r requirements.txt 
