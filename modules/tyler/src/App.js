@@ -20,7 +20,7 @@ console.log = function(...args) {
   originalLog.apply(console, args);
 };
 // Connects to the MQTT broker specified in environment variable
-const cid = 'tyler-logger-' + uuidv1()
+const cid = 'tyler-logger-' + uuidv4()
 const client = mqtt.connect(process.env.REACT_APP_URL, { clientId: cid })
 
 function App() {
