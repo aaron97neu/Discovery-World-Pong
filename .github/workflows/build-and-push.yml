@@ -21,7 +21,8 @@ jobs:
           - human-paddle-control
           - human-visualizer
           - neural-net-visualizer
-          - single-screen-development # upstream
+          - single-screen-development
+          - log-server
           - top-web-paddle-control
           - bottom-web-paddle-control
           

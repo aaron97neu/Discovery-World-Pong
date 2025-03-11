@@ -26,6 +26,10 @@ RUN chmod +x ./node_modules/.bin/react-scripts
 RUN npm run build
 
 FROM ssl_nginx_${CERTS}
+
+LABEL org.opencontainers.image.source=https://github.com/aaron97neu/Discovery-World-Pong
+LABEL org.opencontainers.image.licenses=MIT
+
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 COPY --from=builder /app/build .

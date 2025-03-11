@@ -218,7 +218,7 @@ services:
             - pong-network
     single-screen-development:
         container_name: single-screen-development
-        image: single-screen-development:latest
+        image: ghcr.io/aaron97neu/single-screen-development:${TAG:-next}
         build:
             context: ./modules/single-screen-development
             additional_contexts:
@@ -231,9 +231,9 @@ services:
             - pong-network
     log-server:
         container_name: log-server
-        image: log-server:latest
+        image: ghcr.io/aaron97neu/log-server:${TAG:-next}
         build:
-            context: ./src/log-server
+            context: ./modules/log-server
         profiles: [dev]
         environment:
             - MQTT_BROKER_URL=ws://mqtt-broker:9001
