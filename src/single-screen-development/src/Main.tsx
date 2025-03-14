@@ -22,6 +22,13 @@ export type Log = {
   containerName: LogContainerKeys;
 };
 
+/**
+ * The Main Component:
+ *  Contains all web app components,
+ *  Determines sidebar width
+ *  Connects to MQTT
+ *  Handles MQTT messages
+ */
 const Main: FC = () => {
   const isSideBarOpen = useAppSelector(selectSideBarState);
   const containerLogCounts = useAppSelector(selectContainerLogCount);
@@ -31,9 +38,10 @@ const Main: FC = () => {
   const [logs, setLogs] = useState<Log[]>([]);
   const mqttClientRef = useRef<MqttClient | null>(null);
   const sideBarRef = useRef(isSideBarOpen);
-  const filterStateRef = useRef(filterState)
+  const filterStateRef = useRef(filterState);
 
   useEffect(() => {
+    //Set the side bar width to 35% of the screen up to a max of 750px.
     const handleResize = () => {
       if (window.innerWidth * 0.35 < 750) {
         setSideBarWidth("35%");
@@ -46,14 +54,15 @@ const Main: FC = () => {
   }, []);
 
   useEffect(() => {
-    sideBarRef.current = isSideBarOpen
-  }, [isSideBarOpen])
+    sideBarRef.current = isSideBarOpen;
+  }, [isSideBarOpen]);
 
   useEffect(() => {
-    filterStateRef.current = filterState
-  }, [filterState])
+    filterStateRef.current = filterState;
+  }, [filterState]);
 
   useEffect(() => {
+    //Connect to mqtt client
     if (!mqttClientRef.current) {
       const mqttClient = mqtt.connect("ws://localhost:9001", {
         clientId: "single-screen-dev",
@@ -61,8 +70,10 @@ const Main: FC = () => {
       });
       mqttClientRef.current = mqttClient;
 
+      //subscribe to mqtt topic
       mqttClient.on("connect", () => {
         console.log("Connected to MQTT broker");
+        //subscribe to all docker log subtopics
         mqttClient.subscribe("docker/logs/#", (err) => {
           if (!err) {
             console.log("Subscribed to docker/logs/");
@@ -70,6 +81,7 @@ const Main: FC = () => {
             console.error("Failed to subscribe:", err);
           }
         });
+        //subscribe to all app log subtopics
         mqttClient.subscribe("app/logs/#", (err) => {
           if (!err) {
             console.log("Subscribed to app/logs/");
@@ -81,6 +93,11 @@ const Main: FC = () => {
 
       const originalLog = console.log;
 
+      /*
+        Overloads the console log function
+        Publishes all logs to the specified mqtt topic then still logs to the console
+        This overload applies to all of Main's child components
+      */
       console.log = function (...args) {
         const message = format(...args);
         mqttClient.publish("app/logs/single-screen-development", message);
@@ -91,15 +108,19 @@ const Main: FC = () => {
         try {
           const containerName = topic.split("/").pop() as LogContainerKeys;
           let type: "docker" | "console";
+          //determine if incoming message is a docker or console log
           if (topic.includes("docker/logs/")) {
             type = "docker";
           } else if (topic.includes("app/logs/")) {
             type = "console";
           }
+          //determine if the container is a vertical exhibit screen
           if (containerLogCounts[containerName] !== undefined) {
+            //if the sidebar is closed, then add to screen's notification badge
             if (sideBarRef.current === false) {
               dispatch(incrementContainerLogCount(containerName));
             } else {
+              //if the sidebar is open but this screen's logs are not being displayed, then add to screen's notification badge
               if (
                 !filterStateRef.current.logType[type!] ||
                 !filterStateRef.current.containers[containerName]
@@ -108,6 +129,7 @@ const Main: FC = () => {
               }
             }
           }
+          //add log to memory
           setLogs((prev) => [
             ...prev,
             {
