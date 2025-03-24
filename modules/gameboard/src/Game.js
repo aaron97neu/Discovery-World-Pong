@@ -26,7 +26,6 @@ const wallWidth = 1.0;
 const goalWidth = 0.1;
 const ballStartPosition = [0, -(gameboardHeight / 2) + 10, 0];
 const angles = [-60, -45, -30, 0, 0, 30, 45, 60]; // Bounce angles
-// const regionSize = paddleWidth / 8;
 
 function Game() {
 
@@ -35,32 +34,30 @@ function Game() {
     levelComplete,
     setLevelComplete,
     isGamePlaying,
-    isGameComplete,
-    setIsGameComplete,
   } = useContext(GameContext);
 
   const {
-    countdown, setCountdown,
+    setCountdown,
     topScore, setTopScore,
     bottomScore, setBottomScore,
     topPaddlePosition, setTopPaddlePosition,
     topPaddleState, setTopPaddleState,
     bottomPaddlePosition, setBottomPaddlePosition,
     bottomPaddleState, setBottomPaddleState,
-    ballPosition, setBallPosition,
-    isPaddleHit, setIsPaddleHit,
-    isPlaying, setIsPlaying,
-    resetPaddles, setResetPaddles,
+    setBallPosition,
+    setIsPaddleHit,
+    setIsPlaying,
+    setResetPaddles,
     isCountdownComplete, setIsCountdownComplete,
     includeCountDown, setIncludeCountDown,
     isBallReset, setIsBallReset,
     isTopPaddleReset, setIsTopPaddleReset,
     isBottomPaddleReset, setIsBottomPaddleReset,
-    prevLevel, setPrevLevel,
-    stateMachine, setStateMachine,
-    forcePaddleRerender, setForcePaddleRerender,
-    forceBallRerender, setForceBallRerender,
-    resetBall, setResetBall,
+    setPrevLevel,
+    setStateMachine,
+    setForcePaddleRerender,
+    setForceBallRerender,
+    setResetBall,
     isDontPlay, setIsDontPlay
   } = useContext(PlayContext);  
   
@@ -74,29 +71,6 @@ function Game() {
   const audioPlayerRef = useRef(null);
   const audioVolume = 0.5;
 
-  // const { world, setWorld, rapier } = useRapier();
-  // const [snapshot, setSnapshot] = useState(null);
-
-  // useEffect(() => {
-  //   if (rapier && world) {
-  //     console.log('Rapier object:', rapier);
-  //     console.log('Rapier world:', world);
-  //     // rapier.reset();
-  //     setSnapshot(world.takeSnapshot());
-  //     // You can now interact with the Rapier object and world
-  //     // For example, accessing Rapier classes or methods
-  //   }
-  // }, [rapier, world]);
-
-  // useEffect(() => {
-
-  //     if (isGameComplete) {
-  //       console.log("game complete @@@@@@@@@@@@@@@@@@@@@@@@");
-  //       // world.restoreSnapshot(snapshot);
-  //       setWorld(rapier.World.restoreSnapshot(snapshot))
-  //     }
-  // }, [isGameComplete, world]);
-
   useEffect(() => {
     if (!audioPlayerRef.current) {
       audioPlayerRef.current = new AudioPlayer();
@@ -108,29 +82,28 @@ function Game() {
     if (fsmRef.current) {
 
       if(fsmRef.current.state === 'gameStarted') {
-
-  setCountdown(TEXT.blank);
-  setTopScore(0);
-  setBottomScore(0);
-  setTopPaddlePosition(0.5);
-  setTopPaddleState("not_ready");
-  setBottomPaddlePosition(0.5);
-  setBottomPaddleState("not_ready");
-  setBallPosition({x: 0.0, y: 0.0});
-  setIsPaddleHit(false);
-  setIsPlaying(false);
-  setResetPaddles(false);
-  setIsCountdownComplete(false);
-  setIncludeCountDown(true);
-  setIsBallReset(false);
-  setIsTopPaddleReset(false);
-  setIsBottomPaddleReset(false);
-  setPrevLevel(0);
-  setStateMachine(null);
-  setForcePaddleRerender(false);
-  setForceBallRerender(false);
-  setResetBall(false);
-  setIsDontPlay(true);
+        setCountdown(TEXT.blank);
+        setTopScore(0);
+        setBottomScore(0);
+        setTopPaddlePosition(0.5);
+        setTopPaddleState("not_ready");
+        setBottomPaddlePosition(0.5);
+        setBottomPaddleState("not_ready");
+        setBallPosition({x: 0.0, y: 0.0});
+        setIsPaddleHit(false);
+        setIsPlaying(false);
+        setResetPaddles(false);
+        setIsCountdownComplete(false);
+        setIncludeCountDown(true);
+        setIsBallReset(false);
+        setIsTopPaddleReset(false);
+        setIsBottomPaddleReset(false);
+        setPrevLevel(0);
+        setStateMachine(null);
+        setForcePaddleRerender(false);
+        setForceBallRerender(false);
+        setResetBall(false);
+        setIsDontPlay(true);
 
         fsmRef.current.startGame();
       }
@@ -146,14 +119,12 @@ function Game() {
       if(fsmRef.current.state === 'paddleReset') {
         if (isTopPaddleReset && isBottomPaddleReset) {
           fsmRef.current.resetBall();
-          // setForcePaddleRerender(prevState => !prevState);
         }
       }
 
       if(fsmRef.current.state === 'ballReset') {
         if(isBallReset) {
           fsmRef.current.resetGame();
-          // setForceBallRerender(prevState => !prevState);
         }
       }
 
@@ -208,8 +179,6 @@ function Game() {
       }
 
       if(fsmRef.current.state === 'gameFinished') {
-        
-        console.log("1111111111=%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         if (bottomScore > topScore) {
           setCountdown(TEXT.human_wins);
         }
@@ -221,15 +190,7 @@ function Game() {
         if (bottomScore == topScore) {
             setCountdown(TEXT.draw);
         }
-
-        // setIsGameComplete(true);
-        // setLevelComplete(3);
       }
-
-      // if (!isGamePlaying) {
-      //   console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-      //   fsmRef.current.returnToIdle();
-      // }
     }
 
   });
@@ -245,18 +206,9 @@ function Game() {
   }, [level]);
 
   useEffect(() => {
-    // if (levelComplete === 3) {
-    //   // fsmRef.current.endGame();
-    // } else {
-    //   if (levelComplete > 0) {
-    //     fsmRef.current.endLevel();
-    //   }
-    // }    
-
       if (levelComplete > 0) {
         fsmRef.current.endLevel();
       }
-
   }, [levelComplete]);
 
   useEffect(() => {
@@ -279,7 +231,6 @@ function Game() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // console.log('This message prints every half second');
       if (ballRef && ballRef.current) {
         try {
           const currentPosition = ballRef.current.translation();
@@ -307,18 +258,13 @@ function Game() {
     if (otherObject.userData && otherObject.userData.isBall && 
       targetObject.userData && targetObject.userData.isPaddle) {
 
-      // audioPlayerRef.stop('paddleHit');
       audioPlayerRef.current.play('paddleHit').catch((error) => {
         console.error('Error playing audio:', error);
       });
 
-      // console.log(`ballCurrentPostion: ${otherObject.translation().x}`);
-      // console.log(`paddleCurrentPostion: ${targetObject.translation().x}`);
       const collisionPoint = event.manifold.localContactPoint1().x;
-      // console.log(`collisionPoint: ${collisionPoint}`);
       const d = (collisionPoint + (paddleWidth / 2));
       const regionIndex = Math.min(7, Math.floor((collisionPoint + (paddleWidth / 2)) / 2.5))
-      // console.log(`regionIndex: ${regionIndex}`);
 
       if (regionIndex >= 0 && regionIndex < angles.length) {
         const radians = (angles[regionIndex] * (Math.PI / 180)); // Convert angle to radians
@@ -328,7 +274,6 @@ function Game() {
           z: 0,
         };   
 
-        // console.log(`newVelocity: ${JSON.stringify(newVelocity, null, 2)}`);
         otherObject.setLinvel(newVelocity, true);
       }
     }
@@ -367,9 +312,7 @@ function Game() {
       />
 
       <Paddle
-        // ref={topPaddleRef}
         isTop={true}
-        // position={[gameboardWidth / 2, gameboardHeight / 2 - paddlePadding, 0.0]} 
         position={[0.0, gameboardHeight / 2 - paddlePadding, 0.0]} 
         args={[paddleWidth, paddleHeigth]} 
         color="rgb(187,30,50)" 
@@ -380,9 +323,7 @@ function Game() {
       />
 
       <Paddle 
-        // ref={bottomPaddleRef}
         isTop={false}
-        // position={[gameboardWidth / 2, -gameboardHeight / 2 + paddlePadding, 0.0]} 
         position={[0.0, -gameboardHeight / 2 + paddlePadding, 0.0]} 
         args={[paddleWidth, paddleHeigth]} 
         color="rgb(20,192,243)" 
@@ -393,7 +334,6 @@ function Game() {
       />
 
       <Ball 
-        // ref={ballRef}  
         ballRef={ballRef}
         position={ballStartPosition} 
         args={[ballRadius, 64, 64]}  

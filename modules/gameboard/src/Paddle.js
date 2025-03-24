@@ -33,10 +33,6 @@ const Paddle = ({
       }
     }, [forcePaddleRerender, paddlePosition]);
 
-    // useEffect(() => {
-    //   console.log(`!!!!!!!!!!!!!!!!! forcePaddleRerender: ${forcePaddleRerender}`);
-    // }, [forcePaddleRerender]);
-
     return (
       <RigidBody ref={paddleRef} position={position} type="static" colliders="cuboid" onCollisionEnter={handleCollision} restitution={1.0} friction={0.0} userData={{ isPaddle: true, isTop: {isTop} }} >
         <mesh>

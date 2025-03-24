@@ -34,8 +34,6 @@ const {
     const [stateMachine, setStateMachine] = useState(null);
 
     useEffect(() => {
-        // console.log("game constructor");
-
         if (!audioPlayerRef.current) {
             audioPlayerRef.current = new AudioPlayer();
             audioPlayerRef.current.setVolume('pointScore', audioVolume);

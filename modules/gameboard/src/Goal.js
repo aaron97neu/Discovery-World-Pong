@@ -3,7 +3,6 @@ import { RigidBody } from '@react-three/rapier';
 
 function Goal({ position, args, onGoal }) {
   const handleIntersectionExit = useCallback(() => {
-    console.log('Goal scored!!!!!!!!!!!!!!!!!!!!!');
     onGoal();
    }, []);
 

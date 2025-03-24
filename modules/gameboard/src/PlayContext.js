@@ -27,8 +27,6 @@ const PlayProvider = ({ children }) => {
   const [resetBall, setResetBall] = useState(false);
   const [isDontPlay, setIsDontPlay] = useState(true);
 
-  // console.log("start PlayContext");
-
   return (
     <PlayContext.Provider value={{ 
       countdown, setCountdown,

@@ -6,7 +6,6 @@ const GameContext = createContext();
 const GameProvider = ({ children }) => {
   const [playerInstructionProps, setPlayerInstructionProps] = useState({
     image: IMAGES.noImage,
-    // image: IMAGES.welcomeScreen,
     position: [0.0, 0.0, 0.0],
     scale: 1.0
   });
@@ -18,8 +17,6 @@ const GameProvider = ({ children }) => {
   const [isGamePlaying, setIsGamePlaying] = useState(false);
   const [isAppInitialized, setisAppInitialized] = useState(false);
   const [isGameComplete, setIsGameComplete] = useState(false);
-
-  // console.log("start GameContext");
 
   return (
     <GameContext.Provider value={{ 

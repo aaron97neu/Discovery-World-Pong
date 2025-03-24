@@ -11,7 +11,6 @@ const GamePlay = ({pongAPIRef}) => {
     isGamePlaying,
     isIntroPlaying,
     setIsIntroPlaying,
-    setIsGamePlaying,
     levelComplete,
     setIsGameComplete,
     isGameComplete,
@@ -37,7 +36,6 @@ const GamePlay = ({pongAPIRef}) => {
 
   useEffect(() => {
     if (pongAPIRef.current) {
-      console.log("????????????????????????????????????????????  1");
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_POSITION, onPaddleTopPosition);
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_STATE, onPaddleTopState);
       pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_BOTTOM_POSITION, onPaddleBottomPosition);
@@ -50,16 +48,12 @@ const GamePlay = ({pongAPIRef}) => {
       if ( pongAPIRef.current.isConnected()) {
 
         if (isGameComplete) {
-          console.log(`isGameComplete: ${isGameComplete}`);
           setIsGameComplete(false);
           const message = {
             "transition": "game_complete"
           };
-          console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
-
-          
         }  
 
         if (prevBallPositionRef.current !== ballPosition) {
@@ -81,7 +75,6 @@ const GamePlay = ({pongAPIRef}) => {
               }
             }
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
   
           pongAPIRef.current.update(PongAPI.Topics.GAME_PLAY, message );
           prevBallPositionRef.current = ballPosition;
@@ -90,25 +83,21 @@ const GamePlay = ({pongAPIRef}) => {
         if (!isIntroPlaying 
           && (topPaddleState == "start" && bottomPaddleState == "ready") 
           || (topPaddleState == "ready" && bottomPaddleState == "start")) {
-          // setIsGamePlaying(true);
           setIsIntroPlaying(true);
 
           const message = {
             "transition": "player_ready"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }
 
         if (!isGamePlaying 
           && (topPaddleState == "start" && bottomPaddleState == "start")) {
-          // setIsGamePlaying(true);
           
           const message = {
             "transition": "move_intro_complete"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         } 
@@ -117,7 +106,6 @@ const GamePlay = ({pongAPIRef}) => {
           const message = {
             "transition": "player_exit"
           };
-          // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
           pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
         }  
@@ -127,7 +115,6 @@ const GamePlay = ({pongAPIRef}) => {
             const message = {
               "transition": "level1_complete"
             };
-            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
             pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
           }
@@ -136,7 +123,6 @@ const GamePlay = ({pongAPIRef}) => {
             const message = {
               "transition": "level2_complete"
             };
-            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
             pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
           }
@@ -145,7 +131,6 @@ const GamePlay = ({pongAPIRef}) => {
             const message = {
               "transition": "level3_complete"
             };
-            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
             pongAPIRef.current.update(PongAPI.Topics.GAME_STATE, message );
           }
@@ -165,7 +150,6 @@ const GamePlay = ({pongAPIRef}) => {
           "player_bottom": { "score": bottomScore},
           "level": level
         };
-        // console.log(`message: ${JSON.stringify(message, null, 2)}`);
 
         pongAPIRef.current.update(PongAPI.Topics.GAME_STATS, scoreMessage );
       }
@@ -175,12 +159,8 @@ const GamePlay = ({pongAPIRef}) => {
   useEffect(() => {
     if (pongAPIRef.current) {     
       if ( pongAPIRef.current.isConnected()) {
-        // if (playState == PlayState.PADDLE_RESET) {
           if (resetPaddles) {
-            // console.log(`topPaddleState: ${topPaddleState}`);
-            // console.log(`bottomPaddleState: ${bottomPaddleState}`);
             const message =  { "transition": "reset" };
-            // console.log(`message: ${JSON.stringify(message, null, 2)}`);
             pongAPIRef.current.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
             pongAPIRef.current.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );    
         }
@@ -190,34 +170,22 @@ const GamePlay = ({pongAPIRef}) => {
 
   const onPaddleTopPosition = (message) => {
       const paddlePosition = message.position.x;
-      // console.log('%%%%%%%%%%%%%%%% topPaddlePosition:', topPaddlePosition);
-      // console.log('%%%%%%%%%%%%%%%% top  paddlePosition:', paddlePosition);
       setTopPaddlePosition(paddlePosition);   
   }
 
   const onPaddleTopState = (message) => {
       const paddleState = message.state;
-      // console.log('top paddleState:', paddleState);
-      // console.log('%%%%%%%%%%%%%%%% topPaddleState:', topPaddleState);
-      // console.log('%%%%%%%%%%%%%%%% top  paddleState:', paddleState);
       setTopPaddleState(paddleState);      
-      // console.log('%%%%%%%%%%%%%%%% topPaddleState2:', topPaddleState);
   }
 
   const onPaddleBottomPosition = (message) => {
       const paddlePosition = message.position.x;
-      // console.log('%%%%%%%%%%%%%%%% bottomPaddlePosition:', bottomPaddlePosition);
-      // console.log('%%%%%%%%%%%%%%%% bottom paddlePosition:', paddlePosition);
       setBottomPaddlePosition(paddlePosition);   
   }  
 
   const onPaddleBottomState = (message) => {
       const paddleState = message.state;
-      // console.log('bottom paddleState:', paddleState);
-      // console.log('%%%%%%%%%%%%%%%% bottomPaddleState:', bottomPaddleState);
-      // console.log('%%%%%%%%%%%%%%%% bottom  paddleState:', paddleState);
       setBottomPaddleState(paddleState);      
-      // console.log('%%%%%%%%%%%%%%%% bottomPaddleState:', bottomPaddleState);
   }  
 
   return null;
