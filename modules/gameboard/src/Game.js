@@ -237,7 +237,9 @@ function Game() {
           currentPosition.y = Math.round(currentPosition.y);
           currentPosition.z = Math.round(currentPosition.z);
 
-          if (currentPosition.x != oldBallPosition.x || currentPosition.y != oldBallPosition.y) {
+          if (currentPosition.x != oldBallPosition.x || 
+            currentPosition.y != oldBallPosition.y) 
+          {
             setBallPosition(currentPosition);
             setOldBallPosition(currentPosition);
           }
@@ -250,29 +252,38 @@ function Game() {
     return () => clearInterval(interval); // Cleanup the interval on component unmount   
   });  
   
+  // Function to handle collision events using useCallback
   const handleCollision = useCallback((event) => {
+    // Extract the rigid body of the colliding object and the target object from the event
     const otherObject = event.rigidBody;
     const targetObject = event.target.rigidBody;
 
+    // Check if the colliding object is a ball and the target object is a paddle
     if (otherObject.userData && otherObject.userData.isBall && 
       targetObject.userData && targetObject.userData.isPaddle) {
 
+      // Play an audio clip for the paddle hit using the audio player reference
       audioPlayerRef.current.play('paddleHit').catch((error) => {
         console.error('Error playing audio:', error);
       });
 
+      // Calculate the collision point on the paddle
       const collisionPoint = event.manifold.localContactPoint1().x;
-      const d = (collisionPoint + (paddleWidth / 2));
       const regionIndex = Math.min(7, Math.floor((collisionPoint + (paddleWidth / 2)) / 2.5))
 
+      // Check if the region index is within the valid range of angles array
       if (regionIndex >= 0 && regionIndex < angles.length) {
-        const radians = (angles[regionIndex] * (Math.PI / 180)); // Convert angle to radians
+        // Convert the angle to radians
+        const radians = (angles[regionIndex] * (Math.PI / 180));
+        // Calculate the new velocity for the ball based on the collision point and angle
+        // Adjust y based on whether it's the top or bottom paddle
         const newVelocity = {
           x: speed * Math.sin(radians),
-          y: speed * Math.cos(radians) * (targetObject.isTop ? -1 : 1), // Adjust y based on whether it's the top or bottom paddle
+          y: speed * Math.cos(radians) * (targetObject.isTop ? -1 : 1), 
           z: 0,
         };   
 
+        // Set the new linear velocity for the ball
         otherObject.setLinvel(newVelocity, true);
       }
     }
