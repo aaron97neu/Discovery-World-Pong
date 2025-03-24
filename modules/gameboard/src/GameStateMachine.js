@@ -11,7 +11,6 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Constructor'); 
     super(pongAPI);
     this.playTime = 30000;
-    // this.playTime = 10000;
     this.volume = 0.5;
     this.gameContext = gameContext;
     this.audioPlayer = new AudioPlayer();
@@ -23,14 +22,11 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
-    // this.gameContext.setPlayersReady(false);
     this.gameContext.setIsGame(false);
     this.audioPlayer.stop('musicBackground');
     this.audioPlayer.setVolume('musicIdle', this.volume);
     this.audioPlayer.play('musicIdle');
 
-    // this.gameContext.setGameboard(false);
-    // this.gameContext.setGameboard(true);
     this.gameContext.setPlayerInstructionProps({
       image: IMAGES.welcomeScreen,
       position: [0.0, 0.2, 0.0],
@@ -49,7 +45,6 @@ class GameStateMachine extends BaseStateMachine {
     console.log('GameStateMachine Entered Intro state'); 
     super.onEnterIntro();
 
-    // this.gameContext.setPlayersReady(true);
     this.audioPlayer.setVolume('musicBackground', this.volume);
     this.audioPlayer.play('musicBackground');
   }  
@@ -59,7 +54,6 @@ class GameStateMachine extends BaseStateMachine {
     super.onLeaveIntro();
 
     this.audioPlayer.stop('musicBackground');
-    // this.audioPlayer.stop('musicBackground');
   }  
 
   onEnterMoveIntro() {
@@ -121,27 +115,10 @@ class GameStateMachine extends BaseStateMachine {
     this.gameContext.setLevel(3);        
   }
 
-  onLeaveLevel3() { 
-    console.log('GameStateMachine Exit Level3 state'); 
-    super.onLeaveLevel3();
-      
-    // this.gameContext.setLevel(4); 
-    // this.gameContext.setIsGamePlaying(false);
-  }
-
-  onEnterOutro() { 
-    console.log('GameStateMachine Enter Outro state'); 
-    super.onLeaveOutro();
-      
-    // this.gameContext.setLevel(4); 
-    // this.gameContext.setIsGamePlaying(false);
-  }
-
   onLeaveOutro() { 
     console.log('GameStateMachine Exit Outro state'); 
     super.onLeaveOutro();
       
-    // this.gameContext.setLevel(4); 
     this.gameContext.setIsGamePlaying(false);
     this.gameContext.setIsIntroPlaying(false);
     this.gameContext.setIsGameComplete(true);

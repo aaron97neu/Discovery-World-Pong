@@ -1,4 +1,4 @@
-import React, {Suspense, useEffect, useContext, useRef} from 'react'
+import React, {Suspense, useEffect, useContext} from 'react'
 import { Canvas, useThree } from "@react-three/fiber";
 import { Physics } from '@react-three/rapier';
 import {GizmoHelper, GizmoViewcube, GizmoViewport, GridHelper} from "@react-three/drei"; // can be commented in for debugging
@@ -11,23 +11,11 @@ function CameraController() {
   const { camera } = useThree();
 
   useEffect(() => {
-    // camera.position.set(0, -5, 10);
-    // camera.lookAt(0, 0, 0);
-
-    // camera.position.set(0, -8.5, 10);
-    // camera.lookAt(0, -4, 0);
-
     camera.fov = 65;
     camera.updateProjectionMatrix();
 
     camera.position.set(0, -95.0, 95);
     camera.lookAt(0, -37, 0);
-
-    // camera.fov = 40;
-    // camera.updateProjectionMatrix();
-    // camera.position.set(0, -1.2, 0.5);
-    // camera.lookAt(0.0, -0.4, 0.0);
-
   }, [camera]);
 
   return null;
@@ -37,7 +25,6 @@ function MainScene() {
 
   const {
     isGame,
-    isGameComplete,
   } = useContext(GameContext);
 
   return (
@@ -45,9 +32,7 @@ function MainScene() {
       <ambientLight intensity={1.5} />
       <CameraController />
       <Suspense fallback={null} >
-        {/* <Physics ref={physicsRef} gravity={[0, 0, 0]} debug> */}
         <Physics gravity={[0, 0, 0]} >
-      {/* <GamePlay /> */}
         {isGame ? (
           <group> 
             <Game/>

@@ -3,7 +3,6 @@ import {GameContext} from './GameContext';
 import {PlayContext} from './PlayContext';
 import {PongAPI} from 'dw-state-machine';
 
-// class GamePlay {
 const GamePlay = ({pongAPIRef}) => {
 
   const {

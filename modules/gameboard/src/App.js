@@ -6,11 +6,8 @@ import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
 import {GameContext} from './GameContext';
 import { v4 as uuidv4 } from 'uuid';
-// const logger = require('./logger');
 
 function App() {
-  // logger.info('This is a winston info message');
-
   const [size, setSize] = useState({ width: 800, height: 600 });
 
   const gameContext = useContext(GameContext);
@@ -46,8 +43,6 @@ function App() {
     console.log(`port: ${[port]}`);
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
-
-    // const gameStateMachine = new GameStateMachine(pongAPIRef.current, GameContext);
 
     if (pongAPIRef.current) {
       pongAPIRef.current.start();

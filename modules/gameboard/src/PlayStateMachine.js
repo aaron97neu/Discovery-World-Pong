@@ -6,32 +6,31 @@ import AudioPlayer from './AudioPlayer';
 
 const PlayStateMachine = forwardRef(({ ballRef }, ref) => {
 
-const {
-    setCountdown,
-    setTopPaddleState,
-    setBottomPaddleState,
-    setResetPaddles,
-    setTopScore,
-    setBottomScore,
-    setIsCountdownComplete,
-    setIncludeCountDown,
-    setIsTopPaddleReset,
-    setIsBottomPaddleReset,
-    setIsBallReset,
-    setPrevLevel,
-    setForcePaddleRerender,
-    setForceBallRerender,
-    setResetBall,
-    setIsDontPlay,
-  } = useContext(PlayContext);  
+    const {
+        setCountdown,
+        setTopPaddleState,
+        setBottomPaddleState,
+        setResetPaddles,
+        setTopScore,
+        setBottomScore,
+        setIsCountdownComplete,
+        setIncludeCountDown,
+        setIsTopPaddleReset,
+        setIsBottomPaddleReset,
+        setIsBallReset,
+        setPrevLevel,
+        setForcePaddleRerender,
+        setForceBallRerender,
+        setResetBall,
+        setIsDontPlay,
+    } = useContext(PlayContext);  
 
-  const gameboardHeight = 160; // height used in AI 
     const audioPlayerRef = useRef(null);
     const audioVolume = 0.5;
     const delay = 500;
     const speed = 200;
   
-    const [stateMachine, setStateMachine] = useState(null);
+    const [setStateMachine] = useState(null);
 
     useEffect(() => {
         if (!audioPlayerRef.current) {

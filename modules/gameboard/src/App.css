@@ -1,7 +1,5 @@
 .App {
   background-image: url('imgs/AutoEverywhere_Background.svg');
-  /*background-size: cover;*/ /* Ensures the image covers the entire area */
-  /*background-size: contain;*/ /* Ensures the image covers the entire area */
   background-size: contain;
   background-repeat: no-repeat; /* Prevents the image from repeating */
   background-position: center; /* Centers the image */
