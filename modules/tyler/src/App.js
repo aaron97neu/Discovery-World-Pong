@@ -6,11 +6,8 @@ import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
 import {SceneContext} from './SceneContext';
 import { v4 as uuidv4 } from 'uuid';
-// const logger = require('./logger');
 
 function App() {
-  // logger.info('This is a winston info message');
-
   const [size, setSize] = useState({ width: 800, height: 600 });
 
   const sceneContext = useContext(SceneContext);
@@ -22,7 +19,10 @@ function App() {
   const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
 
-  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl));
+  const pongAPIRef = useRef(new PongAPI(
+    fullClientId, 
+    brokerUrl)
+  );
   const gameStateMachineRef = useRef();
 
   useEffect(() => {

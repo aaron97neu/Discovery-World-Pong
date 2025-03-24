@@ -12,8 +12,16 @@ function HudImage({image, position = [0, 0, 0], scale = 1.0}) {
 
   return (
     <mesh position={position}>
-      <planeGeometry attach="geometry" args={[aspectRatio * scale, scale]} />
-      <meshBasicMaterial attach="material" map={texture} transparent opacity={1.0} />
+      <planeGeometry 
+        attach="geometry" 
+        args={[aspectRatio * scale, scale]} 
+      />
+      <meshBasicMaterial 
+        attach="material" 
+        map={texture} 
+        transparent 
+        opacity={1.0} 
+      />
     </mesh>         
   );
 }

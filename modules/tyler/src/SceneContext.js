@@ -6,7 +6,6 @@ const SceneContext = createContext();
 const SceneProvider = ({ children }) => {
   const [playerInstructionProps, setPlayerInstructionProps] = useState({
     image: IMAGES.noImage,
-    // image: IMAGES.welcomeScreen,
     position: [0.0, 0.0, 0.0],
     scale: 1.0
   });

@@ -14,12 +14,26 @@ function TylerHud() {
         return (
           <group>
             <group position={[0.0, 1.5, 0.0]} >
-              <Text position={[0.0, 2.2, 0.0]} font={mainFont} fontSize={0.4} color="white" text={'T.Y.L.E.R.'}/>
-              <HudImage position={[0.0, 0.0, 0.0]} scale={4.0} image={IMAGES.TYLERFace_Sleeping1}/>
+              <Text 
+                position={[0.0, 2.2, 0.0]} 
+                font={mainFont} 
+                fontSize={0.4} 
+                color="white" 
+                text={'T.Y.L.E.R.'}
+              />
+              <HudImage 
+                position={[0.0, 0.0, 0.0]} 
+                scale={4.0} 
+                image={IMAGES.TYLERFace_Sleeping1}
+              />
             </group>
 
             <group position={[0.0, -2.0, 0.0]}> 
-              <HudImage position={[0.0, 0.0, 0.0]} scale={2.7} image={IMAGES.welcomeScreen}/>
+              <HudImage 
+                position={[0.0, 0.0, 0.0]} 
+                scale={2.7} 
+                image={IMAGES.welcomeScreen}
+              />
             </group>
           </group>
         );
@@ -27,8 +41,17 @@ function TylerHud() {
         return (
           <group>
             <group position={[0.0, 1.5, 0.0]} >
-              <Text position={[0.0, 2.2, 0.0]} font={mainFont} fontSize={0.4} color="white" text={'T.Y.L.E.R.'}/>
-              <HudImage image={playerInstructionProps.image} position={playerInstructionProps.position} scale={playerInstructionProps.scale}/>
+              <Text 
+                position={[0.0, 2.2, 0.0]} 
+                font={mainFont} fontSize={0.4} 
+                color="white" 
+                text={'T.Y.L.E.R.'}
+              />
+              <HudImage 
+                image={playerInstructionProps.image} 
+                position={playerInstructionProps.position} 
+                scale={playerInstructionProps.scale}
+              />
               </group>
 
             <group position={[0.0, -2.0, 0.0]}> 
