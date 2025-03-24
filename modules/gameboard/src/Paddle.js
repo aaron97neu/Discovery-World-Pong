@@ -34,7 +34,16 @@ const Paddle = ({
     }, [forcePaddleRerender, paddlePosition]);
 
     return (
-      <RigidBody ref={paddleRef} position={position} type="static" colliders="cuboid" onCollisionEnter={handleCollision} restitution={1.0} friction={0.0} userData={{ isPaddle: true, isTop: {isTop} }} >
+      <RigidBody 
+        ref={paddleRef} 
+        position={position} 
+        type="static" 
+        colliders="cuboid" 
+        onCollisionEnter={handleCollision} 
+        restitution={1.0} 
+        friction={0.0} 
+        userData={{ isPaddle: true, isTop: {isTop} }} 
+      >
         <mesh>
           <planeGeometry args={args} />
           <meshStandardMaterial color={color} />

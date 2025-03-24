@@ -35,10 +35,22 @@ const GamePlay = ({pongAPIRef}) => {
 
   useEffect(() => {
     if (pongAPIRef.current) {
-      pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_POSITION, onPaddleTopPosition);
-      pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_TOP_STATE, onPaddleTopState);
-      pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_BOTTOM_POSITION, onPaddleBottomPosition);
-      pongAPIRef.current.registerObserver(PongAPI.Topics.PADDLE_BOTTOM_STATE, onPaddleBottomState);
+      pongAPIRef.current.registerObserver(
+        PongAPI.Topics.PADDLE_TOP_POSITION, 
+        onPaddleTopPosition
+      );
+      pongAPIRef.current.registerObserver(
+        PongAPI.Topics.PADDLE_TOP_STATE, 
+        onPaddleTopState
+      );
+      pongAPIRef.current.registerObserver(
+        PongAPI.Topics.PADDLE_BOTTOM_POSITION, 
+        onPaddleBottomPosition
+      );
+      pongAPIRef.current.registerObserver(
+        PongAPI.Topics.PADDLE_BOTTOM_STATE, 
+        onPaddleBottomState
+      );
     }
   }, []);
 

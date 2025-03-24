@@ -7,10 +7,20 @@ function Goal({ position, args, onGoal }) {
    }, []);
 
   return (
-    <RigidBody position={position} sensor colliders="cuboid" onIntersectionEnter={handleIntersectionExit} userData={{ isGoal: true }}>
+    <RigidBody 
+      position={position} 
+      sensor 
+      colliders="cuboid" 
+      onIntersectionEnter={handleIntersectionExit} 
+      userData={{ isGoal: true }}
+    >
     <mesh>
         <boxGeometry args={args} />
-        <meshStandardMaterial  color="green" transparent opacity={1.0} />
+        <meshStandardMaterial  
+          color="green" 
+          transparent 
+          opacity={1.0} 
+        />
       </mesh>
     </RigidBody>
   );

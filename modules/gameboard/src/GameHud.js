@@ -8,25 +8,66 @@ import * as IMAGES from './loadImages';
 
 function GameHud() {
   const {level} = useContext(GameContext);
-  const {countdown, topScore, bottomScore} = useContext(PlayContext);
+  const {
+    countdown, 
+    topScore, 
+    bottomScore
+  } = useContext(PlayContext);
 
   return (
     <Hud>
       <group>
-        <PerspectiveCamera makeDefault position={[0, 0, 10]} />
+        <PerspectiveCamera 
+          makeDefault 
+          position={[0, 0, 10]} 
+        />
 
         <group position={[7.2, 2.4, 0.0]} >
-           <HudImage position={[0.0, 0.0, 0.0]} scale={4.0} image={IMAGES.score}/>
-           <Text position={[0.0, 0.2, 0.0]} font={mainFont} fontSize={1.2} color="black" text={topScore}/>
-           <Text position={[0.0, -1.6, 0.0]} font={mainFont} fontSize={1.2} color="black" text={bottomScore}/>
+          <HudImage 
+            position={[0.0, 0.0, 0.0]} 
+            scale={4.0} 
+            image={IMAGES.score}
+          />
+          <Text 
+            position={[0.0, 0.2, 0.0]} 
+            font={mainFont} 
+            fontSize={1.2} 
+            color="black" 
+            text={topScore}
+          />
+          <Text 
+            position={[0.0, -1.6, 0.0]} 
+            font={mainFont} 
+            fontSize={1.2} 
+            color="black" 
+            text={bottomScore}
+          />
         </group>
 
         <group position={[-6.8, 4.0, 0.0]} >
-          <Text position={[0.0, 0.0, 0.0]} font={mainFont} fontSize={0.8} color="white" text={'LEVEL:'}/>
-          <Text position={[1.6, 0.0, 0.0]} font={mainFont} fontSize={0.8} color="white" text={level}/>
+          <Text 
+            position={[0.0, 0.0, 0.0]} 
+            font={mainFont} 
+            fontSize={0.8} 
+            color="white" 
+            text={'LEVEL:'}
+          />
+        ` <Text 
+            position={[1.6, 0.0, 0.0]} 
+            font={mainFont} 
+            fontSize={0.8} 
+            color="white" 
+            text={level}
+          />
         </group> 
       
-        <Text position={[0.0, 1.0, 0.0]} font={mainFont} fontSize={1.7} color="white" text={countdown} />
+        <Text 
+          position={[0.0, 1.0, 0.0]} 
+          font={mainFont} 
+          fontSize={1.7} 
+          color="white" 
+          text={countdown} 
+        />
       </group>
 
 

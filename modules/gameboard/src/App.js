@@ -35,7 +35,13 @@ function App() {
   const onPongApiDisconnection = () => {
   }
 
-  const pongAPIRef = useRef(new PongAPI(fullClientId, brokerUrl, onPongApiConnection, onPongApiDisconnection));
+  const pongAPIRef = useRef(new PongAPI(
+    fullClientId, 
+    brokerUrl, 
+    onPongApiConnection, 
+    onPongApiDisconnection)
+  );
+
   const gameStateMachineRef = useRef();
 
   useEffect(() => {
@@ -49,7 +55,10 @@ function App() {
     }
 
     if (!gameStateMachineRef.current) {
-      gameStateMachineRef.current = new GameStateMachine(pongAPIRef.current, gameContext);
+      gameStateMachineRef.current = new GameStateMachine(
+        pongAPIRef.current, 
+        gameContext
+      );
       gameStateMachineRef.current.startMachine();
     }
 

@@ -7,12 +7,11 @@ import * as IMAGES from './loadImages';
 import Gameboard from './Gameboard';
 import Ball from './Ball';
 import Paddle from './Paddle';
-import Goal from './Goal';
+// import Goal from './Goal';
 import Wall from './Wall';
 import AudioPlayer from './AudioPlayer';
 import PlayStateMachine from './PlayStateMachine';
 import * as TEXT from './loadText';
-import { useRapier } from '@react-three/rapier';
 
 const speed = 200;
 const gameboardHeight = 160; // height used in AI 
@@ -280,6 +279,9 @@ function Game() {
   }, []);
 
   return (
+    // Goal component was an attempt to use Rapier sensor to register goal but
+    // it was duplicating collisions.
+
     <group position={[0, 0, 0]} >
       <PlayStateMachine ref={fsmRef} ballRef={ballRef} />
 
