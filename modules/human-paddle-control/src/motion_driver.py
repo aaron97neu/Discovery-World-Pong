@@ -253,8 +253,10 @@ class MotionDriver:
             # else: # if ready or running
             position = self.get_human()
             # self.subscriber.publish("motion/position", position)
-            data = {"position": {"x": position}}    
-            self.subscriber.publish(Topics.PADDLE_BOTTOM_POSITION, data)  
+            if 0.0 <= position <= 1.0:
+                data = {"position": {"x": position}}    
+                self.subscriber.publish(Topics.PADDLE_BOTTOM_POSITION, data)
+
             time.sleep(0.016) # wait so we're not spamming as fast as the system can - approx 60 per second is more than enough for a max
 
     # def __init__(self, config=Config.instance(), in_q = Queue(), pipeline = rs.pipeline(), decimation_filter = rs.decimation_filter(), crop_percentage_w = 1.0, crop_percentage_h = 1.0, clipping_distance_in_meters = 2):

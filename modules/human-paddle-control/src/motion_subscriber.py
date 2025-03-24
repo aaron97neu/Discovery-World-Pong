@@ -57,8 +57,8 @@ class MotionSubscriber:
             data = {"state": "not_ready"}    
             self.publish(Topics.PADDLE_BOTTOM_STATE, data, retain=True)   
 
-    def state(self, message):
-        on_game_state(self, message)
+    # def state(self, message):
+    #     on_game_state(self, message)
 
     # def on_game_play(self, message):
     #     """
