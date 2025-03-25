@@ -15,9 +15,9 @@ const PlayStateMachine = forwardRef(({ ballRef }, ref) => {
         setBottomScore,
         setIsCountdownComplete,
         setIncludeCountDown,
-        setIsTopPaddleReset,
-        setIsBottomPaddleReset,
-        setIsBallReset,
+        // setIsTopPaddleReset,
+        // setIsBottomPaddleReset,
+        // setIsBallReset,
         setPrevLevel,
         setForcePaddleRerender,
         setForceBallRerender,
@@ -104,8 +104,8 @@ const PlayStateMachine = forwardRef(({ ballRef }, ref) => {
                     console.log('PlayStateMachine Leaving paddleReset state');
                     setTopPaddleState("play");
                     setBottomPaddleState("play");
-                    setIsTopPaddleReset(false);
-                    setIsBottomPaddleReset(false);
+                    // setIsTopPaddleReset(false);
+                    // setIsBottomPaddleReset(false);
                     setResetPaddles(false);
                     setForcePaddleRerender(prevState => !prevState);
                 },

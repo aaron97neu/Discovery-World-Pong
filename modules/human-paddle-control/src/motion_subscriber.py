@@ -43,6 +43,21 @@ class MotionSubscriber:
     #         # self.puck_y = payload["y"]
     #         # We'll use this update to grab a player position value and then publish
 
+    def on_paddle_state_transition(self, message):
+        """
+        Callback method for when the BaseState changes.
+
+        Parameters:
+        changed_state (dict): The changed state values.
+        """
+
+        state_transition = message["state_transition"]
+        if state_transition == "reset":
+            data = {"position": {"x": 0.5}}    
+            self.subscriber.publish(Topics.PADDLE_BOTTOM_POSITION, data)
+            data = {"state": "reset"}    
+            self.publish(Topics.PADDLE_TOP_STATE, data, retain=True)   
+
     def on_game_state(self, message):
         """
         Callback method for when the BaseState changes.

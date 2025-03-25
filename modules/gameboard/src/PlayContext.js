@@ -17,9 +17,9 @@ const PlayProvider = ({ children }) => {
   const [resetPaddles, setResetPaddles] = useState(false);
   const [isCountdownComplete, setIsCountdownComplete] = useState(false);
   const [includeCountDown, setIncludeCountDown] = useState(true);
-  const [isBallReset, setIsBallReset] = useState(false);
-  const [isTopPaddleReset, setIsTopPaddleReset] = useState(false);
-  const [isBottomPaddleReset, setIsBottomPaddleReset] = useState(false);
+  // const [isBallReset, setIsBallReset] = useState(false);
+  // const [isTopPaddleReset, setIsTopPaddleReset] = useState(false);
+  // const [isBottomPaddleReset, setIsBottomPaddleReset] = useState(false);
   const [prevLevel, setPrevLevel] = useState(0);
   const [stateMachine, setStateMachine] = useState(null);
   const [forcePaddleRerender, setForcePaddleRerender] = useState(false);
@@ -42,9 +42,9 @@ const PlayProvider = ({ children }) => {
       resetPaddles, setResetPaddles,
       isCountdownComplete, setIsCountdownComplete,
       includeCountDown, setIncludeCountDown,
-      isBallReset, setIsBallReset,
-      isTopPaddleReset, setIsTopPaddleReset,
-      isBottomPaddleReset, setIsBottomPaddleReset,
+      // isBallReset, setIsBallReset,
+      // isTopPaddleReset, setIsTopPaddleReset,
+      // isBottomPaddleReset, setIsBottomPaddleReset,
       prevLevel, setPrevLevel,
       stateMachine, setStateMachine,
       forcePaddleRerender, setForcePaddleRerender,

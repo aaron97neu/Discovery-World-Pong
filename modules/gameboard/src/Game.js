@@ -49,9 +49,9 @@ function Game() {
     setResetPaddles,
     isCountdownComplete, setIsCountdownComplete,
     includeCountDown, setIncludeCountDown,
-    isBallReset, setIsBallReset,
-    isTopPaddleReset, setIsTopPaddleReset,
-    isBottomPaddleReset, setIsBottomPaddleReset,
+    // isBallReset, setIsBallReset,
+    // isTopPaddleReset, setIsTopPaddleReset,
+    // isBottomPaddleReset, setIsBottomPaddleReset,
     setPrevLevel,
     setStateMachine,
     setForcePaddleRerender,
@@ -94,9 +94,9 @@ function Game() {
         setResetPaddles(false);
         setIsCountdownComplete(false);
         setIncludeCountDown(true);
-        setIsBallReset(false);
-        setIsTopPaddleReset(false);
-        setIsBottomPaddleReset(false);
+        // setIsBallReset(false);
+        // setIsTopPaddleReset(false);
+        // setIsBottomPaddleReset(false);
         setPrevLevel(0);
         setStateMachine(null);
         setForcePaddleRerender(false);
@@ -116,7 +116,7 @@ function Game() {
       }
 
       if(fsmRef.current.state === 'paddleReset') {
-        if (isTopPaddleReset && isBottomPaddleReset) {
+        if (topPaddleState == "reset" && bottomPaddleState == "reset") {
           fsmRef.current.resetBall();
         }
       }
@@ -216,17 +216,17 @@ function Game() {
     }    
   }, [isGamePlaying]);
  
-  useEffect(() => {
-    if (bottomPaddleState == "reset") {
-      setIsBottomPaddleReset(true);
-    }
-  }, [bottomPaddleState]);
+  // useEffect(() => {
+  //   if (bottomPaddleState == "reset") {
+  //     setIsBottomPaddleReset(true);
+  //   }
+  // }, [bottomPaddleState]);
 
-  useEffect(() => {
-    if (topPaddleState == "reset") {
-      setIsTopPaddleReset(true);
-    }
-  }, [topPaddleState]);
+  // useEffect(() => {
+  //   if (topPaddleState == "reset") {
+  //     setIsTopPaddleReset(true);
+  //   }
+  // }, [topPaddleState]);
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -48,6 +48,24 @@ class AISubscriber:
     #         self.trailing_frame = self.latest_frame
     #         self.latest_frame = self.render_latest_preprocessed()
 
+    def on_paddle_state_transition(self, message):
+        """
+        Callback method for when the BaseState changes.
+
+        Parameters:
+        changed_state (dict): The changed state values.
+        """
+
+        paddle_adjustment_top = 192
+        self.top_paddle_x = paddle_adjustment_top / 2
+
+        state_transition = message["state_transition"]
+        if state_transition == "reset":
+            data = {"position": {"x": self.top_paddle_x / paddle_adjustment_top}}    
+            self.state.publish(Topics.PADDLE_TOP_POSITION, data, retain=True)    
+            data = {"state": "reset"}    
+            self.publish(Topics.PADDLE_TOP_STATE, data, retain=True)   
+
     def on_game_state(self, message):
         """
         Callback method for when the BaseState changes.
@@ -59,10 +77,10 @@ class AISubscriber:
         transition = message["transition"]
         if transition == "game_complete":
             data = {"state": "start"}    
-            self.publish(Topics.PADDLE_TOP_STATE, data)   
+            self.publish(Topics.PADDLE_TOP_STATE, data, retain=True)   
 
-    def state(self, message):
-        on_game_state(self, message)
+    # def state(self, message):
+    #     on_game_state(self, message)
 
 
     def on_game_play(self, message):
@@ -361,7 +379,6 @@ class AISubscriber:
         # self.client.connect_async("192.168.2.214", port=1883, keepalive=60)
         # self.client.connect_async("mqtt-broker", port=1883, keepalive=60)
 
-        self.my_paddle_x = 0.0
         self.puck_x = None
         self.puck_y = None
         self.bottom_paddle_x = None
