@@ -7,11 +7,11 @@ import * as TEXT from './loadText';
  * Class representing the game state machine.
  * Inherits from BaseStateMachine.
  */
-class GameStateMachine extends BaseStateMachine {
+class GameSessionStateMachine extends BaseStateMachine {
   // Additional methods or overrides can be added here
 
   constructor(pongAPI, sceneContext) {
-    console.log('GameStateMachine Entered Constructor'); 
+    console.log('GameSessionStateMachine Entered Constructor'); 
     super(pongAPI);
     this.sceneContext = sceneContext;
     this.audioPlayer = new AudioPlayer();
@@ -19,12 +19,12 @@ class GameStateMachine extends BaseStateMachine {
 
   // Define onEnter<state> and onLeave<state> methods for each state
   onEnterIdle() {
-    console.log('GameStateMachine Entered Idle state'); 
+    console.log('GameSessionStateMachine Entered Idle state'); 
     super.onEnterIdle();
 
     this.sceneContext.setStateTransition('idle');
     // this.sceneContext.setConvoText('');
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.noImage,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -33,16 +33,17 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveIdle() { 
-    console.log('GameStateMachine Exited Idle state'); 
+    console.log('GameSessionStateMachine Exited Idle state'); 
+    super.onLeaveIdle();
   }
 
   onEnterIntro() { 
-    console.log('GameStateMachine Entered Intro state');
+    console.log('GameSessionStateMachine Entered Intro state');
     super.onEnterIntro();
 
     this.sceneContext.setStateTransition('intro');
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -61,19 +62,19 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveIntro() { 
-    console.log('GameStateMachine Exit Intro state');
+    console.log('GameSessionStateMachine Exit Intro state');
     super.onLeaveIntro();
 
     this.audioPlayer.stop('tylerIntro');  
   }
 
   onEnterMoveIntro() {
-    console.log('GameStateMachine Entered MoveIntro state'); 
+    console.log('GameSessionStateMachine Entered MoveIntro state'); 
     super.onEnterMoveIntro();
 
     this.sceneContext.setStateTransition('intro');
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -92,19 +93,19 @@ class GameStateMachine extends BaseStateMachine {
   }  
 
   onLeaveMoveIntro() {
-    console.log('GameStateMachine Leave MoveIntro state'); 
-    super.onLeaveIntro();
+    console.log('GameSessionStateMachine Leave MoveIntro state'); 
+    super.onLeaveMoveIntro();
 
     this.audioPlayer.stop('tylerMove');  
   }  
 
   onEnterLevel1Intro() { 
-    console.log('GameStateMachine Entered Level1 Intro state');
+    console.log('GameSessionStateMachine Entered Level1 Intro state');
     super.onEnterLevel1Intro();
 
     this.sceneContext.setStateTransition('intro');
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -123,21 +124,21 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveLevel1Intro() { 
-    console.log('GameStateMachine Exit Level1 Intro state');
+    console.log('GameSessionStateMachine Exit Level1 Intro state');
     super.onLeaveLevel1Intro();
 
     this.audioPlayer.stop('tylerDuel');  
   }
 
   onEnterLevel1() { 
-    console.log('GameStateMachine Entered Level1 state');
+    console.log('GameSessionStateMachine Entered Level1 state');
     super.onEnterLevel1();
 
     console.log(`isGamePlaying1: ${this.sceneContext.isGamePlaying}`);
     this.sceneContext.setIsGamePlaying(true);
     console.log(`isGamePlaying2: ${this.sceneContext.isGamePlaying}`);
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -148,7 +149,7 @@ class GameStateMachine extends BaseStateMachine {
       this.audioPlayer.onEnd('tylerCountdown', () => 
         {
           this.sceneContext.setStateTransition('play');
-          this.sceneContext.setPlayerInstructionProps({
+          this.sceneContext.setgameInstructionProps({
             image: IMAGES.TYLERFace_MoveLeft,
             position: [0.0, 0.0, 0.0],
             scale: 4.0,
@@ -159,11 +160,11 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onEnterLevel2Intro() { 
-    console.log('GameStateMachine Entered Level 2 Intro state');
-    super.onEnterIntro();
+    console.log('GameSessionStateMachine Entered Level 2 Intro state');
+    super.onEnterLevel2Intro();
 
     this.sceneContext.setStateTransition('intro');
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -184,19 +185,19 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveLevel2Intro() { 
-    console.log('GameStateMachine Exit Level 2 Intro state');
-    super.onLeaveIntro();
+    console.log('GameSessionStateMachine Exit Level 2 Intro state');
+    super.onLeaveLevel2Intro();
 
     this.audioPlayer.stop('tylerLevelOneComplete');  
   }
 
   onEnterLevel2() { 
-    console.log('GameStateMachine Entered Level2 state');
-    super.onEnterLevel1();
+    console.log('GameSessionStateMachine Entered Level2 state');
+    super.onEnterLevel2();
 
     console.log(`isGamePlaying3: ${this.sceneContext.isGamePlaying}`);
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -207,7 +208,7 @@ class GameStateMachine extends BaseStateMachine {
       this.audioPlayer.onEnd('tylerCountdown', () => 
         {
           this.sceneContext.setStateTransition('play');
-          this.sceneContext.setPlayerInstructionProps({
+          this.sceneContext.setgameInstructionProps({
             image: IMAGES.TYLERFace_MoveLeft,
             position: [0.0, 0.0, 0.0],
             scale: 4.0,
@@ -218,11 +219,11 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onEnterLevel3Intro() { 
-    console.log('GameStateMachine Entered Level 2 Intro state');
-    super.onEnterIntro();
+    console.log('GameSessionStateMachine Entered Level 3 Intro state');
+    super.onEnterLevel3Intro();
 
     this.sceneContext.setStateTransition('intro');
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -243,17 +244,17 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveLevel3Intro() { 
-    console.log('GameStateMachine Exit Level 2 Intro state');
-    super.onLeaveIntro();
+    console.log('GameSessionStateMachine Exit Level 3 Intro state');
+    super.onLeaveLevel3Intro();
 
     this.audioPlayer.stop('tylerLevelTwoComplete');  
   }
 
   onEnterLevel3() { 
-    console.log('GameStateMachine Entered Level1 state');
-    super.onEnterLevel1();
+    console.log('GameSessionStateMachine Entered Level3 state');
+    super.onEnterLevel3();
 
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_MoveLeft,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -264,7 +265,7 @@ class GameStateMachine extends BaseStateMachine {
       this.audioPlayer.onEnd('tylerCountdown', () => 
         {
           this.sceneContext.setStateTransition('play');
-          this.sceneContext.setPlayerInstructionProps({
+          this.sceneContext.setgameInstructionProps({
             image: IMAGES.TYLERFace_MoveLeft,
             position: [0.0, 0.0, 0.0],
             scale: 4.0,
@@ -276,14 +277,14 @@ class GameStateMachine extends BaseStateMachine {
 
 
   onEnterOutro() { 
-    console.log('GameStateMachine Entered Outtro state');
+    console.log('GameSessionStateMachine Entered Outtro state');
     super.onEnterOutro();
 
     this.sceneContext.setIsGamePlaying(false);
 
     console.log("onEnterOutro1");
     this.sceneContext.setStateTransition('intro');
-    this.sceneContext.setPlayerInstructionProps({
+    this.sceneContext.setgameInstructionProps({
       image: IMAGES.TYLERFace_Neutral,
       position: [0.0, 0.0, 0.0],
       scale: 4.0,
@@ -298,7 +299,7 @@ class GameStateMachine extends BaseStateMachine {
           console.log("onEnterOutro3");
 
           this.sceneContext.setStateTransition('intro');
-          this.sceneContext.setPlayerInstructionProps({
+          this.sceneContext.setgameInstructionProps({
             image: IMAGES.TYLERFace_Neutral,
             position: [0.0, 0.0, 0.0],
             scale: 4.0,
@@ -320,7 +321,7 @@ class GameStateMachine extends BaseStateMachine {
   }
 
   onLeaveOutro() { 
-    console.log('GameStateMachine Exit Outtro state');
+    console.log('GameSessionStateMachine Exit Outtro state');
     super.onLeaveOutro();
 
     this.audioPlayer.stop('tylerOutro');  
@@ -328,4 +329,4 @@ class GameStateMachine extends BaseStateMachine {
   }
 }
 
-export default GameStateMachine;
+export default GameSessionStateMachine;

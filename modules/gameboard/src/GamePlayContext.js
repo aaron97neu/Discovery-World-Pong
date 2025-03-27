@@ -1,9 +1,15 @@
 import { createContext, useState } from "react";
 import * as TEXT from './loadText';
 
-const PlayContext = createContext();
+const GamePlayContext = createContext();
 
-const PlayProvider = ({ children }) => {
+const GamePlayProvider = ({ children }) => {
+  const [startLevel, setStartLevel] = useState(false);
+  const [stopLevel, setStopLevel] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [startPlay, setStartPlay] = useState(false);
+  // const [resetBoard, setResetBoard] = useState(false);
+  // const [startCountdown, setStartCountdown] = useState(false);
   const [countdown, setCountdown] = useState(TEXT.blank);
   const [topScore, setTopScore] = useState(0);
   const [bottomScore, setBottomScore] = useState(0);
@@ -13,14 +19,14 @@ const PlayProvider = ({ children }) => {
   const [bottomPaddleState, setBottomPaddleState] = useState("not_ready");
   const [ballPosition, setBallPosition] = useState({x: 0.0, y: 0.0});
   const [isPaddleHit, setIsPaddleHit] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const [resetPaddles, setResetPaddles] = useState(false);
-  const [isCountdownComplete, setIsCountdownComplete] = useState(false);
+  // const [isCountdownComplete, setIsCountdownComplete] = useState(false);
   const [includeCountDown, setIncludeCountDown] = useState(true);
-  // const [isBallReset, setIsBallReset] = useState(false);
+  const [isBallReset, setIsBallReset] = useState(false);
   // const [isTopPaddleReset, setIsTopPaddleReset] = useState(false);
   // const [isBottomPaddleReset, setIsBottomPaddleReset] = useState(false);
-  const [prevLevel, setPrevLevel] = useState(0);
+  // const [prevLevel, setPrevLevel] = useState(0);
   const [stateMachine, setStateMachine] = useState(null);
   const [forcePaddleRerender, setForcePaddleRerender] = useState(false);
   const [forceBallRerender, setForceBallRerender] = useState(false);
@@ -28,7 +34,13 @@ const PlayProvider = ({ children }) => {
   const [isDontPlay, setIsDontPlay] = useState(true);
 
   return (
-    <PlayContext.Provider value={{ 
+    <GamePlayContext.Provider value={{
+      startLevel, setStartLevel,
+      stopLevel, setStopLevel,
+      // isPlaying, setIsPlaying,
+      // startPlay, setStartPlay,
+      // resetBoard, setResetBoard,
+      // startCountdown, setStartCountdown,
       countdown, setCountdown,
       topScore, setTopScore,
       bottomScore, setBottomScore,
@@ -38,14 +50,14 @@ const PlayProvider = ({ children }) => {
       bottomPaddleState, setBottomPaddleState,
       ballPosition, setBallPosition,
       isPaddleHit, setIsPaddleHit,
-      isPlaying, setIsPlaying,
+      // isPlaying, setIsPlaying,
       resetPaddles, setResetPaddles,
-      isCountdownComplete, setIsCountdownComplete,
+      // isCountdownComplete, setIsCountdownComplete,
       includeCountDown, setIncludeCountDown,
-      // isBallReset, setIsBallReset,
+      isBallReset, setIsBallReset,
       // isTopPaddleReset, setIsTopPaddleReset,
       // isBottomPaddleReset, setIsBottomPaddleReset,
-      prevLevel, setPrevLevel,
+      // prevLevel, setPrevLevel,
       stateMachine, setStateMachine,
       forcePaddleRerender, setForcePaddleRerender,
       forceBallRerender, setForceBallRerender,
@@ -53,10 +65,10 @@ const PlayProvider = ({ children }) => {
       isDontPlay, setIsDontPlay
       }}>
       {children}
-    </PlayContext.Provider>
+    </GamePlayContext.Provider>
   );
 };
 
 
 
-export { PlayContext, PlayProvider};
+export { GamePlayContext, GamePlayProvider};

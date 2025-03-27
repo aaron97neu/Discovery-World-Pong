@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import { RigidBody } from '@react-three/rapier';
-import {PlayContext} from './PlayContext';
+import {GamePlayContext} from './GamePlayContext';
 
 const Ball = ({ ballRef, position, args, color  }) => {
   const ballStartTranslation = {x: 0, y: -(160 / 2) + 10, z: 0};
@@ -9,7 +9,7 @@ const Ball = ({ ballRef, position, args, color  }) => {
     resetBall,
     setIsBallReset,
     forceBallRerender,
-  } = useContext(PlayContext);  
+  } = useContext(GamePlayContext);  
 
   useEffect(() => {
     if (ballRef.current) {

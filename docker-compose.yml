@@ -187,7 +187,7 @@ services:
                 certs: ./certs
         profiles: [dev]
         ports:
-            - 5005:80
+            - 5006:80
         restart: unless-stopped
         networks:
             - pong-network

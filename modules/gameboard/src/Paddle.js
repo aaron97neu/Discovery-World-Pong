@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect, useRef, useState, useContext } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { RigidBody } from '@react-three/rapier';
-import {PlayContext} from './PlayContext';
+import {GamePlayContext} from './GamePlayContext';
 
 const Paddle = ({
   isTop, 
@@ -14,11 +14,11 @@ const Paddle = ({
   }) => {
 
   const paddleRef = useRef();
-  const [oldPaddlePosition, setOldPaddlePosition] = useState(0.0);
+  // const [oldPaddlePosition, setOldPaddlePosition] = useState(0.0);
 
   const {
     forcePaddleRerender,
-  } = useContext(PlayContext);  
+  } = useContext(GamePlayContext);  
 
   const max = (gameboardWidth - paddleWidth) / 2;
   const min = -max;

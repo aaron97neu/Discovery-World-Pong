@@ -1,22 +1,24 @@
 import './App.css';
 import React, {useEffect, useState, useContext, useRef} from 'react'
-import GameStateMachine from './GameStateMachine';
-import GamePlay from './GamePlay';
-import {PongAPI} from 'dw-state-machine';
-import MainScene from './MainScene';
-import {GameContext} from './GameContext';
 import { v4 as uuidv4 } from 'uuid';
+import {PongAPI} from 'dw-state-machine';
+import GameAPI from './GameAPI';
+import {GameSessionContext} from './GameSessionContext';
+import {GamePlayContext} from './GamePlayContext';
+import GameSessionStateMachine from './GameSessionStateMachine';
+import MainScene from './MainScene';
 
 function App() {
   const [size, setSize] = useState({ width: 800, height: 600 });
 
-  const gameContext = useContext(GameContext);
+  const gameSessionContext = useContext(GameSessionContext);
+  const gamePlayContext = useContext(GamePlayContext);
 
   const {
     isAppInitialized, 
     setisAppInitialized,
-    setIsGameComplete,
-  } = useContext(GameContext);
+    // setIsGameComplete,
+  } = useContext(GameSessionContext);
 
   const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
   const port = process.env.REACT_APP_MQTT_PORT || 9001;
@@ -28,7 +30,7 @@ function App() {
   const onPongApiConnection = () => {
     if (!isAppInitialized) {
       setisAppInitialized(true);
-      setIsGameComplete(true);
+      // setIsGameComplete(true);
     }
   }  
   
@@ -42,7 +44,7 @@ function App() {
     onPongApiDisconnection)
   );
 
-  const gameStateMachineRef = useRef();
+  const GameSessionStateMachineRef = useRef();
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -54,12 +56,13 @@ function App() {
       pongAPIRef.current.start();
     }
 
-    if (!gameStateMachineRef.current) {
-      gameStateMachineRef.current = new GameStateMachine(
+    if (!GameSessionStateMachineRef.current) {
+      GameSessionStateMachineRef.current = new GameSessionStateMachine(
         pongAPIRef.current, 
-        gameContext
+        gameSessionContext,
+        gamePlayContext
       );
-      gameStateMachineRef.current.startMachine();
+      GameSessionStateMachineRef.current.startMachine();
     }
 
     const handleResize = () => {
@@ -78,7 +81,7 @@ function App() {
 
   return (
     <div className="App" >
-      <GamePlay pongAPIRef={pongAPIRef} />
+      <GameAPI pongAPIRef={pongAPIRef} />
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );

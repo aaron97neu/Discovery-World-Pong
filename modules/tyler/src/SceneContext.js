@@ -4,7 +4,7 @@ import * as IMAGES from './loadImages';
 const SceneContext = createContext();
 
 const SceneProvider = ({ children }) => {
-  const [playerInstructionProps, setPlayerInstructionProps] = useState({
+  const [gameInstructionProps, setgameInstructionProps] = useState({
     image: IMAGES.noImage,
     position: [0.0, 0.0, 0.0],
     scale: 1.0
@@ -17,7 +17,7 @@ const SceneProvider = ({ children }) => {
 
   return (
     <SceneContext.Provider value={{ 
-      playerInstructionProps, setPlayerInstructionProps,
+      gameInstructionProps, setgameInstructionProps,
       stateTransition, setStateTransition,
       isGamePlaying, setIsGamePlaying,
       topScore, setTopScore,

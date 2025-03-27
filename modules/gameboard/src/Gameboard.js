@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 function Gameboard( {position, args, map} ) {
   return (

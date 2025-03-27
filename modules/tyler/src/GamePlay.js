@@ -7,7 +7,7 @@ import * as TEXT from './loadText';
 const GamePlay = ({pongAPIRef}) => {
   const {
     isGamePlaying,
-    setPlayerInstructionProps,
+    setgameInstructionProps,
     topScore, setTopScore,
     bottomScore, setBottomScore,
   } = useContext(SceneContext);
@@ -26,7 +26,7 @@ const GamePlay = ({pongAPIRef}) => {
     if (isGamePlaying) {
       if (topScore > prevTopScore) {
         console.log("playerTopScore > topScore");
-        setPlayerInstructionProps({
+        setgameInstructionProps({
           image: IMAGES.TYLERFace_Happy,
           position: [0.0, 0.0, 0.0],
           scale: 4.0,
@@ -42,7 +42,7 @@ const GamePlay = ({pongAPIRef}) => {
     if (isGamePlaying) {
       if (bottomScore > prevBottomScore) {
         console.log("playerBottomScore > bottomScore");
-        setPlayerInstructionProps({
+        setgameInstructionProps({
           image: IMAGES.TYLERFace_Annoyed,
           position: [0.0, 0.0, 0.0],
           scale: 4.0,

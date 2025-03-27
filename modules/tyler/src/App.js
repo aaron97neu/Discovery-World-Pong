@@ -1,6 +1,6 @@
 import './App.css';
 import React, {useEffect, useState, useContext, useRef} from 'react'
-import GameStateMachine from './GameStateMachine';
+import GameSessionStateMachine from './GameSessionStateMachine';
 import GamePlay from './GamePlay';
 import {PongAPI} from 'dw-state-machine';
 import MainScene from './MainScene';
@@ -23,7 +23,7 @@ function App() {
     fullClientId, 
     brokerUrl)
   );
-  const gameStateMachineRef = useRef();
+  const GameSessionStateMachineRef = useRef();
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -31,15 +31,15 @@ function App() {
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
 
-    const gameStateMachine = new GameStateMachine(pongAPIRef.current, sceneContext);
+    const GameSessionStateMachine = new GameSessionStateMachine(pongAPIRef.current, sceneContext);
 
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
     }
 
-    if (!gameStateMachineRef.current) {
-      gameStateMachineRef.current = new GameStateMachine(pongAPIRef.current, sceneContext);
-      gameStateMachineRef.current.startMachine();
+    if (!GameSessionStateMachineRef.current) {
+      GameSessionStateMachineRef.current = new GameSessionStateMachine(pongAPIRef.current, sceneContext);
+      GameSessionStateMachineRef.current.startMachine();
     }
 
 

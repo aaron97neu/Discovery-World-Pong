@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {PlayProvider} from './PlayContext';
-import {GameProvider} from './GameContext';
+import {GameSessionProvider} from './GameSessionContext';
+import {GamePlayProvider} from './GamePlayContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <GameProvider>
-    <PlayProvider>
+    <GameSessionProvider>
+    <GamePlayProvider>
     <App />
-    </PlayProvider>
-    </GameProvider>
+    </GamePlayProvider>
+    </GameSessionProvider>
   // </React.StrictMode>
 );
 

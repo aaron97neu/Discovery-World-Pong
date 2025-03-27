@@ -6,7 +6,7 @@ import mainFont from './fonts/Roboto-Bold.ttf';
 import * as IMAGES from './loadImages';
 
 function TylerHud() {
-  const {stateTransition, playerInstructionProps} = useContext(SceneContext);
+  const {stateTransition, gameInstructionProps} = useContext(SceneContext);
 
   const renderGroupSection = () => {
     switch (stateTransition) {
@@ -48,9 +48,9 @@ function TylerHud() {
                 text={'T.Y.L.E.R.'}
               />
               <HudImage 
-                image={playerInstructionProps.image} 
-                position={playerInstructionProps.position} 
-                scale={playerInstructionProps.scale}
+                image={gameInstructionProps.image} 
+                position={gameInstructionProps.position} 
+                scale={gameInstructionProps.scale}
               />
               </group>
 
@@ -59,7 +59,7 @@ function TylerHud() {
                 <planeGeometry args={[5.0, 2.5]} />
                 <meshStandardMaterial color="black" />
               </mesh>
-              <Text position={[-2.4, 1.1, 0.0]} maxWidth={4.8} anchorX="left" anchorY="top" font={mainFont} fontSize={0.3} color="white" text={playerInstructionProps.text}/>
+              <Text position={[-2.4, 1.1, 0.0]} maxWidth={4.8} anchorX="left" anchorY="top" font={mainFont} fontSize={0.3} color="white" text={gameInstructionProps.text}/>
             </group>
           </group>
         );
@@ -68,7 +68,7 @@ function TylerHud() {
           <group>
             <group position={[0.0, 1.5, 0.0]} >
               <Text position={[0.0, 2.2, 0.0]} font={mainFont} fontSize={0.4} color="white" text={'T.Y.L.E.R.'}/>
-              <HudImage image={playerInstructionProps.image} position={playerInstructionProps.position} scale={playerInstructionProps.scale}/>
+              <HudImage image={gameInstructionProps.image} position={gameInstructionProps.position} scale={gameInstructionProps.scale}/>
               </group>
 
             <group position={[0.0, -2.0, 0.0]}> 
@@ -76,7 +76,7 @@ function TylerHud() {
                 <planeGeometry args={[5.0, 2.5]} />
                 <meshStandardMaterial color="black" />
               </mesh>
-              <Text position={[-2.4, 1.1, 0.0]} maxWidth={4.8} anchorX="left" anchorY="top" font={mainFont} fontSize={0.3} color="white" text={playerInstructionProps.text}/>
+              <Text position={[-2.4, 1.1, 0.0]} maxWidth={4.8} anchorX="left" anchorY="top" font={mainFont} fontSize={0.3} color="white" text={gameInstructionProps.text}/>
             </group>
           </group>
         );
