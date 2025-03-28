@@ -69,13 +69,18 @@ const VisualizerButton: FC<VisualizerButtonProps> = ({
       }
       onClick={onClick}
       selected={selected}
-      sx={{padding: '8px', fontSize: `${isMd ? "10px" : "12px"}`}}
+      sx={{ padding: "8px", fontSize: `${isMd ? "10px" : "12px"}` }}
     >
       {children}
     </StyledButton>
   );
 };
-
+/**
+ * The VisualizerButtonGroup Component:
+ *  Allows the user to select and deselect vertical screens to be displayed
+ *  Handles sending display state to redux
+ * @returns
+ */
 function VisualizerButtonGroup() {
   const dispatch = useAppDispatch();
   const screenState = useAppSelector(selectVerticalScreens);
@@ -89,7 +94,7 @@ function VisualizerButtonGroup() {
         size="small"
         variant="outlined"
         aria-label="Basic button group"
-        sx={{ height: "30px", transition: "width 0.3s ease"}}
+        sx={{ height: "30px", transition: "width 0.3s ease" }}
       >
         <VisualizerButton
           selected={screenState.networkVisualizer}

@@ -1,12 +1,18 @@
 import { Box, Typography } from "@mui/material";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useAppSelector } from "../app/hooks";
 import useScreenSize from "../app/hooks/useScreenSize";
-import { LogContainerColors, selectLogFiltersState } from "../redux/containerInfoSlice";
+import {
+  LogContainerColors,
+  selectLogFiltersState,
+} from "../redux/containerInfoSlice";
 import { Log } from "../Main";
 
-
-
+/**
+ * The LogStreamDisplayComponent
+ *  Contains all logs
+ *  Determines which logs to display based on filter state
+ */
 const LogStreamDisplay: FC<{ logs: Log[] }> = ({ logs }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const autoScrollRef = useRef(true);
@@ -16,6 +22,7 @@ const LogStreamDisplay: FC<{ logs: Log[] }> = ({ logs }) => {
     const container = containerRef.current;
     if (!container) return;
 
+    //autoscroll user if already scrolled to bottom of container
     const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = container;
       const isAtBottom = scrollHeight - (scrollTop + clientHeight) <= 1;
@@ -27,6 +34,10 @@ const LogStreamDisplay: FC<{ logs: Log[] }> = ({ logs }) => {
   }, []);
 
   useEffect(() => {
+    /*
+      If the user is not scrolled to the bottom of the container,
+      then hold their current place so they don't get scrolled up as new messages get added.
+    */
     const check = () => {
       if (autoScrollRef.current && containerRef.current) {
         const container = containerRef.current;
@@ -43,7 +54,7 @@ const LogStreamDisplay: FC<{ logs: Log[] }> = ({ logs }) => {
         height: "100%",
         width: "100%",
         overflowY: "auto",
-        overflowX: 'hidden',
+        overflowX: "hidden",
         backgroundColor: "rgba(255,255,255, .12)",
         borderRadius: "2px",
         display: "flex",
@@ -64,14 +75,27 @@ const LogStreamDisplay: FC<{ logs: Log[] }> = ({ logs }) => {
         },
       }}
     >
+      {/*Filter out logs based on current filters, then create component for remaining logs*/}
       {logs
-        .filter((log) => logFilterState.logType[log.type] && logFilterState.containers[log.containerName])
+        .filter(
+          (log) =>
+            logFilterState.logType[log.type] &&
+            logFilterState.containers[log.containerName]
+        )
         .map((entry, index) => (
           <Typography
             sx={{ fontSize: `${isLg ? "12px" : "10px"}` }}
             key={index}
           >
-            <span style={{color: `${LogContainerColors[entry.containerName]}`, fontWeight: 700}}>{entry.containerName + " | "}</span>{entry.message}
+            <span
+              style={{
+                color: `${LogContainerColors[entry.containerName]}`,
+                fontWeight: 700,
+              }}
+            >
+              {entry.containerName + " | "}
+            </span>
+            {entry.message}
           </Typography>
         ))}
     </Box>

@@ -7,6 +7,14 @@ import {
 } from "../redux/exhibitScreensSlice";
 import GameScreen from "./GameScreen";
 import ExhibitScreen from "./Screen Grid/Screen/ExhibitScreen";
+
+/**
+ * The Body Component:
+ *  Holds all game screens
+ *  Calculates the size of each game screen
+ *  Determines what screens to display based on redux state
+ * @returns
+ */
 function Body() {
   const screenState = useAppSelector(selectVerticalScreens);
   const screenTabState = useAppSelector(selectDisplayTab);
@@ -39,6 +47,9 @@ function Body() {
   const aspectRatio = 9 / 16;
   const gameScreenAspectRatio = 16 / 9;
 
+  /**
+   * Store the size of the top-level container component whenever it resizes
+   */
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]): void => {
       for (const entry of entries) {
@@ -61,38 +72,50 @@ function Body() {
     };
   }, []);
 
+  /**
+   * Calculates the max dimensions that each vertical game screen can be based on:
+   *  The size of the window
+   *  How many screens are present
+   * Also calculates the max size of the game display if on that tab
+   */
   useEffect(() => {
     const containerWidth = containerSize.width;
     const containerHeight = containerSize.height;
-    if(screenTabState === 'vertical'){
-      let newWidth = containerWidth / (verticalScreensCount + .20);
+    //check which tab we are in
+    if (screenTabState === "vertical") {
+      //determine the max width each container can be (the plus .20 just gives room for error)
+      let newWidth = containerWidth / (verticalScreensCount + 0.2);
+      //determine the max height based on the calculated width and fixed aspect ratio
       let newHeight = newWidth / aspectRatio;
-  
+
+      /*
+        If the height is too large for the screen
+        Multiply the height by 95%
+        Recalculate the width based on the new height 
+       */
       if (newHeight > containerHeight * 0.95) {
         newHeight = containerHeight * 0.95;
         newWidth = newHeight * aspectRatio;
       }
-  
+
       setDivSize({
         width: Math.round(newWidth),
         height: Math.round(newHeight),
       });
-    }else{
+    } else {
       let newWidth = containerWidth;
       let newHeight = newWidth / gameScreenAspectRatio;
-  
+
       if (newHeight > containerHeight * 0.95) {
         newHeight = containerHeight * 0.95;
         newWidth = newHeight * gameScreenAspectRatio;
       }
-  
+
       setGameScreenSize({
         width: Math.round(newWidth),
         height: Math.round(newHeight),
       });
     }
-
-
   }, [containerSize, verticalScreensCount]);
 
   return (
@@ -112,7 +135,9 @@ function Body() {
             width: "100%",
             alignContent: "flex-start",
             alignItems: "flex-start",
-            justifyContent: `${verticalScreensCount < 3 ? "center" : "space-between"}`,
+            justifyContent: `${
+              verticalScreensCount < 3 ? "center" : "space-between"
+            }`,
             gap: `${verticalScreensCount === 1 ? "0" : "12px"}`,
             transition: "all 0.3s ease",
           }}
@@ -144,11 +169,15 @@ function Body() {
           sx={{
             width: "100%",
             height: "100%",
-            display: 'flex',
-            justifyContent: 'center'
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <GameScreen connectionString="http://localhost:5000" width={gameScreenSize.width} height={gameScreenSize.height}/>
+          <GameScreen
+            connectionString="http://localhost:5000"
+            width={gameScreenSize.width}
+            height={gameScreenSize.height}
+          />
         </Box>
       )}
     </Box>
