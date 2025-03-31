@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dw"
+version = "0.2.0"
+description = "A sample Python package"
+
+# [tool.setuptools]
+# packages = [
+#     "dw",
+#     "dw.state_machine",
+#     "dw.utils"
+# ]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"] # This should be specific and not use wildcards but I can't figure it out. Are you willing to bother?
