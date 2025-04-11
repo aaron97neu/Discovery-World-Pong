@@ -5,7 +5,8 @@ import {GizmoHelper, GizmoViewcube, GizmoViewport, GridHelper} from "@react-thre
 import GamePlay from './GamePlay';
 import GamePlayHud from './GamePlayHud';
 import GameInstructionsHud from './GameInstructionHud';
-import { GameSessionContext } from './GameSessionContext';
+import { useGameContext } from './GameContext';
+import Game from './Game';
 
 function CameraController() {
   const { camera } = useThree();
@@ -25,10 +26,11 @@ function MainScene() {
 
   const {
     isGamePlayComplete,
-  } = useContext(GameSessionContext);
+  } = useGameContext();
 
   return (
     <Canvas mode="concurrent">
+      <Game/>
       <ambientLight intensity={1.5} />
       <CameraController />
       <Suspense fallback={null} >

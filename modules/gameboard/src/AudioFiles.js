@@ -14,6 +14,15 @@ class AudioFileMap {
       ['pointLose', new Audio(AUDIO.pointLose)],
       ['pointScore', new Audio(AUDIO.pointScore)]
     ]);
+
+    // Preload all audio files
+    this.preloadAllAudio();
+  }
+
+  preloadAllAudio() {
+    this.fileMap.forEach((audio, key) => {
+      audio.load(); // Force the browser to preload the audio file
+    });
   }
 
   getAudio(id) {

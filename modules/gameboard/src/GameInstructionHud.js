@@ -1,12 +1,12 @@
 import { useContext} from 'react'
 import {Hud, PerspectiveCamera} from "@react-three/drei";
-import {GameSessionContext} from './GameSessionContext';
+import {GameContext} from './GameContext';
 import HudImage from './HudImage';
 
 function GameInstructionsHud() {
   const {
     gameInstructionProps
-  } = useContext(GameSessionContext);
+  } = useContext(GameContext);
 
   return (
     <Hud>

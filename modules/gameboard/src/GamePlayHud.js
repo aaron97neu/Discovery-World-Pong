@@ -1,6 +1,6 @@
 import { useContext} from 'react'
 import {Hud, PerspectiveCamera, Text} from "@react-three/drei";
-import {GamePlayContext} from './GamePlayContext';
+import {useGamePlayContext} from './GamePlayContext';
 import mainFont from './fonts/Roboto-Bold.ttf';
 import * as IMAGES from './loadImages';
 import HudImage from './HudImage';
@@ -11,7 +11,7 @@ function GamePlayHud() {
     countdown, 
     topScore, 
     bottomScore
-  } = useContext(GamePlayContext);
+  } = useGamePlayContext();
 
   return (
     <Hud>

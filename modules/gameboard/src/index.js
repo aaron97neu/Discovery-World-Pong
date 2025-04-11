@@ -3,18 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {GameSessionProvider} from './GameSessionContext';
+import {GameProvider} from './GameContext';
 import {GamePlayProvider} from './GamePlayContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
-    <GameSessionProvider>
+  <React.StrictMode>
+    <GameProvider>
     <GamePlayProvider>
     <App />
     </GamePlayProvider>
-    </GameSessionProvider>
-  // </React.StrictMode>
+    </GameProvider>
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

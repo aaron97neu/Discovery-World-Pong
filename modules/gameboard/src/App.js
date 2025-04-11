@@ -1,50 +1,28 @@
 import './App.css';
-import React, {useEffect, useState, useContext, useRef} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import {PongAPI} from 'dw-state-machine';
-import GameAPI from './GameAPI';
-import {GameSessionContext} from './GameSessionContext';
-import {GamePlayContext} from './GamePlayContext';
-import GameSessionStateMachine from './GameSessionStateMachine';
+import {useGameContext} from './GameContext';
 import MainScene from './MainScene';
+import Game from './Game';
+import ParentComponent from './ParentComponent';
+
+const uuid = uuidv4();
 
 function App() {
-  const [size, setSize] = useState({ width: 800, height: 600 });
-
-  const gameSessionContext = useContext(GameSessionContext);
-  const gamePlayContext = useContext(GamePlayContext);
-
   const {
-    isAppInitialized, 
-    setisAppInitialized,
-    // setIsGameComplete,
-  } = useContext(GameSessionContext);
+    pongAPI,
+    setPongAPI,
+  } = useGameContext();
+
+  const [size, setSize] = useState({ width: 800, height: 600 });
 
   const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
   const port = process.env.REACT_APP_MQTT_PORT || 9001;
   const brokerUrl = `ws://${broker}:${port}`;
   const clientId = process.env.REACT_APP_MQTT_CLIENT_ID || 'gameboard';
-  const uuid = uuidv4();
   const fullClientId = `${clientId}-${uuid}`;
-
-  const onPongApiConnection = () => {
-    if (!isAppInitialized) {
-      setisAppInitialized(true);
-      // setIsGameComplete(true);
-    }
-  }  
-  
-  const onPongApiDisconnection = () => {
-  }
-
-  const pongAPIRef = useRef(new PongAPI(
-    fullClientId, 
-    brokerUrl, 
-    onPongApiConnection, 
-    onPongApiDisconnection)
-  );
-
-  const GameSessionStateMachineRef = useRef();
+  const pongAPIRef = useRef(null); // Use useRef to store the PongAPI instance
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -52,18 +30,16 @@ function App() {
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
 
+    if (!pongAPIRef.current) {
+      pongAPIRef.current = PongAPI(fullClientId, brokerUrl);
+    } 
+
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
-    }
+    } 
 
-    if (!GameSessionStateMachineRef.current) {
-      GameSessionStateMachineRef.current = new GameSessionStateMachine(
-        pongAPIRef.current, 
-        gameSessionContext,
-        gamePlayContext
-      );
-      GameSessionStateMachineRef.current.startMachine();
-    }
+    setPongAPI(pongAPIRef.current);
+
 
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });
@@ -73,15 +49,18 @@ function App() {
     return () => {
       // Cleanup if necessary
       window.removeEventListener('resize', handleResize);
+
+      // pongAPI.stop();
       if (pongAPIRef.current) {
         pongAPIRef.current.stop();
-      }
+      } 
     };
   }, []);
 
   return (
     <div className="App" >
-      <GameAPI pongAPIRef={pongAPIRef} />
+      {/* <Game/> */}
+      
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );
