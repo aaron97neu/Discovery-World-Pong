@@ -27,34 +27,44 @@
 
 <body>
     <div class="container">
-        <div class="info">
-            <h1> Neural Network Visualization </h1>
-            <p>
-                The Pong "AI" makes decisions by using a type of machine 
-                learning called Deep Reinforcement Learning. The graphic helps
-                us understand how the AI is making decisions. Starting from the
-                bottom, we see simplified picture of the pong game. This
-                simplistic version of the game helps the computer focus on the
-                important parts of the game (the paddles and the ball) and not
-                get distracted by things like the background. Above this, we
-                have the AI's "neurons". The number, weight (size), and
-                connections between these neurons is what determines the AI's
-                inteligence. The lines drawn between the pixels on the game and
-                the "activated" neurons show which pixels are important to the
-                network. The "importance" is determined by weights, which we
-                determine when we "train" the algorithm. From there, each neuron
-                can activate other neurons by using a similar mechanism. Neurons
-                communicating with other neurons is what makes our AI
-                <b>deep</b> reinforcement learning. From there, the activated
-                neurons try to activate one of the three possible actions the AI
-                can take. These are shown on top as "Left", "Right", and "None".
-                The output with the most activation, shows as a percentage above
-                the action, is what the opponent eventually does.
-            </p>
-        </div>
+        <h1 class="title"> T.Y.L.E.R.’S BRAIN</h1>
         <div class="visualization">
             <canvas id="visualizer"></canvas>
         </div>
+        <div class="think-outer-container">
+            <div class="think-inner-container">
+                Watch me think!
+            </div>
+        </div>
+        <div class="info-container">
+            <div class="info-text">
+                <p>This is T.Y.L.E.R’s brain! Like your own brain,
+                    T.Y.L.E.R uses his to learn new things. In this
+                    case, he learns how to be better at keeping
+                    the ball in play and winning the game!
+                </p>
+                <br></br>
+                <p>The dots help tell T.Y.L.E.R what to do,
+                    like moving left or right. The lines move
+                    information between dots and create
+                    connections. These connections strengthen
+                    as they are used more frequently.
+                </p>
+            </div>
+            <div class="dots-outer-container">
+                <div class="dots-inner-container">
+                    <div class="dot-container">
+                        <p>ON</p>
+                        <div class='dot' style="background-color: red;"></div>
+                    </div>
+                    <div class="dot-container">
+                        <p>OFF</p>
+                        <div class='dot' style="background-color: black;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

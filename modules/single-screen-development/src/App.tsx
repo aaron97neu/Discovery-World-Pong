@@ -1,4 +1,3 @@
-import { Box, useMediaQuery } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { FC } from "react";
