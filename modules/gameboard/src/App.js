@@ -4,14 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 import {PongAPI} from 'dw-state-machine';
 import {useGameContext} from './GameContext';
 import MainScene from './MainScene';
-import Game from './Game';
-import ParentComponent from './ParentComponent';
 
 const uuid = uuidv4();
 
 function App() {
   const {
-    pongAPI,
     setPongAPI,
   } = useGameContext();
 
@@ -40,7 +37,6 @@ function App() {
 
     setPongAPI(pongAPIRef.current);
 
-
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });
     };
@@ -50,7 +46,6 @@ function App() {
       // Cleanup if necessary
       window.removeEventListener('resize', handleResize);
 
-      // pongAPI.stop();
       if (pongAPIRef.current) {
         pongAPIRef.current.stop();
       } 
@@ -58,9 +53,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App" >
-      {/* <Game/> */}
-      
+    <div className="App" >     
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );

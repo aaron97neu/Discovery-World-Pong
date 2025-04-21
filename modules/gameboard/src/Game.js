@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
 import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
 import GameStateMachine from './GameStateMachine';
@@ -7,7 +6,6 @@ import { PongAPI } from 'dw-state-machine';
 
 const Game = () => {
   const {
-    setGameStateMachine,
     gameStateMachine,
     pongAPI,
   } = useGameContext();
@@ -42,8 +40,6 @@ const Game = () => {
       if (pongAPI &&  pongAPI.isConnected()) {     
         if (gameStateMachine.state != "idle"
           && (topPaddleState == "stop" || bottomPaddleState == "stop")) {
-            console.log("000000000000000000000000");
-            console.log(`gameStateMachine.state: ${gameStateMachine.state}`);
           const message = {
             "transition": "player_exit"
           };

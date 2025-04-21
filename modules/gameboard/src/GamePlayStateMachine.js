@@ -1,23 +1,22 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import StateMachine from 'javascript-state-machine';
-import { PongAPI } from 'dw-state-machine';
 import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
+import { PongAPI } from 'dw-state-machine';
 import * as TEXT from './loadText';
 
-const GamePlayStateMachine = () => {
+const GamePlayStateMachine = ({ballRef}) => {
     const {
-        setGamePlayStateMachine,
         pongAPI,
+        setGamePlayStateMachine,
     } = useGameContext();
 
     const {
+        speed,
         setCountdown,
-        setResetPaddles,
-        setResetBall,
-        setStartBall,
-        setIsCountdownComplete,
-        setIsNoCountdownComplete,
+        setIsTopPaddleReset,
+        setIsBottomPaddleReset,
+        setIsBallReset,
     } = useGamePlayContext();  
 
     const delay = 500;
@@ -26,7 +25,7 @@ const GamePlayStateMachine = () => {
         const fsm = new StateMachine({   
             init: 'gameStarted',
             transitions: [
-                { name: 'startLevelReset', from: ['gameStarted', "topScore", "bottomScore"], to: 'levelReset' },
+                { name: 'startLevelReset', from: ['gameStarted', "play", "gameComplete"], to: 'levelReset' },
                 { name: 'startCountdown', from: ['levelReset'], to: 'countdown' },
                 { name: 'startNoCountdown', from: ['playReset'], to: 'noCountdown' },
                 { name: 'startPlay', from: ['countdown', 'noCountdown'], to: 'play' },
@@ -39,85 +38,58 @@ const GamePlayStateMachine = () => {
                 },
                 onLevelReset: () => {
                     console.log('GamePlayStateMachine levelReset state');
-                },
-                onCountdown: () => {
-                    console.log('GamePlayStateMachine countdown state');
+
+                    setIsTopPaddleReset(false);                 
+                    setIsBottomPaddleReset(false);                 
+                    setIsBallReset(false);
+    
+                    const message =  { "transition": "reset" };
+                    pongAPI.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
+                    pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message ); 
                 },
                 onPlayReset: () => {
                     console.log('GamePlayStateMachine playReset state');
+                    setIsTopPaddleReset(false);                 
+                    setIsBottomPaddleReset(false);                 
+                    setIsBallReset(false);
+        
+                    const message =  { "transition": "reset" };
+                    pongAPI.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
+                    pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );
+                },
+                onCountdown: () => {
+                    console.log('GamePlayStateMachine countdown state');
+
+                    setCountdown(TEXT.countdown_three);
+                    setTimeout(() => {
+                        setCountdown(TEXT.countdown_two);
+                        setTimeout(() => {
+                            setCountdown(TEXT.countdown_one);
+                            setTimeout(() => {
+                                setCountdown(TEXT.countdown_go);
+                                setTimeout(() => {
+                                    setCountdown(TEXT.blank);
+                                    fsm.startPlay();
+                                    }, delay); 
+                            }, delay); 
+                        }, delay);
+                    }, delay);
                 },
                 onNoCountdown: () => {
                     console.log('GamePlayStateMachine noCountdown state');
+
+                    setTimeout(() => {
+                        fsm.startPlay();
+                    }, delay);                   
                 },
                 onPlay: () => {
                     console.log('GamePlayStateMachine play state');
+
+                    ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);  
                 },
                 onGameComplete: () => {
                     console.log('GamePlayStateMachine gameComplete state');
                 },
-
-
-                // onLevelReset: () => {
-                //     console.log('GamePlayStateMachine levelReset state');
-
-                //     setResetPaddles(true);
-                //     setResetBall(true);
-
-                //     const message =  { "transition": "reset" };
-                //     pongAPI.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
-                //     pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );   
-                // },
-                // onCountdown: () => {
-                //     console.log('GamePlayStateMachine countdown state');
-
-                //     setCountdown(TEXT.countdown_three);
-                //     setTimeout(() => {
-                //         setCountdown(TEXT.countdown_two);
-                //         setTimeout(() => {
-                //             setCountdown(TEXT.countdown_one);
-                //             setTimeout(() => {
-                //                 setCountdown(TEXT.countdown_go);
-                //                 setTimeout(() => {
-                //                     setCountdown(TEXT.blank);
-                //                     setIsCountdownComplete(true);
-                //                 }, delay); 
-                //             }, delay); 
-                //         }, delay);
-                //     }, delay);
-                // }, 
-                                    
-                // onPlayReset: () => {
-                //     console.log('GamePlayStateMachine playReset state');
-
-                //     setResetPaddles(true);
-                //     setResetBall(true);
-
-                //     const message =  { "transition": "reset" };
-                //     pongAPI.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
-                //     pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );   
-                // },                
-                // onNoCountdown: () => {
-                //     console.log('GamePlayStateMachine noCountdown state');
-
-                //     setTimeout(() => {
-                //         setIsNoCountdownComplete(true);
-                //     }, delay);
-                // },                 
-                // onPlay: () => {
-                //     console.log('GamePlayStateMachine play state');
-
-                //     setStartBall(true);
-                // },  
-                // onGameComplete: () => {
-                //     console.log('GamePlayStateMachine endGame state');
-
-                //     setResetPaddles(true);
-                //     setResetBall(true);
-
-                //     const message =  { "transition": "reset" };
-                //     pongAPI.update(PongAPI.Topics.PADDLE_TOP_STATE_TRANSITION ,message );
-                //     pongAPI.update(PongAPI.Topics.PADDLE_BOTTOM_STATE_TRANSITION, message );   
-                // },  
                 onInvalidTransition: function(transition, from, to) {
                     console.log("transition '%s' not allowed from state '%s'", transition, from);
                     return false;

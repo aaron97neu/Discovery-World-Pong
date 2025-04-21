@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
-import GamePlayStateMachine from './GamePlayStateMachine';
 import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
 import { createBaseGameStateMachine } from 'dw-state-machine';
 import { PongAPI } from 'dw-state-machine';
 import AudioPlayer from './AudioPlayer';
-import { level1Win } from "./loadAudioFiles";
 import * as IMAGES from './loadImages';
 
 const GameStateMachine = () => {
@@ -18,25 +16,22 @@ const GameStateMachine = () => {
 
   const {
     setLevel,
-    setIsCollidersEnabled,
-    setTopPaddleStateTransition,
-    setBottomPaddleStateTransition,
-    setIsBallReset,
   } = useGamePlayContext();  
 
-  const playTime = 30000;
+  // const playTime = 30000;
+  const playTime = 10000;
   const volume = 0.5;
   const audioPlayer = new AudioPlayer();
 
   useEffect(() => {
     if (gamePlayStateMachine) {
+      console.log(`exhibitActivationNoise`);
+      audioPlayer.play('exhibitActivationNoise');
+
       const fsm = createBaseGameStateMachine(pongAPI);
 
       fsm.onEnterIdle = () => { 
         console.log('GameStateMachine Entered Idle state'); 
-        const sm = gamePlayStateMachine;
-
-        // gamePlayStateMachine.endGame();
 
         audioPlayer.stop('musicBackground');
         audioPlayer.setVolume('musicIdle',  volume);
@@ -62,12 +57,6 @@ const GameStateMachine = () => {
         audioPlayer.play('musicBackground');
       };
 
-      fsm.onLeaveIntro = () => { 
-        console.log('GameStateMachine Leave Intro state'); 
-
-        audioPlayer.stop('musicBackground');
-      };  
-
       fsm.onEnterMoveIntro = () => { 
         console.log('GameStateMachine Entered MoveIntro state'); 
 
@@ -88,31 +77,37 @@ const GameStateMachine = () => {
         });
       };  
 
-      fsm.onEnterLevel1 = () => {  
-        console.log('GameStateMachine Entered Level1 state');
-        const sm = gamePlayStateMachine;
-
-        // setIsCollidersEnabled(false);
-        // setTopPaddleStateTransition("not_ready");
-        // setBottomPaddleStateTransition("not_ready");
-        // setIsBallReset(false);
+      fsm.onEnterLevel1Intro = () => {  
+        console.log('GameStateMachine Entered Level1Intro state');
         gamePlayStateMachine.startLevelReset();
 
-        setLevel(1);
+        setLevel(1);        
+      };
+
+      fsm.onEnterLevel1 = () => {  
+        console.log('GameStateMachine Entered Level1 state');
+        gamePlayStateMachine.startCountdown();
 
         setTimeout(() => {
           const message = {
             "transition": "level1_complete"
           };
 
-          // pongAPI.update(PongAPI.Topics.GAME_STATE, message );
+          pongAPI.update(PongAPI.Topics.GAME_STATE, message );
         },  playTime);         
+      };
+
+      fsm.onEnterLevel2Intro = () => {  
+        console.log('GameStateMachine Entered Level2Intro state');
+        gamePlayStateMachine.startLevelReset();
+
+        setLevel(2);
       };
 
       fsm.onEnterLevel2 = () => {  
         console.log('GameStateMachine Entered Level2 state');
 
-        setLevel(2);
+        gamePlayStateMachine.startCountdown();
 
         setTimeout(() => {
           const message = {
@@ -123,10 +118,17 @@ const GameStateMachine = () => {
         },  playTime);            
       }
 
+      fsm.onEnterLevel3Intro = () => {  
+        console.log('GameStateMachine Entered Level3Intro state');
+        gamePlayStateMachine.startLevelReset();
+
+        setLevel(3);
+      };
+
       fsm.onEnterLevel3 = () => {  
         console.log('GameStateMachine Entered Level3 state');
 
-        setLevel(3);        
+        gamePlayStateMachine.startCountdown();      
       }
 
       fsm.onLeaveOutro = () => {  
@@ -142,10 +144,6 @@ const GameStateMachine = () => {
       setGameStateMachine(fsm);
     }
   }, [gamePlayStateMachine]);
-
-  // return (
-  //   <GamePlayStateMachine />
-  // );
 
   return null;
 };
