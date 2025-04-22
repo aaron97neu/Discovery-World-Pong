@@ -53,7 +53,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App" >     
+    <div className="App" >
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );

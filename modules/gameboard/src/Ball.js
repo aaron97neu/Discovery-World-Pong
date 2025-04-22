@@ -1,7 +1,11 @@
-import React, { useRef } from 'react';
 import { RigidBody } from '@react-three/rapier';
+import {useGamePlayContext} from './GamePlayContext';
 
-const Ball = ({ ballRef, position, args, color  }) => {
+const Ball = ({ position, args, color  }) => {
+  const {
+    ballRef,
+  } = useGamePlayContext();  
+
   return (
     <RigidBody 
       ref={ballRef} 
@@ -20,25 +24,5 @@ const Ball = ({ ballRef, position, args, color  }) => {
     </RigidBody>
   );    
 };
-
-
-// const Ball = ({ ballRef, position, args, color  }) => {
-//   // const ballRef = useRef(null);
-
-//   return (
-//     <RigidBody
-//       ref={ballRef}
-//       colliders="ball"
-//       restitution={0.8}
-//       position={position}
-//     >
-//       <mesh castShadow receiveShadow>
-//         <sphereGeometry args={args} />
-//         <meshStandardMaterial color="orange" />
-//       </mesh>
-//     </RigidBody>
-//   );
-// };
-
 
 export default Ball;

@@ -6,13 +6,12 @@ import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
 import * as IMAGES from './loadImages';
 import * as TEXT from './loadText';
-import AudioPlayer from './AudioPlayer';
 import Gameboard from './Gameboard';
 import Ball from './Ball';
 import Paddle from './Paddle';
 // import Goal from './Goal';
 import Wall from './Wall';
-import GamePlayStateMachine from './GamePlayStateMachine';
+// import GamePlayStateMachine from './GamePlayStateMachine';
 
 const gameboardHeight = 160; // height used in AI 
 const gameboardWidth = 192; // width used in AI
@@ -34,6 +33,8 @@ function GamePlay() {
   } = useGameContext();
 
   const {
+    audioPlayer,
+    volume,
     speed,
     level,
     setCountdown,
@@ -49,21 +50,19 @@ function GamePlay() {
     setIsBottomPaddleReset,
     isBallReset,
     setIsBallReset,
+    ballRef,
   } = useGamePlayContext();  
   
-  const ballRef = useRef();
+  // const ballRef = useRef();
   const topPaddleRef = useRef();
   const bottomPaddleRef = useRef();
 
   const max = (gameboardWidth - paddleWidth) / 2;
   const min = -max;
 
-  const texture = useLoader(THREE.TextureLoader, IMAGES.gameboard);
+  const gameboardTexture = useLoader(THREE.TextureLoader, IMAGES.gameboard);
 
   const [prevBallPosition, setPrevBallPosition] = useState({x: 0.0, y: 0.0, z: 0.0});
-
-  const audioPlayerRef = useRef(null);
-  const audioVolume = 0.5;
 
   useEffect(() => {
     if (pongAPI) {
@@ -88,131 +87,112 @@ function GamePlay() {
       );      
     }
 
-    if (!audioPlayerRef.current) {
-      audioPlayerRef.current = new AudioPlayer();
-      audioPlayerRef.current.setVolume('paddleHit', audioVolume);
-      audioPlayerRef.current.setVolume('pointScore', audioVolume);
-      audioPlayerRef.current.setVolume('pointLose', audioVolume);
+    audioPlayer.setVolume('paddleHit', volume);
+    audioPlayer.setVolume('pointScore', volume);
+    audioPlayer.setVolume('pointLose', volume);
 
-    }
   }, []);
 
   useFrame(() => {
     if (gamePlayStateMachine 
-      && ballRef 
-      && ballRef.current 
       && pongAPI 
       &&  pongAPI.isConnected()) {
-
-        switch (gamePlayStateMachine.state) {
-          case "gameStarted":
-            break;            
-          case "levelReset":
-            if(!isBallReset) {
-              setIsBallReset(true);                  
-            } else {
-              if (!isTopPaddleReset
-                || !isBottomPaddleReset) {
+      switch (gamePlayStateMachine.state) {
+        case "gameStarted":
+          break;            
+        case "levelReset":
+          if(!isBallReset) {
+            setIsBallReset(true);                  
+          } else {
+            if (!isTopPaddleReset
+              || !isBottomPaddleReset) {
                 setIsBallReset(true);   
-              }
             }
-
-            // }
-            break;
-          case "playReset":
-              if (isTopPaddleReset
-                && isBottomPaddleReset
-                && isBallReset) {
-                  gamePlayStateMachine.startNoCountdown();
-                } else {
-                  setIsBallReset(true);
-                }
-            break;
-          case "countdown":
-            break;
-          case "noCountdown":
-            break;
-          case "play":
-              try {
-                const ballPosition = ballRef.current.translation();
-                ballPosition.x = Math.round(ballPosition.x);
-                ballPosition.y = Math.round(ballPosition.y);
-                ballPosition.z = Math.round(ballPosition.z);
-    
-                if (ballPosition.x != prevBallPosition.x || 
-                  ballPosition.y != prevBallPosition.y) 
-                {
-                  const message = {
-                    "ball": {
-                      "position": {
-                        "x": ballPosition.x,
-                        "y": ballPosition.y
-                      }
-                    },
-                    "paddle_top": {
-                      "position": {
-                        "x": topPaddlePosition
-                      }
-                    },
-                    "paddle_bottom": {
-                      "position": {
-                        "x":bottomPaddlePosition
-                      }
+          }
+          break;
+        case "playReset":
+            if (isTopPaddleReset
+              && isBottomPaddleReset
+              && isBallReset) {
+                gamePlayStateMachine.startNoCountdown();
+              } else {
+                setIsBallReset(true);
+              }
+          break;
+        case "countdown":
+          break;
+        case "noCountdown":
+          break;
+        case "play":
+          try {
+            if (ballRef && ballRef.current) {
+              const ballPosition = ballRef.current.translation();
+              ballPosition.x = Math.round(ballPosition.x);
+              ballPosition.y = Math.round(ballPosition.y);
+              ballPosition.z = Math.round(ballPosition.z);
+  
+              if (ballPosition.x != prevBallPosition.x || 
+                ballPosition.y != prevBallPosition.y) 
+              {
+                const message = {
+                  "ball": {
+                    "position": {
+                      "x": ballPosition.x,
+                      "y": ballPosition.y
                     }
-                  };
-            
-                  pongAPI.update(PongAPI.Topics.GAME_PLAY, message );
-                  // setPrevBallPosition(ballPosition);
-                }
-    
-                if (ballPosition.y > 90) {
-                  // if (audioPlayerRef.current) {
-                  //   audioPlayerRef.current.play('pointScore').catch((error) => {
-                  //       console.error('Error playing audio:', error);
-                  //   });
-                  // }
-
-                  setBottomScore((prev) => prev + 1);
+                  },
+                  "paddle_top": {
+                    "position": {
+                      "x": topPaddlePosition
+                    }
+                  },
+                  "paddle_bottom": {
+                    "position": {
+                      "x":bottomPaddlePosition
+                    }
+                  }
+                };
+          
+                pongAPI.update(PongAPI.Topics.GAME_PLAY, message );
+                // setPrevBallPosition(ballPosition); // causes issues with the ball
+              }
+  
+              if (ballPosition.y > 90) {
+                setBottomScore((prev) => prev + 1);
+                gamePlayStateMachine.startPlayReset();
+              }
+  
+              if (ballPosition.y < -90) {       
+                if (level === 3) {
+                  setTopScore((prev) => prev + 1);
+                  gamePlayStateMachine.endGame();
+                } else {
+                  setTopScore((prev) => prev + 1);
                   gamePlayStateMachine.startPlayReset();
                 }
-    
-                if (ballPosition.y < -90) {
-                  // if (audioPlayerRef.current) {
-                  //   audioPlayerRef.current.play('pointLose').catch((error) => {
-                  //       console.error('Error playing audio:', error);
-                  //   });
-                  // }
-        
-                  if (level === 3) {
-                    setTopScore((prev) => prev + 1);
-                    gamePlayStateMachine.endGame();
-
-                  } else {
-                    setTopScore((prev) => prev + 1);
-                    gamePlayStateMachine.startPlayReset();
-                  }
-                }
-              } catch (error) {
-                console.log(`Error: ${error.message}`);
-              }               
-              break;
-            case "gameComplete":
-              gamePlayStateMachine.startLevelReset();
-              if (bottomScore > topScore) {
-                setCountdown(TEXT.human_wins);
               }
-          
-              if (bottomScore < topScore) {
-                  setCountdown(TEXT.tyler_wins);
-              }
-          
-              if (bottomScore == topScore) {
-                  setCountdown(TEXT.draw);
-              }
-              break;
-            default:
-            console.log("Unknown state");
-        }
+            }
+          } catch (error) {
+            console.log(`Error: ${error.message}`);
+          }               
+          break;
+        case "gameComplete":
+          gamePlayStateMachine.startLevelReset();
+          if (bottomScore > topScore) {
+            setCountdown(TEXT.human_wins);
+          }
+      
+          if (bottomScore < topScore) {
+              setCountdown(TEXT.tyler_wins);
+          }
+      
+          if (bottomScore == topScore) {
+              setCountdown(TEXT.draw);
+          }
+        break;
+        default:
+          console.log("Unknown state");
+      }
     }
 
     if (topPaddleRef.current) {
@@ -232,7 +212,7 @@ function GamePlay() {
     }   
 
   });
-  
+ 
   const onPaddleTopStateTransition = (message) => {
     const paddleStateTransition = message.transition;
    
@@ -270,7 +250,7 @@ function GamePlay() {
       targetObject.userData && targetObject.userData.isPaddle) {
 
       // Play an audio clip for the paddle hit using the audio player reference
-      audioPlayerRef.current.play('paddleHit').catch((error) => {
+      audioPlayer.play('paddleHit').catch((error) => {
         console.error('Error playing audio:', error);
       });
 
@@ -302,12 +282,10 @@ function GamePlay() {
     // it was duplicating collisions.
 
     <group position={[0, 0, 0]} >
-      <GamePlayStateMachine ballRef={ballRef} />
-
       <Gameboard 
         position={[0.0, 0.0, gameboardZ]} 
         args={[gameboardWidth, gameboardHeight]} 
-        map={texture} 
+        map={gameboardTexture} 
       />
 
       {/* <Goal 
@@ -351,12 +329,12 @@ function GamePlay() {
       />
 
       {isBallReset && (
-      <Ball 
-      ballRef={ballRef}
-      position={ballStartPosition} 
-      args={[ballRadius, 64, 64]}  
-      color="rgb(255,255,255)" 
-      />
+        <Ball 
+        // ballRef={ballRef}
+          position={ballStartPosition} 
+          args={[ballRadius, 64, 64]}  
+          color="rgb(255,255,255)" 
+        />
       )}
 
     </group>

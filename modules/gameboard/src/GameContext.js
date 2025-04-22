@@ -16,7 +16,8 @@ const GameProvider = ({ children }) => {
   const [pongAPI, setPongAPI] = useState(null);
   const [parentStateMachine, setParentStateMachine] = useState(null);
   const [childStateMachine, setChildStateMachine] = useState(null);
-
+  const [isGamePlayComplete, setIsGamePlayComplete] = useState(true);
+  
   return (
     <GameContext.Provider value={{ 
       gameInstructionProps, setgameInstructionProps,
@@ -25,6 +26,7 @@ const GameProvider = ({ children }) => {
       pongAPI, setPongAPI,
       parentStateMachine, setParentStateMachine,
       childStateMachine, setChildStateMachine,
+      isGamePlayComplete, setIsGamePlayComplete,
     }}>
       {children}
     </GameContext.Provider>

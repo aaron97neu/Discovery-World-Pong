@@ -5,7 +5,7 @@ import {useGamePlayContext} from './GamePlayContext';
 import { PongAPI } from 'dw-state-machine';
 import * as TEXT from './loadText';
 
-const GamePlayStateMachine = ({ballRef}) => {
+const GamePlayStateMachine = () => {
     const {
         pongAPI,
         setGamePlayStateMachine,
@@ -13,13 +13,13 @@ const GamePlayStateMachine = ({ballRef}) => {
 
     const {
         speed,
+        delay,
         setCountdown,
         setIsTopPaddleReset,
         setIsBottomPaddleReset,
         setIsBallReset,
+        ballRef,
     } = useGamePlayContext();  
-
-    const delay = 500;
 
     useEffect(() => {
         const fsm = new StateMachine({   
@@ -85,7 +85,9 @@ const GamePlayStateMachine = ({ballRef}) => {
                 onPlay: () => {
                     console.log('GamePlayStateMachine play state');
 
-                    ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);  
+                    if (ballRef && ballRef.current) {
+                        ballRef.current.setLinvel({ x: 0, y: speed, z: 0 }, true);
+                    }  
                 },
                 onGameComplete: () => {
                     console.log('GamePlayStateMachine gameComplete state');

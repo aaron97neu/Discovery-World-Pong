@@ -3,25 +3,25 @@ import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
 import { createBaseGameStateMachine } from 'dw-state-machine';
 import { PongAPI } from 'dw-state-machine';
-import AudioPlayer from './AudioPlayer';
 import * as IMAGES from './loadImages';
+import * as TEXT from './loadText';
 
 const GameStateMachine = () => {
   const {
+    setgameInstructionProps,
     setGameStateMachine,
     gamePlayStateMachine, 
     pongAPI,
-    setgameInstructionProps,
+    setIsGamePlayComplete,
   } = useGameContext();
 
   const {
+    audioPlayer,
+    playTime,
+    volume,
     setLevel,
+    setCountdown,
   } = useGamePlayContext();  
-
-  // const playTime = 30000;
-  const playTime = 10000;
-  const volume = 0.5;
-  const audioPlayer = new AudioPlayer();
 
   useEffect(() => {
     if (gamePlayStateMachine) {
@@ -70,31 +70,33 @@ const GameStateMachine = () => {
       fsm.onLeaveMoveIntro = () => { 
         console.log('GameStateMachine Leave MoveIntro state'); 
 
-        setgameInstructionProps({
-          image: IMAGES.welcomeScreen,
-          position: [0.0, 0.2, 0.0],
-          scale: 8.5
-        });
+        setIsGamePlayComplete();
+        setCountdown(TEXT.countdown_get_ready);
       };  
 
       fsm.onEnterLevel1Intro = () => {  
         console.log('GameStateMachine Entered Level1Intro state');
-        gamePlayStateMachine.startLevelReset();
+        if (gamePlayStateMachine) {
+          gamePlayStateMachine.startLevelReset();
 
-        setLevel(1);        
+          setLevel(1);
+        }        
       };
 
       fsm.onEnterLevel1 = () => {  
         console.log('GameStateMachine Entered Level1 state');
-        gamePlayStateMachine.startCountdown();
 
-        setTimeout(() => {
-          const message = {
-            "transition": "level1_complete"
-          };
+        if (gamePlayStateMachine) {
+          gamePlayStateMachine.startCountdown();
 
-          pongAPI.update(PongAPI.Topics.GAME_STATE, message );
-        },  playTime);         
+          setTimeout(() => {
+            const message = {
+              "transition": "level1_complete"
+            };
+
+            pongAPI.update(PongAPI.Topics.GAME_STATE, message );
+          },  playTime);
+        }         
       };
 
       fsm.onEnterLevel2Intro = () => {  
@@ -107,28 +109,35 @@ const GameStateMachine = () => {
       fsm.onEnterLevel2 = () => {  
         console.log('GameStateMachine Entered Level2 state');
 
-        gamePlayStateMachine.startCountdown();
+        if (gamePlayStateMachine) {
+          gamePlayStateMachine.startCountdown();
 
-        setTimeout(() => {
-          const message = {
-            "transition": "level2_complete"
-          };
+          setTimeout(() => {
+            const message = {
+              "transition": "level2_complete"
+            };
 
-          pongAPI.update(PongAPI.Topics.GAME_STATE, message );
-        },  playTime);            
+            pongAPI.update(PongAPI.Topics.GAME_STATE, message );
+          },  playTime);            
+        }
       }
 
       fsm.onEnterLevel3Intro = () => {  
         console.log('GameStateMachine Entered Level3Intro state');
-        gamePlayStateMachine.startLevelReset();
 
-        setLevel(3);
+        if (gamePlayStateMachine) {
+          gamePlayStateMachine.startLevelReset();
+
+          setLevel(3);
+        }
       };
 
       fsm.onEnterLevel3 = () => {  
         console.log('GameStateMachine Entered Level3 state');
 
-        gamePlayStateMachine.startCountdown();      
+        if (gamePlayStateMachine) {
+          gamePlayStateMachine.startCountdown();    
+        }  
       }
 
       fsm.onLeaveOutro = () => {  

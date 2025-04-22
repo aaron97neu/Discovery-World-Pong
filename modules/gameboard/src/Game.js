@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react';
 import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
+import GamePlayStateMachine from './GamePlayStateMachine';
 import GameStateMachine from './GameStateMachine';
 import { PongAPI } from 'dw-state-machine';
+import GamePlay from './GamePlay';
+import GamePlayHud from './GamePlayHud';
+import GameInstructionsHud from './GameInstructionHud';
 
 const Game = () => {
   const {
     gameStateMachine,
     pongAPI,
+    isGamePlayComplete,
   } = useGameContext();
 
   const {
@@ -50,7 +55,6 @@ const Game = () => {
         if (gameStateMachine.state === "idle"
           && (topPaddleState == "start" && bottomPaddleState == "ready") 
           || (topPaddleState == "ready" && bottomPaddleState == "start")) {
-    
           const message = {
             "transition": "player_ready"
           };
@@ -83,7 +87,20 @@ const Game = () => {
   } 
 
   return (
-    <GameStateMachine />
+    <group>
+      <GameStateMachine />
+      <GamePlayStateMachine />
+      {isGamePlayComplete ? (
+        <group>
+          <GameInstructionsHud/>
+        </group>  
+      ) : (
+        <group> 
+          <GamePlay/>
+          <GamePlayHud/>
+        </group>
+      )}
+    </group>
   );
   
 };

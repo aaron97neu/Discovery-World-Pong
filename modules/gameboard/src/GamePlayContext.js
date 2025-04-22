@@ -1,11 +1,16 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useRef } from "react";
+import AudioPlayer from './AudioPlayer';
 import * as TEXT from './loadText';
 
 const GamePlayContext = createContext();
 const useGamePlayContext = () => useContext(GamePlayContext);
 
 const GamePlayProvider = ({ children }) => {
-  const [speed, setSpeed] = useState(200);
+  const [audioPlayer] = useState(new AudioPlayer());
+  const [volume] = useState(0.5);
+  const [speed] = useState(200);
+  const [playTime] = useState(10000);
+  const [delay] = useState(500);
   const [level, setLevel] = useState(0);
   const [countdown, setCountdown] = useState(TEXT.blank);
   const [topScore, setTopScore] = useState(0);
@@ -18,10 +23,15 @@ const GamePlayProvider = ({ children }) => {
   const [isTopPaddleReset, setIsTopPaddleReset] = useState(false);
   const [isBottomPaddleReset, setIsBottomPaddleReset] = useState(false);
   const [isBallReset, setIsBallReset] = useState(true);
+  const ballRef = useRef();
 
   return (
     <GamePlayContext.Provider value={{
-      speed, setSpeed,
+      audioPlayer,
+      volume,
+      speed,
+      playTime,
+      delay,
       level, setLevel,
       countdown, setCountdown,
       topScore, setTopScore,
@@ -34,6 +44,7 @@ const GamePlayProvider = ({ children }) => {
       isTopPaddleReset, setIsTopPaddleReset,
       isBottomPaddleReset, setIsBottomPaddleReset,
       isBallReset, setIsBallReset,
+      ballRef,
     }}>
       {children}
     </GamePlayContext.Provider>

@@ -1,4 +1,4 @@
-import { useContext} from 'react'
+import React, { useEffect } from 'react';
 import {Hud, PerspectiveCamera, Text} from "@react-three/drei";
 import {useGamePlayContext} from './GamePlayContext';
 import mainFont from './fonts/Roboto-Bold.ttf';
@@ -7,11 +7,26 @@ import HudImage from './HudImage';
 
 function GamePlayHud() {
   const {
+    audioPlayer,
     level,
     countdown, 
     topScore, 
     bottomScore
   } = useGamePlayContext();
+
+  // useEffect(() => {
+  //   console.log("888888888888888888888888888888888");
+  //   audioPlayer.play('paddleHit').catch((error) => {
+  //     console.error('Error playing audio:', error);
+  //   });
+  // }, [topScore]);
+
+  // useEffect(() => {
+  //   console.log("7777777777777777777777777777777777");
+  //   audioPlayer.play('paddleHit').catch((error) => {
+  //     console.error('Error playing audio:', error);
+  //   });
+  // }, [bottomScore]);
 
   return (
     <Hud>
