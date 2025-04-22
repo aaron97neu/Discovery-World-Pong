@@ -1,0 +1,15 @@
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.App {
+  height: 100vh;
+  background-image: url('imgs/AutoEverywhere_Background_portrait.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
