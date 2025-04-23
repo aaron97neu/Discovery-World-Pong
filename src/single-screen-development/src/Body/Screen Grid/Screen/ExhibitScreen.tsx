@@ -115,30 +115,31 @@ const ExhibitScreen: FC<ExhibitScreenProps> = ({
           } else {
             dispatch(setSidebarOpen());
           }
-        }}
-      ></Badge>
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          transform: `scale(${width / 1080})`,
-          transformOrigin: "top left",
-          transition: "all 0.2s ease",
-        }}
-      >
-        <iframe
-          src={iframeSrc}
-          style={{
-            width: "1080px",
-            height: "1920px",
-            border: "none",
+        }}></Badge>
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            transform: `scale(${width / 1080})`,
+            transformOrigin: "top left",
+            transition: "all 0.2s ease"
           }}
-        ></iframe>
+        >
+          <iframe
+            id={container}
+            src={iframeSrc}
+            style={{
+              width: "1080px",
+              height: "1920px",
+              border: "none",
+              
+            }}
+          ></iframe>
+        </Box>
       </Box>
-    </Box>
   );
 };
 
