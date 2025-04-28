@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import AudioPlayer from './AudioPlayer';
 import * as IMAGES from './loadImages';
 
 const GameContext = createContext();
@@ -14,8 +15,8 @@ const GameProvider = ({ children }) => {
   const [gameStateMachine, setGameStateMachine] = useState(null);
   const [gamePlayStateMachine, setGamePlayStateMachine] = useState(null);
   const [pongAPI, setPongAPI] = useState(null);
-  const [parentStateMachine, setParentStateMachine] = useState(null);
-  const [childStateMachine, setChildStateMachine] = useState(null);
+  // const [parentStateMachine, setParentStateMachine] = useState(null);
+  // const [childStateMachine, setChildStateMachine] = useState(null);
   const [isGamePlayComplete, setIsGamePlayComplete] = useState(true);
   
   return (
@@ -24,8 +25,8 @@ const GameProvider = ({ children }) => {
       gameStateMachine, setGameStateMachine,
       gamePlayStateMachine, setGamePlayStateMachine,
       pongAPI, setPongAPI,
-      parentStateMachine, setParentStateMachine,
-      childStateMachine, setChildStateMachine,
+      // parentStateMachine, setParentStateMachine,
+      // childStateMachine, setChildStateMachine,
       isGamePlayComplete, setIsGamePlayComplete,
     }}>
       {children}

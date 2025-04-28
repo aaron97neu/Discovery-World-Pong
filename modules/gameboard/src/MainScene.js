@@ -36,16 +36,6 @@ function MainScene() {
       <Suspense fallback={null} >
         <Physics gravity={[0, 0, 0]} >
         <Game/>
-        {/* {isGamePlayComplete ? (
-          <group>
-            <GameInstructionsHud/>
-          </group>  
-        ) : (
-          <group> 
-            <GamePlay/>
-            <GamePlayHud/>
-          </group>
-        )} */}
         </Physics>   
       </Suspense>
        

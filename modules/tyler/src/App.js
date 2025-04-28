@@ -1,29 +1,25 @@
 import './App.css';
-import React, {useEffect, useState, useContext, useRef} from 'react'
-import GameSessionStateMachine from './GameSessionStateMachine';
-import GamePlay from './GamePlay';
-import {PongAPI} from 'dw-state-machine';
-import MainScene from './MainScene';
-import {SceneContext} from './SceneContext';
+import React, {useEffect, useState, useRef} from 'react'
 import { v4 as uuidv4 } from 'uuid';
+import {PongAPI} from 'dw-state-machine';
+import {useGameContext} from './GameContext';
+import MainScene from './MainScene';
+
+const uuid = uuidv4();
 
 function App() {
-  const [size, setSize] = useState({ width: 800, height: 600 });
+  const {
+    setPongAPI,
+  } = useGameContext();
 
-  const sceneContext = useContext(SceneContext);
+  const [size, setSize] = useState({ width: 800, height: 600 });
 
   const broker = process.env.REACT_APP_MQTT_BROKER || window.location.hostname;
   const port = process.env.REACT_APP_MQTT_PORT || 9001;
   const brokerUrl = `ws://${broker}:${port}`;
-  const clientId = process.env.REACT_APP_MQTT_CLIENT_ID || 'tyler';
-  const uuid = uuidv4();
+  const clientId = process.env.REACT_APP_MQTT_CLIENT_ID || 'gameboard';
   const fullClientId = `${clientId}-${uuid}`;
-
-  const pongAPIRef = useRef(new PongAPI(
-    fullClientId, 
-    brokerUrl)
-  );
-  const GameSessionStateMachineRef = useRef();
+  const pongAPIRef = useRef(null); // Use useRef to store the PongAPI instance
 
   useEffect(() => {
     console.log(`broker: ${broker}`);
@@ -31,17 +27,15 @@ function App() {
     console.log(`clientId: ${clientId}`);
     console.log(`fullClientId: ${fullClientId}`);
 
-    const GameSessionStateMachine = new GameSessionStateMachine(pongAPIRef.current, sceneContext);
+    if (!pongAPIRef.current) {
+      pongAPIRef.current = PongAPI(fullClientId, brokerUrl);
+    } 
 
     if (pongAPIRef.current) {
       pongAPIRef.current.start();
-    }
+    } 
 
-    if (!GameSessionStateMachineRef.current) {
-      GameSessionStateMachineRef.current = new GameSessionStateMachine(pongAPIRef.current, sceneContext);
-      GameSessionStateMachineRef.current.startMachine();
-    }
-
+    setPongAPI(pongAPIRef.current);
 
     const handleResize = () => {
       setSize({ width: window.innerWidth, height: window.innerHeight });
@@ -51,15 +45,15 @@ function App() {
     return () => {
       // Cleanup if necessary
       window.removeEventListener('resize', handleResize);
+
       if (pongAPIRef.current) {
         pongAPIRef.current.stop();
-      }
+      } 
     };
   }, []);
 
   return (
     <div className="App" >
-      <GamePlay pongAPIRef={pongAPIRef} />
       <MainScene style={{ width: size.width, height: size.height }} />
     </div>
   );

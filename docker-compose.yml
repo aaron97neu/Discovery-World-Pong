@@ -154,7 +154,7 @@ services:
                 REACT_APP_PADDLE_ID: top
                 REACT_APP_INCREMENT: 0.02
                 REACT_APP_INTERVAL: 70
-        profiles: [top-player-web]
+        profiles: [dev]
         ports:
             - 5004:80
         restart: unless-stopped
@@ -174,7 +174,7 @@ services:
                 REACT_APP_INTERVAL: 70
         ports:
             - 5005:80
-        profiles: [bottom-player-web]
+        profiles: [dev]
         restart: unless-stopped
         networks:
             - pong-network

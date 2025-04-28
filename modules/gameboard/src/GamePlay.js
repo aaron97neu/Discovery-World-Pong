@@ -203,7 +203,6 @@ function GamePlay() {
           };
 
           pongAPI.update(PongAPI.Topics.GAME_STATE, message );
-          // setIsGamePlayComplete(true);
         break;
         default:
           console.log("Unknown state");

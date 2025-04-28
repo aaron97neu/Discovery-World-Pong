@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import {useGameContext} from './GameContext';
 import {useGamePlayContext} from './GamePlayContext';
-import { createBaseGameStateMachine } from 'dw-state-machine';
-import { PongAPI } from 'dw-state-machine';
+import { createBaseGameStateMachine, PongAPI } from 'dw-state-machine';
 import * as IMAGES from './loadImages';
 import * as TEXT from './loadText';
 

@@ -1,16 +1,14 @@
 import React, {Suspense} from 'react'
 import { Canvas } from "@react-three/fiber";
 import {GizmoHelper, GizmoViewcube, GizmoViewport, GridHelper} from "@react-three/drei"; // can be commented in for debugging
-import TylerHud from './TylerHud';
+import Game from './Game';
 
 function MainScene() {
   return (
     <Canvas mode="concurrent">
       <ambientLight intensity={1.5} />
       <Suspense fallback={null} >
-          <group> 
-            <TylerHud/>
-          </group>
+      <Game/>
       </Suspense>
        
       {/* <axesHelper args={[2]} position={[11, 4, -3]} />
