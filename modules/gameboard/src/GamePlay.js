@@ -11,7 +11,6 @@ import Ball from './Ball';
 import Paddle from './Paddle';
 // import Goal from './Goal';
 import Wall from './Wall';
-// import GamePlayStateMachine from './GamePlayStateMachine';
 
 const gameboardHeight = 160; // height used in AI 
 const gameboardWidth = 192; // width used in AI
@@ -53,7 +52,6 @@ function GamePlay() {
     ballRef,
   } = useGamePlayContext();  
   
-  // const ballRef = useRef();
   const topPaddleRef = useRef();
   const bottomPaddleRef = useRef();
 
@@ -100,6 +98,16 @@ function GamePlay() {
       switch (gamePlayStateMachine.state) {
         case "gameStarted":
           break;            
+        case "gameReset":
+          if(!isBallReset) {
+            setIsBallReset(true);                  
+          } else {
+            if (!isTopPaddleReset
+              || !isBottomPaddleReset) {
+                setIsBallReset(true);   
+            }
+          }
+          break;
         case "levelReset":
           if(!isBallReset) {
             setIsBallReset(true);                  
@@ -162,9 +170,9 @@ function GamePlay() {
                 gamePlayStateMachine.startPlayReset();
               }
   
-              if (ballPosition.y < -90) {       
+              if (ballPosition.y < -90) {     
                 if (level === 3) {
-                  setTopScore((prev) => prev + 1);
+                  setTopScore((prev) => prev + 1);   
                   gamePlayStateMachine.endGame();
                 } else {
                   setTopScore((prev) => prev + 1);
@@ -177,7 +185,7 @@ function GamePlay() {
           }               
           break;
         case "gameComplete":
-          gamePlayStateMachine.startLevelReset();
+          gamePlayStateMachine.startGameReset();
           if (bottomScore > topScore) {
             setCountdown(TEXT.human_wins);
           }
@@ -195,6 +203,7 @@ function GamePlay() {
           };
 
           pongAPI.update(PongAPI.Topics.GAME_STATE, message );
+          // setIsGamePlayComplete(true);
         break;
         default:
           console.log("Unknown state");
@@ -336,7 +345,6 @@ function GamePlay() {
 
       {isBallReset && (
         <Ball 
-        // ballRef={ballRef}
           position={ballStartPosition} 
           args={[ballRadius, 64, 64]}  
           color="rgb(255,255,255)" 

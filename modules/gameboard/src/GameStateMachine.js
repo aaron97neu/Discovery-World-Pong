@@ -21,6 +21,8 @@ const GameStateMachine = () => {
     volume,
     setLevel,
     setCountdown,
+    setTopScore,
+    setBottomScore,
   } = useGamePlayContext();  
 
   useEffect(() => {
@@ -42,6 +44,11 @@ const GameStateMachine = () => {
           position: [0.0, 0.2, 0.0],
           scale: 8.5
         });
+
+        setIsGamePlayComplete(true);
+        setLevel(2);
+        setTopScore(0);
+        setBottomScore(0);
       };
 
       fsm.onLeaveIdle = () => { 
@@ -70,8 +77,7 @@ const GameStateMachine = () => {
       fsm.onLeaveMoveIntro = () => { 
         console.log('GameStateMachine Leave MoveIntro state'); 
 
-        setIsGamePlayComplete();
-        setCountdown(TEXT.countdown_get_ready);
+        setIsGamePlayComplete(false);
       };  
 
       fsm.onEnterLevel1Intro = () => {  
@@ -79,6 +85,7 @@ const GameStateMachine = () => {
         if (gamePlayStateMachine) {
           gamePlayStateMachine.startLevelReset();
 
+          setCountdown(TEXT.countdown_get_ready);
           setLevel(1);
         }        
       };
@@ -103,6 +110,7 @@ const GameStateMachine = () => {
         console.log('GameStateMachine Entered Level2Intro state');
         gamePlayStateMachine.startLevelReset();
 
+        setCountdown(TEXT.countdown_get_ready);
         setLevel(2);
       };
 
@@ -128,6 +136,7 @@ const GameStateMachine = () => {
         if (gamePlayStateMachine) {
           gamePlayStateMachine.startLevelReset();
 
+          setCountdown(TEXT.countdown_get_ready);
           setLevel(3);
         }
       };
@@ -142,12 +151,6 @@ const GameStateMachine = () => {
 
       fsm.onLeaveOutro = () => {  
         console.log('GameStateMachine Leave Outro state'); 
-          
-        const message = {
-          "transition": "game_complete"
-        };
-
-        pongAPI.update(PongAPI.Topics.GAME_STATE, message );
       };  
 
       setGameStateMachine(fsm);

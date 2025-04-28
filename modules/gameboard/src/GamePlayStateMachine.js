@@ -25,7 +25,8 @@ const GamePlayStateMachine = () => {
         const fsm = new StateMachine({   
             init: 'gameStarted',
             transitions: [
-                { name: 'startLevelReset', from: ['gameStarted', "play", "gameComplete"], to: 'levelReset' },
+                { name: 'startGameReset', from: ["gameComplete"], to: 'gameReset' },
+                { name: 'startLevelReset', from: ["gameStarted", "gameReset", "play"], to: 'levelReset' },
                 { name: 'startCountdown', from: ['levelReset'], to: 'countdown' },
                 { name: 'startNoCountdown', from: ['playReset'], to: 'noCountdown' },
                 { name: 'startPlay', from: ['countdown', 'noCountdown'], to: 'play' },
@@ -35,6 +36,9 @@ const GamePlayStateMachine = () => {
             methods: {
                 onGameStarted: () => {
                     console.log('GamePlayStateMachine gameStarted state');
+                },
+                onGameReset: () => {
+                    console.log('GamePlayStateMachine gameReset state');
                 },
                 onLevelReset: () => {
                     console.log('GamePlayStateMachine levelReset state');
