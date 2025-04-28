@@ -189,6 +189,12 @@ function GamePlay() {
           if (bottomScore == topScore) {
               setCountdown(TEXT.draw);
           }
+
+          const message = {
+            "transition": "level3_complete"
+          };
+
+          pongAPI.update(PongAPI.Topics.GAME_STATE, message );
         break;
         default:
           console.log("Unknown state");
