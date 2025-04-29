@@ -105,12 +105,6 @@ function TylerHud() {
     <Hud>
       <group>
         <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-                  <Text 
-                    position={[0.0, 0.2, 0.0]} 
-                    fontSize={1.2} 
-                    color="black" 
-                    text="here"
-                  />
         {renderGroupSection()}
       </group>
     </Hud>

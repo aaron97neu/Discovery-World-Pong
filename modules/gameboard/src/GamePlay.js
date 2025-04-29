@@ -264,7 +264,6 @@ function GamePlay() {
       targetObject.userData && targetObject.userData.isPaddle) {
 
       // Play an audio clip for the paddle hit using the audio player reference
-      console.log("paddleHit");
       audioPlayer.play('paddleHit').catch((error) => {
         console.error('Error playing audio:', error);
       });
