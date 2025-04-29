@@ -6,13 +6,12 @@ import { PongAPI } from 'dw-state-machine';
 import GameStateMachine from './GameStateMachine';
 import TylerHud from './TylerHud'; 
 
-// class GamePlay {
 const Game = () => {
   const {
+    setgameInstructionProps,
     gameStateMachine,
     pongAPI,
-    isGamePlaying,
-    setgameInstructionProps,
+    // audioPlayer,
     topScore, setTopScore,
     bottomScore, setBottomScore,
   } = useGameContext();
@@ -34,38 +33,31 @@ const Game = () => {
       );
     }
 
-    // audioPlayer.setVolume('paddleHit', volume);
+    // To change volume uncomment and adjust the volume in GameContext
+    // audioPlayer.setVolume('tylerIntro', volume);
   }, []);
 
   useEffect(() => {
-    console.log(`isGamePlaying: ${isGamePlaying}`);
-    if (isGamePlaying) {
-      if (topScore > prevTopScore) {
-        console.log("playerTopScore > topScore");
-        setgameInstructionProps({
-          image: IMAGES.TYLERFace_Happy,
-          position: [0.0, 0.0, 0.0],
-          scale: 4.0,
-          text: TEXT.blank
-        }); 
-        setPrevTopScore(topScore);
-      }
+    if (topScore > prevTopScore) {
+      setgameInstructionProps({
+        image: IMAGES.TYLERFace_Happy,
+        position: [0.0, 0.0, 0.0],
+        scale: 4.0,
+        text: TEXT.blank
+      }); 
+      setPrevTopScore(topScore);
     }
   }, [topScore]);
 
   useEffect(() => {
-    console.log(`isGamePlaying: ${isGamePlaying}`);
-    if (isGamePlaying) {
-      if (bottomScore > prevBottomScore) {
-        console.log("playerBottomScore > bottomScore");
-        setgameInstructionProps({
-          image: IMAGES.TYLERFace_Annoyed,
-          position: [0.0, 0.0, 0.0],
-          scale: 4.0,
-          text: TEXT.blank
-        });       
-        setPrevBottomScore(bottomScore);
-      }
+    if (bottomScore > prevBottomScore) {
+      setgameInstructionProps({
+        image: IMAGES.TYLERFace_Annoyed,
+        position: [0.0, 0.0, 0.0],
+        scale: 4.0,
+        text: TEXT.blank
+      });       
+      setPrevBottomScore(bottomScore);
     }
   }, [bottomScore]);
   

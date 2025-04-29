@@ -16,8 +16,7 @@ const GameProvider = ({ children }) => {
   const [gameStateMachine, setGameStateMachine] = useState(null);
   const [pongAPI, setPongAPI] = useState(null);
   const [audioPlayer] = useState(new AudioPlayer());
-  const [volume] = useState(0.5);
-  const [isGamePlaying, setIsGamePlaying] = useState(false);
+  // const [volume] = useState(1.0);
   const [topScore, setTopScore] = useState(0);
   const [bottomScore, setBottomScore] = useState(0);
 
@@ -27,8 +26,7 @@ const GameProvider = ({ children }) => {
       gameStateMachine, setGameStateMachine,
       pongAPI, setPongAPI,
       audioPlayer,
-      volume,
-      isGamePlaying, setIsGamePlaying,
+      // volume,
       topScore, setTopScore,
       bottomScore, setBottomScore,
       }}>

@@ -26,7 +26,6 @@ const GameStateMachine = () => {
 
   useEffect(() => {
     if (gamePlayStateMachine) {
-      console.log(`exhibitActivationNoise`);
       audioPlayer.play('exhibitActivationNoise');
 
       const fsm = createBaseGameStateMachine(pongAPI);

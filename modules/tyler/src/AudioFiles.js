@@ -16,6 +16,15 @@ class AudioFileMap {
       ['tylerLevelThreeComplete', new Audio(AUDIO.tylerLevelThreeComplete)],
       ['tylerOutro', new Audio(AUDIO.tylerOutro)]
     ]);
+
+    // Preload all audio files
+    this.preloadAllAudio();    
+  }
+  
+  preloadAllAudio() {
+    this.fileMap.forEach((audio, key) => {
+      audio.load(); // Force the browser to preload the audio file
+    });
   }
 
   getAudio(id) {

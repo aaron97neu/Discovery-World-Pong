@@ -1,4 +1,3 @@
-import { useContext} from 'react'
 import {Hud, PerspectiveCamera, Text} from "@react-three/drei";
 import HudImage from './HudImage';
 import {useGameContext} from './GameContext';
@@ -12,11 +11,8 @@ function TylerHud() {
   } = useGameContext();
 
   const renderGroupSection = () => {
-    console.log(`gameStateMachine ${gameStateMachine}`);
     if (gameStateMachine) {
-      console.log(`gameStateMachine.state ${gameStateMachine.state}`);
       switch (gameStateMachine.state) {
-      // switch (stateTransition) {
         case 'stopped':
         case 'idle':
           return (
