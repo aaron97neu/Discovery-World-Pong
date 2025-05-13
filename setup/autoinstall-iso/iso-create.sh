@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x -e
+set -x
 
 #################################################################
 # This file creates a custom ISO for the AI Pong Exhibit based
@@ -19,7 +19,7 @@ ISO_DIRECTORY='iso-test'
 # wget - to download fresh build of Ubuntu Server ISO from online
 # xorriso - for building the modified ISO
 sudo apt update
-sudo apt install p7zip-full wget xorriso --install-suggests
+sudo apt install p7zip wget xorriso
 
 # Set up build environment
 cd ../..
@@ -32,12 +32,12 @@ fi
 
 mkdir "$ISO_DIRECTORY"
 cd "$ISO_DIRECTORY"
-wget https://releases.ubuntu.com/jammy/ubuntu-22.04.5-live-server-amd64.iso
+wget https://releases.ubuntu.com/noble/ubuntu-24.04.2-live-server-amd64.iso
 
 # Unpack files and partition images from the source ISO
-7z -y x ubuntu-22.04.5-live-server-amd64.iso -osource-files
+7z -y x ubuntu-24.04.2-live-server-amd64.iso -osource-files
 # Remove open source server ISO to save space
-rm ubuntu-22.04.5-live-server-amd64.iso
+rm ubuntu-24.04.2-live-server-amd64.iso
 
 cd source-files
 mv '[BOOT]' ../BOOT 

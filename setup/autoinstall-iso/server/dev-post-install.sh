@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x -e
+set -x
 
 #############
 # Variables #
@@ -212,7 +212,6 @@ sudo mkdir -p /etc/apt/keyrings
 
 # Add Intel RealSense repository key
 # Jammy update is the most recent update that is supported by Intel RealSense as of March 2025
-# **Look at overview.md for more information**
 sudo curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null
 sudo apt-get install apt-transport-https -y
 
