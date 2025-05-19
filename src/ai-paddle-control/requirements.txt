@@ -1,5 +1,5 @@
 imageio==2.31.1
-keras==2.13.1
+keras==3.9.0
 matplotlib==3.7.1
 opencv-python-headless==4.8.1.78
 paho-mqtt==1.6.1
