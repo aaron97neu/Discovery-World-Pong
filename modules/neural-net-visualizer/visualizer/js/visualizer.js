@@ -1,6 +1,15 @@
+const originalLog = console.log;
+console.log = function(...args) {
+  const message = `${args}`;
+  if (mqtt_connected) {
+    client.publish('app/logs/neural-net-visualizer', message);
+  }
+  originalLog.apply(console, args);
+};
 // called when the client connects
 function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
+    mqtt_connected = true;
     console.log("Connected to MQTT broker");
     client.subscribe("game/level");
     client.subscribe("ai/activation");
@@ -8,6 +17,7 @@ function onConnect() {
 
 // called when the client loses its connection
 function onConnectionLost(responseObject) {
+    mqtt_connected = false;
     if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:" + responseObject.errorMessage);
     }
@@ -233,6 +243,7 @@ function init_model(level) {
 }
 
 function init() {
+    
     /*
     Basic housekeeping initialization. Makes sure the canvases we need
     exist, and do any precomputing or sizing that aren't model dependent.
@@ -247,7 +258,7 @@ function init() {
 
     // connect the client
     client.connect({ onSuccess: onConnect, reconnect: true });
-
+    
     canvas = document.getElementById("visualizer");
     const ctx = canvas.getContext("2d");
 
@@ -315,6 +326,8 @@ var canvas_height = null;
 
 var last_activations = null;
 var last_rendered_activations = null;
+var client = null;
+var mqtt_connected = false
 
 
 window.onload = init

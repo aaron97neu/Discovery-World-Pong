@@ -1,32 +1,156 @@
-* {
-    margin: 0;
-    padding: 0;
-    background-color: white;
+/*
+  Discovery World Font
+*/
+@font-face {
+   font-family: 'TradeGothicLTStd-Cn18';
+   src: url('./assets/TradeGothicLTStd-Cn18.otf');
+ }
+ 
+ * {
+   font-family: 'TradeGothicLTStd-Cn18';
+   color: white;
  }
  
  body, html {
     height: 100%;
+    margin: 0px;
+    padding: 0px;
     overflow: hidden;
  }
 
- #info, #msg {
-    margin-top: 25px;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-bottom: 0px;
-    text-align: center;
-    font-family: 'Barlow', sans-serif;
- }
- 
- canvas {
-    position:relative;
+ p, h1 {
+   padding: 0px;
+   margin: 0px;
  }
  
  #depth {
-     width: 100%;
-     position:absolute;
+    width: 100%;
  }
  #wrapper {
-    position:relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+ }
+
+ #msg {
+   margin-top: 25px;
+   margin-left: 25px;
+   margin-right: 25px;
+   margin-bottom: 0px;
+   text-align: center;
+   font-family: 'Barlow', sans-serif;
+}
+
+.container {
+   overflow: hidden;
+   height: calc(100vh - 40px);
+   width: calc(100vw - 40px);
+   padding: 20px;
+   background-image: url(./assets/background.png);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 40px;
+ } 
+ 
+ .title-outer-container {
+   background-color: #B11D36;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 139px;
+   width: 719px;
+   border-radius: 20px;
  }
  
+ .title-inner-container {
+   background-color: #6F1B57;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   height: 118px;
+   width: 699px;
+   border-radius: 20px;
+   font-size: 64px;
+ }
+
+ .instructions{
+   width: 624px;
+   height: 331px;
+   padding: 0px;
+   margin: 0px;
+ } 
+
+.info-container {
+  width: 830px;
+  height: 426px;
+  margin-bottom: 20px;
+  background-color: #1E1E1E;
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-around;
+  gap: 20px;
+  font-size: 56px;
+  line-height: 64px;
+}
+
+.info-first-line{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.depth-sensor{
+  width: 408px;
+  height: 120px;
+}
+
+/*Dimensions for 4k resolution*/
+@media (min-height: 3800px) and (min-width: 2100px) {
+   .container {
+      height: calc(100vh - 80px);
+      width: calc(100vw - 80px);
+      padding: 40px;
+      gap: 80px;
+    } 
+    
+    .title-outer-container {
+      height: 278px;
+      width: 1438px;
+      border-radius: 40px;
+    }
+    
+    .title-inner-container {
+      height: 236px;
+      width: 1398px;
+      border-radius: 40px;
+      font-size: 128px;
+    }
+   
+    .instructions{
+      width: 1248px;
+      height: 663px;
+    } 
+   
+   .info-container {
+     width: 1660px;
+     height: 852px;
+     margin-bottom: 40px;
+     padding: 40px 80px;
+     gap: 40px;
+     font-size: 112px;
+     line-height: 128px;
+   }
+   
+   .depth-sensor{
+     width: 816px;
+     height: 240px;
+   }
+}
+
+

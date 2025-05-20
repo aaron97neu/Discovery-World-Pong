@@ -22,30 +22,21 @@ const GameScreen: FC<GameScreenProps> = ({
           "0px 20px 25px -5px rgba(0, 0, 0, 0.3), 0px 10px 10px -5px rgba(0, 0, 0, 0.2)",
         width: `${width}px`,
         height: `${height}px`,
-        transition: "all 0.2s ease",
       }}
     >
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          transform: `scale(${width / 1920})`,
-          transformOrigin: "top left",
-          transition: "all 0.2s ease",
-        }}
-      >
         <iframe
           src={connectionString}
           style={{
-            width: "1920px",
-            height: "1080px",
             border: "none",
+            position: "absolute",
+            top: '0',
+            left: '0', 
+            transformOrigin: 'top left',
+            height: '1080px',
+            width: '1920px',
+            transform: `scale(${width / 1920})`
           }}
         ></iframe>
-      </Box>
     </Box>
   );
 };

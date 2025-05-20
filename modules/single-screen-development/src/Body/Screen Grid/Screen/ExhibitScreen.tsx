@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   LogContainerKeys,
@@ -15,6 +15,7 @@ interface ExhibitScreenProps {
   width: number;
   height: number;
   container: LogContainerKeys;
+  vertScreenCount: number;
 }
 
 interface BadgeProps {
@@ -72,8 +73,12 @@ const ExhibitScreen: FC<ExhibitScreenProps> = ({
   width,
   height,
   container,
+  vertScreenCount
 }) => {
   const [iframeSrc, setIframeSrc] = useState("");
+  const boxRef = useRef<HTMLDivElement>(null);
+  const prevVertRef = useRef(3);
+  const frameRef = useRef<HTMLIFrameElement>(null)
   const logCountState = useAppSelector(
     (state) => state.exhibitScreens.newContainerLogCounts[container]
   );
@@ -84,8 +89,53 @@ const ExhibitScreen: FC<ExhibitScreenProps> = ({
   useEffect(() => {
     setIframeSrc(`${connectionString}?t=${Date.now()}`);
   }, [connectionString]);
+
+  /**
+   * This hook updates what events our components should animate.
+   * 
+   * Box component animations:
+   *  Scaling:
+   *    We always want to animate scaling (transforming) our container.
+   * 
+   *    This is what allows us to have the shrink/grow animations when the screen is closed/opened.
+   *  
+   *  Dimension Changes:
+   *    We only want to animate our dimension changes when the change is a result of a screen being closed/opened.
+   * 
+   *    The parent component that houses Body.tsx and Header.tsx already animates 
+   *    dimension changes that are a result of the window size changing and the sidebar being opened.
+   *    If we also animated within this component, then the width of the component would lag behind what it 
+   *    should be based on the Parent's ongoing animation.
+   * 
+   * Frame component animations:
+   *  Scaling:
+   *    We only want to animate our Iframe scaling when a screen is closed/opened.
+   * 
+   *    When the window size changes or a sidebar is opened, the parent component handles the animating 
+   *    the dimension change. So there is no need to animate anything in this case.
+   * 
+   *    When a screen is closed/opened, we need to animate scaling as 
+   *    the inner frame component relies on it to maintain its aspect ratio at smaller dimensions.
+   * 
+   */
+  useLayoutEffect(() => {
+    const hasChanged = prevVertRef.current !== vertScreenCount;
+    if (boxRef.current) {
+      boxRef.current.style.transition = hasChanged
+        ? 'all 0.2s ease'
+        : 'transform 0.2s ease';
+    }
+    if (frameRef.current) {
+      frameRef.current.style.transition = hasChanged
+        ? 'transform 0.2s ease'
+        : '';
+    }
+    prevVertRef.current = vertScreenCount;
+  }, [vertScreenCount, sidebarOpen]);
+
   return (
     <Box
+      ref={boxRef}
       sx={{
         position: "relative",
         boxShadow:
@@ -93,8 +143,7 @@ const ExhibitScreen: FC<ExhibitScreenProps> = ({
         opacity: open ? 1 : 0,
         width: open ? `${width}px` : 0,
         height: `${height}px`,
-        transform: open ? "scale(1)" : "scale(0)",
-        transition: "all 0.2s ease",
+        transform: open ? `scale(1)` : "scale(0)",
       }}
     >
       <Badge
@@ -117,27 +166,21 @@ const ExhibitScreen: FC<ExhibitScreenProps> = ({
           }
         }}
       ></Badge>
-      <Box
-        sx={{
+      {/*Streams the data from our container at a fixed resolution. Uses scaling to fit within the parent box component*/}
+      <iframe
+        ref={frameRef}
+        src={iframeSrc}
+        style={{
+          border: "none",
           position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
+          top: '0',
+          left: '0', 
+          transformOrigin: 'top left',
+          height: '1920px',
+          width: '1080px',
           transform: `scale(${width / 1080})`,
-          transformOrigin: "top left",
-          transition: "all 0.2s ease",
         }}
-      >
-        <iframe
-          src={iframeSrc}
-          style={{
-            width: "1080px",
-            height: "1920px",
-            border: "none",
-          }}
-        ></iframe>
-      </Box>
+      ></iframe>
     </Box>
   );
 };

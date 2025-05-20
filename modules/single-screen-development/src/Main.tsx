@@ -170,11 +170,12 @@ const Main: FC = () => {
           flexDirection: "column",
           backgroundColor: "#1E1E1E",
           height: "100vh",
+          overflow: 'hidden',
           width: `${isSideBarOpen ? `calc(100vw - ${sideBarWidth})` : "100vw"}`,
           alignItems: "center",
           padding: `${isSideBarOpen ? `0px 25px` : "0px 90px"}`,
           marginLeft: `${isSideBarOpen ? `${sideBarWidth}` : "0px"}`,
-          transition: "all 0.3s ease",
+          transition: "all 0.2s ease",
         }}
       >
         <Header></Header>

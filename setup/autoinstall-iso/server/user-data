@@ -1,0 +1,96 @@
+#cloud-config
+# See the autoinstall documentation at:
+# https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+autoinstall:
+  apt:
+    disable_components: []
+    fallback: offline-install
+    geoip: true
+    mirror-selection:
+      primary:
+      - country-mirror
+      - arches: &id001
+        - amd64
+        - i386
+        uri: http://archive.ubuntu.com/ubuntu/
+      - arches: &id002
+        - s390x
+        - arm64
+        - armhf
+        - powerpc
+        - ppc64el
+        - riscv64
+        uri: http://ports.ubuntu.com/ubuntu-ports
+    preserve_sources_list: false
+    security:
+    - arches: *id001
+      uri: http://security.ubuntu.com/ubuntu/
+    - arches: *id002
+      uri: http://ports.ubuntu.com/ubuntu-ports
+    unattended_upgrades: false
+  codecs:
+    install: false
+  drivers:
+    install: false
+  identity:
+    hostname: discovery-world-pong-twin
+    password: $6$fjtWXronV.IMhgRY$Opf7JiYI2IIQ/5wlbC.vXkjqyFBHHIx9VuHgKcwkz/lExlGdngC2qUv95.U9X2JgQtVfAQm2HQXUnu72JqaLl/
+    realname: Discovery World Pong
+    username: dwpong
+  kernel:
+    package: linux-generic
+  keyboard:
+    layout: us
+    toggle: null
+    variant: ''
+  locale: en_US.UTF-8
+  network:
+      #enp2s0:
+    renderer: networkd
+    ethernets:
+      enp0s3:
+        dhcp4: true
+        dhcp-identifier: mac
+        nameservers:
+          addresses:
+            - 8.8.8.8
+            - 8.8.4.4
+    version: 2
+    wifis: {}
+  oem:
+    install: auto
+  source:
+    id: ubuntu-server
+    search_drivers: false
+  ssh:
+    allow-pw: true
+    authorized-keys: []
+    install-server: true
+  late-commands:
+    # Clone the Git repository
+    - echo "Cloning Git repository..."
+    - mkdir -p /target/home/dwpong
+    - git clone https://github.com/aaron97neu/Discovery-World-Pong.git /target/home/dwpong/Discovery-World-Pong-MSOE > /target/var/log/git-clone.log 2>&1
+    
+ Will change again soon as we move back into RA repos but still
+
+    # Create a script to run on first login (ONLY UNCOMMENT ONE OPTION)
+    # ** Look at overview.md for more information **
+
+    # This version runs the post install script found in the main branch of the aipong repo
+    # Ensure the script has execution permissions
+    #- chmod +x /target/home/dwpong/Discovery-World-Pong/setup/post-install.sh
+    #- echo "/home/dwpong/Discovery-World-Pong/setup/post-install.sh; sudo rm -f /etc/profile.d/post-install.sh; sudo reboot" > /target/etc/profile.d/post-install.sh
+    #- chmod +x /target/etc/profile.d/post-install.sh
+
+    # This version runs the dev post install script used for development found in the same repo
+    # as the user-data file
+    - cp /cdrom/server/dev-post-install.sh /target/home/dwpong/dev-post-install.sh
+    # Ensure the script has execution permissions
+    - chmod +x /target/home/dwpong/dev-post-install.sh
+    - echo "/bin/bash /home/dwpong/dev-post-install.sh; sudo rm -f /etc/profile.d/dev-post-install.sh; sudo reboot" > /target/etc/profile.d/dev-post-install.sh
+    - chmod +x /target/etc/profile.d/dev-post-install.sh
+
+    - echo "Post-installation setup completed! Restarting system now..."
+  updates: security
+  version: 1

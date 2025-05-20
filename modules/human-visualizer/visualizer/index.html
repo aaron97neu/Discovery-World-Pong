@@ -10,26 +10,34 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.0.0-beta.3/mqtt.min.js"
-        integrity="sha384-hELSIBNpNv6bWwHPNLtT924lTndbc8WdZcK3tF4qXshE1XKEx+vfC7Y+/w7HjvUv"
-        crossorigin="anonymous">
-    </script>
+        integrity="sha384-hELSIBNpNv6bWwHPNLtT924lTndbc8WdZcK3tF4qXshE1XKEx+vfC7Y+/w7HjvUv" crossorigin="anonymous">
+        </script>
 </head>
 
 <body>
-    <div id="info">
-        <h1> Human Player Visualization </h1>
-        <p>
-            The video below you shows what you look like to the computer! The
-            computer has a special type of camera above the play area called a
-            "depth camera". It uses this to figure out where you are so it can
-            place the paddle on the screen for you.
-        </p>
+    <div class="container">
+        <div class="title-outer-container">
+            <div class="title-inner-container">
+                Smile you're on camera!
+            </div>
+        </div>
+        <div id="wrapper">
+            <canvas id="depth"></canvas>
+            <p id="msg">Connecting...</p>
+        </div>
+        <script src="js/depth.js"></script>
+        <img src="assets/PlayerInstructions-Start.png" class="instructions" />
+        <div class="info-container">
+            <div class="info-first-line">
+                <p>
+                    Look up!
+                </p>
+                <img src="assets/depth-sensor.png" class="depth-sensor" />
+            </div>
+            <p>The special camera above helps T.Y.L.E.R know where you are!</p>
+            <p>Move left and right and see it track your movements</p>
+        </div>
     </div>
-    <div id="wrapper">
-        <canvas id="depth"></canvas>
-        <p id="msg">Connecting...</p>
-    </div>
-    <script src="js/depth.js"></script>
 </body>
 
 </html>

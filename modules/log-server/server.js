@@ -3,19 +3,9 @@ const mqtt = require('mqtt');
 const util = require('util'); 
 const docker = new Docker();
 
-
-
-//const originalLog = console.log;
-
 const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL, {
   clientId: 'docker-log-publisher'
 });
-
-// console.log = function(...args) {
-//   const message = util.format(...args);
-//   mqttClient.publish('app/logs/log-server', message);
-//   originalLog.apply(console, args);
-// };
 
 // Track active log streams
 const activeContainers = new Map();
