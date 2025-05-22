@@ -2,6 +2,13 @@ const Docker = require('dockerode');
 const mqtt = require('mqtt');
 const util = require('util'); 
 const docker = new Docker();
+const express = require('express');
+const app = express();
+const tar = require('tar-fs');
+const path = require('path');
+const fs = require('fs');
+const {execSync} = require('child_process')
+app.use(express.json());
 
 const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL, {
   clientId: 'docker-log-publisher'

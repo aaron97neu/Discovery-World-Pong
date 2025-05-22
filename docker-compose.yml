@@ -203,8 +203,19 @@ services:
             - mqtt-broker
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
+            - ./src/ai-paddle-control:/app/containers/ai-paddle-control
+            - ./src/audio-engine:/app/containers/audio-engine
+            - ./src/clocktower-visualizer:/app/containers/clock-tower-visualizer
+            - ./src/game-engine:/app/containers/game-engine
+            - ./src/gameboard:/app/containers/gameboard
+            - ./src/human-paddle-control:/app/containers/human-paddle-control
+            - ./src/human-visualizer:/app/containers/human-visualizer
+            - ./src/neural-net-visualizer:/app/containers/neural-net-visualizer
+            -  ./docker-compose.yml:/app/files/docker-compose.yml:ro
         networks:
             - pong-network
+        ports:
+            - "5006:5006"
 networks:
     pong-network:
         name: pong-network
