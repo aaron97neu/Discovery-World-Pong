@@ -14,7 +14,6 @@
             /ai-paddle-control
             /autostart
             /game-engine
-            /audio-engine
             /gameboard
             /human-paddle-control
             /visualizers
@@ -23,20 +22,21 @@
         readme.md
         contributing.md
         /guides
-        /Troubleshooting
+        /troubleshooting
             /Known Issues
     /setup
-    /src
+    /modules
         /ai-paddle-control
-        /audio-engine
-        /clocktower-visualizer
-        /game-engine
         /gameboard
         /human-paddle-control
         /human-visualizer
+        /log-server
         /mqtt-broker
         /neural-net-visualizer
         /shared
+        /single-screen-development
+        /tyler
+        /web-paddle-control
     README.md
 
 ## Branch Structure
@@ -64,12 +64,8 @@ Upon merging, the "Squash and Merge" option should be selected to maintain a cle
 After merging, the branch should be deleted if was not pulled from a fork.
 
 ## Documentation Structure
+Documentation should occur in two forms:
+- Dedicated API documentation within the `docs` folder. This should contain an overview, details on the implementation, related tutorials and links. Maintaining all documentation in a single directory and in  the .md format eases exporting for nontechnical stakeholders 
+- Code comments embedded in the source code. Each function should have details as to the function's intended use, preconditions and postconditions. General inline comments are highly encouraged, and should focus on the author's intention and purpose.
 
-Each module requires its own api documentation; an overview, the implementation, related tutorials and links, and stored in docs folder in .md format for ease of exporting.
-
-Each pull request affecting modules performance/substance requires an addition/editing of documentation.
-
-commenting standard:
-comments for every function: input, output, parameters, use
-comments for every class describing members
-inline comments for code describing purpose
+If a pull request affects a module substantially, documentation should be updated as well

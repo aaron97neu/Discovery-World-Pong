@@ -1,6 +1,6 @@
 # Scripting
 
-Bash scripts are a tool to use to automate certain actions, adding variables to
+Bash scripts are a tool used to automate certain actions, adding variables to
 path environment, start up specific programs on computer boot, etc.
 
 See these resources for guides on learning more about bash scripts:
