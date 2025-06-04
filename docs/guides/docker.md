@@ -2,9 +2,9 @@
 
 ## Containerization Benefits
 
-Containers encapsulate an application as an executable software package that bundles application code with all its related configuration files, libraries, and any other userspace dependencies that it needs to run. Becuase of this, containerized apps do not have an requirements to run beyond a compatable kernel and runtime engine (for example, the Docker runtime engine). While userspace is typically highly isolated, the host’s OS is shared .
+Containers encapsulate an application as an executable software package that bundles application code with all its related configuration files, libraries, and any other userspace dependencies that it needs to run. Because of this, containerized apps do not have an requirements to run beyond a compatible kernel and runtime engine (for example, the Docker runtime engine). While userspace is typically highly isolated, the host’s OS is shared .
 
-Generally, containers have significantly higher server efficiencies than the equalivent implemented via virtual machines. In addition, the isolation between containers can help ensures that failures in one module do not affect others. 
+Generally, containers have significantly higher server efficiencies than the equivalent implemented via virtual machines. In addition, the isolation between containers can help ensures that failures in one module do not affect others. 
 
 ## Container Structure
 
