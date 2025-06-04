@@ -15,7 +15,7 @@ const fsm = new StateMachine({
 
 // Generate the DOT representation
 const dot = visualize(fsm);
-console.log(dot.);
+console.log(dot);
 
 
 // Save the DOT representation to a file
