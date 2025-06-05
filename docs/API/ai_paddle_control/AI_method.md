@@ -30,7 +30,7 @@ The PGAgent class applies this algorithm to the data set from each model level u
 
 The current trained model is basic which has lead to complaints of gameplay being trivial. Retraining the AI model is out of scope of current project deliverables, however, there is some available code describing how to start retraining. 
 see [here](https://github.com/Rockwell-Automation-Inc/Discovery-World-Pong/blob/archive/non-containerized/DiscoveryWorldPongAIExhibit/reinforcement_selfplay.py).
-This code was removed during the containerizion process, but could be
+This code was removed during the containerization process, but could be
 reintroduced with some effort.
 
 *note: the .h5 files are the AI training results
