@@ -23,7 +23,7 @@ This format is supported in the following installers:
 - Ubuntu Desktop, version 23.04 and later
 
 For the Pong exhibit, only Ubuntu Server 22.04 has been tested. Ubuntu Server
-24.04 LTS showed significant Nvidia driver issues immediatly after release and
+24.04 LTS showed significant Nvidia driver issues immediately after release and
 has not been re-tested since. Ubuntu Desktop was not used as at the start of the
 switch to Linux, autoinstall was not available for Ubuntu Desktop.
 
@@ -39,12 +39,12 @@ is currently not setup, but can be used as documentation of OS setup and a guide
 during manual installation.
 
 `close_windows.sh` This script closes all browser windows associated with the
-poing exhibit. This can be used when restarting all windows or to kill
+pong exhibit. This can be used when restarting all windows or to kill
 misbehaving windows. Note that the script is quite crude, simply calling
 `killall firefox`, so this will additionally kill other firefox windows not
-associated with the exhbit
+associated with the exhibit
 
-`create_profiles.sh` This script creates seperate profiles for each exhibit
+`create_profiles.sh` This script creates separate profiles for each exhibit
 window. This is required by firefox for technical reasons. This script should
 only be run once for each installation of the exhibit
 
@@ -62,10 +62,10 @@ placed in `~/.config/autostart`, it will be executed upon startup.
 `pong_stop.desktop` Similar to `pong_start.desktop` but allows closing of all
 windows
 
-`post-install.sh` This script attempts to provide a semi-automated installtion
+`post-install.sh` This script attempts to provide a semi-automated installation
 of all dependencies for the exhibit after the OS is installed. It currently does
 not do this and needs a good coat of polish. It's starting to outgrow its 'quick
-little bash script origins' and a reimplementation should be considered.
+little bash script origins' and a re-implementation should be considered.
 
 `refresh-browsers.sh` This goes to each browser windows and performs a refresh.
 This is needed after updating any client side of on any of the visualizations.
@@ -73,7 +73,7 @@ This is needed after updating any client side of on any of the visualizations.
 ## Exhibit Setup From Scratch
 
 1. Install Ubuntu Server Edition 22.04 from scratch
-    1. Ubuntu Server Edition was choosen as Desktop does not allow the use of
+    1. Ubuntu Server Edition was chosen as Desktop does not allow the use of
        the (yet to be implemented) autoinstall-user-data
     1. Ubuntu 24.04 was trialed but found that there were Nvidia Driver
        incompatibilities.
